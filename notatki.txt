@@ -1,0 +1,296 @@
+FRAMEWORK NALEŻY UPROŚCIĆ, ABY MÓC GO FAKTYCZNEI WYKORZYSTAĆ W ROZPRAWIE!!
+NP. PODSYSTEM GENEROWANIA RAPORTÓW NALEŻY GDZIEŚ ODŁĄCZYĆ
+
+Aktualne wymagania wobec frameworka!:
+	zestaw klas, z ktorych mozna sobie dziedziczyc, aby zrobic nowy EA
+	proste logowanie tego, co jest kierowane na stdout
+	zestaw funkcji, ktorych mozna uzyc np. jako operatorow genetycznych, metod selekcji
+	skrypty pomocnicze: generowanie wykresów danego typu, avg.py itp
+
+
+Wyobrazic sobie te eksperymenty, ktore faktycznie bedziemy wykonywac podczas
+pracy nad rozprawa i podczas pracy nad artykulami, i na podstawie tego wyobrazenia
+odpowiedziec sobie na pytania dot. np. formatu argumentow, podzialu odowiedzialnosci skryptow itp.
+(podejscie z gory na dol). Ponizsze jest stworzone na podstawie wlasnie tego wyobrazenia:
+
+TODO:
+	1. Artykul bblocks
+        wygenerowac knapsack16. dobrac parametry, dla ktorych qiga znacznie przewyzsza sga.
+            dla takich parametrow przebadac propagacje BB
+		dokladne przetestowanie knapsack.py, sprawdzenie poprawnosci penalizacji
+		algorytmy QIGA, GAQPR  DONE??
+		wybor bloku budujacego -- opisanie w artykule, jak byl wybrany
+		odpalenie sga, qiga, gaqpr na knapsack (moze byc na roznych kompach :) )
+		skrypt robiacy wykres ze "smugą" qbbfig.py -- na podstawie logow z powyzszego
+			obliczanie prawd dopasowania BinQChromosome do '*01**0111**' (proste)
+			obliczenie E(L) i V(L) w kolejnych generacjach (z moich wzorow w artykule)
+			narysowanie tego
+	2. porównanie pso, sga, qiga dla slam.ExecEvaluator. zrobienie badan, jakie bedzie chcial maciek DONE? :)
+		przeprowadzenie badan
+		wykres porownawczy
+	Wymyślenie jakiegos fajnego rozwiazania ze skryptami generujacymi wykresy (reusable)
+		nasz wlasny pojedynczy plot.py -- DONE?
+			-o /tmp/plik.png --xlabel .. --ylabel ... --itp dane.txt colX colY1 colY2 colY3
+	był jakiś błąd z rekurencja i deepcopy przy dużej liczbie iteracji (300)
+	exp.py chyba lepiej zmienic nazwe na runalgo.py
+			
+
+WYBÓR PUNKTU POCZĄTKOWEGO DLA RÓZNYCH ALGORYTMÓW (INICJALIZACJA) - NP. TEST KILKU ALGORYTMOW Z TEGO SAMEGO PUNKTU STARTOWEGO
+	-- OptAlgorithm::Run: po etapie initialize() - wczytanie populacji z pliku
+	bardzo dobre rozwiązanie
+
+WYWOŁANIA SKRYPTÓW NA BIEŻĄCE POTRZEBY:
+	# na potrzeby art. o bblocks:
+    ./report.py sga.SGA --popsize 10 --maxiter 160 --chromlen 20 --Pm 0.005 realfuncs.InterpolatedEvaluator 
+    ./report.py qiga.QIGA --popsize 10 --maxiter 160 --chromlen 20 realfuncs.InterpolatedEvaluator 
+    01001101011011001110
+	(exp sga.SGA knapsack.Evaluator --file data/knapsack1.txt  # te wywolania maja po prostu generowac logfile)
+	(exp --logfile /tmp/qiga-log1.txt qiga.QIGA knapsack.Evaluator --file data/knapsack1.txt)
+	(exp gaqpr.GAQPR knapsack.Evaluator --file data/knapsack1.txt)
+	graph.py /tmp/log1.txt
+	bblocks.py -o /tmp/fig1.png /tmp/{sga,qiga,gaqpr}-log1.txt   # <- wykres do artykulu
+
+	# na potrzeby art. o slam:
+	 # global artificial:
+		./report.py -o /tmp/report-pso.PSO pso.PSO --maxiter 130 --popsize 30 --maxVelocity 1 --xmin -12 --xmax 80 --ymin -70 --ymax 34  --zmin -3.14 --zmax 3.14 --dimensions 3 slam.ExecEvaluator --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-sga.SGA sga.SGA --popsize 30 --maxiter 130 --Pm 0.001 --chromlen 30 slam.ExecEvaluator --xmin -12 --xmax 80 --ymin -70 --ymax 34  --zmin -3.14 --zmax 3.14 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-qiga.QIGA qiga.QIGA --popsize 30 --maxiter 130 --chromlen 30 slam.ExecEvaluator --xmin -12 --xmax 80 --ymin -70 --ymax 34  --zmin -3.14 --zmax 3.14 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-gaqpr.GAQPR gaqpr.GAQPR --popsize 30 --maxiter 130  --chromlen  30 slam.ExecEvaluator --xmin -12 --xmax 80 --ymin -70 --ymax 34  --zmin -3.14 --zmax 3.14 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-icp.ICP slam-evaluator/icp_algo --map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold --out-file /dev/stdout --max-iterations 130
+	 # global real: (-12,12), (-17,11)
+		./report.py -o /tmp/report-sga.SGA sga.SGA --popsize 30 --maxiter 130 --Pm 0.001 --chromlen 30 slam.ExecEvaluator --xmin -12 --xmax 12 --ymin -17 --ymax 11  --zmin -3.14 --zmax 3.14 --args '--map-file data/robo_kis_map.txt --scan-file data/kis_single_scan0.txt --const-treshold'
+		./report.py -o /tmp/report-pso.PSO pso.PSO --maxiter 130 --popsize 30 --maxVelocity 1 --xmin -12 --xmax 12 --ymin -17 --ymax 11  --zmin -3.14 --zmax 3.14 --dimensions 3 slam.ExecEvaluator --args '--map-file data/robo_kis_map.txt --scan-file data/kis_single_scan0.txt --const-treshold'
+		./report.py -o /tmp/report-qiga.QIGA qiga.QIGA --popsize 30 --maxiter 130 --chromlen 30 slam.ExecEvaluator --xmin -12 --xmax 12 --ymin -17 --ymax 11  --zmin -3.14 --zmax 3.14 --args '--map-file data/robo_kis_map.txt --scan-file data/kis_single_scan0.txt --const-treshold'
+		./report.py -o /tmp/report-gaqpr.GAQPR gaqpr.GAQPR --popsize 30 --maxiter 130  --chromlen  30 slam.ExecEvaluator --xmin -12 --xmax 12 --ymin -17 --ymax 11  --zmin -3.14 --zmax 3.14 --args '--map-file data/robo_kis_map.txt --scan-file data/kis_single_scan0.txt --const-treshold'
+		./report.py -o /tmp/report-icp.ICP slam-evaluator/icp_algo --map-file data/robo_kis_map.txt --scan-file data/kis_single_scan0.txt --const-treshold --out-file /dev/stdout --max-iterations 130
+	 # local artificial: map: (-12,80) (-70,34).    bbox:  17.77 18.37 -1.15 -0.55 1.58 2.63
+		./report.py -o /tmp/report-pso.PSO pso.PSO --maxiter 130 --popsize 30 --maxVelocity 0.01 --xmin 17.77 --xmax 18.37 --ymin -1.15 --ymax -0.55  --zmin 1.58 --zmax 2.63 --dimensions 3 slam.ExecEvaluator --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-sga.SGA sga.SGA --popsize 30 --maxiter 130 --Pm 0.001 --chromlen 30 slam.ExecEvaluator --xmin 17.77 --xmax 18.37 --ymin -1.15 --ymax -0.55  --zmin 1.58 --zmax 2.63 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-qiga.QIGA qiga.QIGA --popsize 30 --maxiter 130 --chromlen 30 slam.ExecEvaluator --xmin 17.77 --xmax 18.37 --ymin -1.15 --ymax -0.55  --zmin 1.58 --zmax 2.63 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-gaqpr.GAQPR gaqpr.GAQPR --popsize 30 --maxiter 130  --chromlen  30 slam.ExecEvaluator --xmin 17.77 --xmax 18.37 --ymin -1.15 --ymax -0.55  --zmin 1.58 --zmax 2.63 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-icp.ICP slam-evaluator/icp_algo --minX 17.77 --maxX 18.37 --minY -1.15 --maxY -0.55 --minZ 1.58 --maxZ 2.63 --map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold --out-file /dev/stdout --max-iterations 130
+	 # local real: bbox: 2.59 3.19 -0.93 -0.33 0.23 1.28
+		./report.py -o /tmp/report-pso.PSO pso.PSO --maxiter 130 --popsize 30 --maxVelocity 0.01 --xmin 2.59 --xmax 3.19 --ymin -0.93 --ymax -0.33  --zmin 0.23 --zmax 1.28 --dimensions 3 slam.ExecEvaluator --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-sga.SGA sga.SGA --popsize 30 --maxiter 130 --Pm 0.001 --chromlen 30 slam.ExecEvaluator --xmin 2.59 --xmax 3.19 --ymin -0.93 --ymax -0.33  --zmin 0.23 --zmax 1.28 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-qiga.QIGA qiga.QIGA --popsize 30 --maxiter 130 --chromlen 30 slam.ExecEvaluator --xmin 2.59 --xmax 3.19 --ymin -0.93 --ymax -0.33  --zmin 0.23 --zmax 1.28 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-gaqpr.GAQPR gaqpr.GAQPR --popsize 30 --maxiter 130  --chromlen  30 slam.ExecEvaluator --xmin 2.59 --xmax 3.19 --ymin -0.93 --ymax -0.33  --zmin 0.23 --zmax 1.28 --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold'
+		./report.py -o /tmp/report-icp.ICP slam-evaluator/icp_algo --minX 2.59 --maxX 3.19 --minY -0.93 --maxY -0.33 --minZ 0.23 --maxZ 1.28 --map-file data/roboMap.txt --scan-file data/singleScan3.txt --const-treshold --out-file /dev/stdout --max-iterations 130
+	-
+	exp pso.PSO slam.Evaluator --scan data/singleScan2.txt
+	exp sga.SGA --Pm 0.2 slam.Evaluator --scan data/singleScan2.txt
+	repeat -n 10 pso.PSO slam.Evaluator --scan data/singleScan2.txt > /tmp/res1.txt
+	graph.py -o /tmp/fig.png /tmp/res1.txt
+	chce tak: ./cmpreport pso.PSO [params] sga.SGA qiga.QIGA slam.ExecEvaluator --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --executions-in-single-iteration 5'
+	[./cmpreport.py pso.PSO --popsize 5 --maxVelocity 1 --maxiter 70 --xmin -12 --xmax 80 --ymin -70 --ymax 34  --zmin -3.14 --zmax 3.14 --dimensions 3 slam.ExecEvaluator --args '--map-file data/roboMap.txt --scan-file data/singleScan3.txt --executions-in-single-iteration 5']
+
+	# testowo:
+	exp sga.SGA realfuncs.Real --func rosenbrock
+	exp sga.SGA realfuncs.Real --expr 'x**2-0.5*x+3'
+	./exp.py sga.SGA --chromlen 20 realfuncs.Eval1D --xmin -3 --xmax 4 --expr '-(x-1)*x*(x+2)*(x-4)'
+	./exp.py sga.SGA --popsize 8 --Pc 0.9 --Pm 0.033 --maxiter 60 --chromlen 30 realfuncs.Eval1D --xmin -1.5 --xmax 5 --expr '-(x+1)*x*(x-1)*(x-2)*(x-3)*(x-4)+x*x'
+	./exp.py sga.SGA --chromlen 30 --maxiter 50 realfuncs.Eval2d --preset 5
+	./exp.py pso.PSO --popsize 40 realfuncs.Eval2dReal --preset 5
+	./exp.py qiga.QIGA
+	./report sga.SGA --popsize 8 --Pc 0.9 --Pm 0.033 --maxiter 10 --chromlen 30 realfuncs.Eval1D --xmin -1 --xmax 4 --expr '-(x+1)*x*(x-1)*(x-2)*(x-3)*(x-4)+x*x'
+	./report.py sga.SGA --popsize 10 --Pc 0.7 --Pm 0.003 --maxiter 50 --chromlen 30 realfuncs.Eval1D --xmin -3 --xmax 5 --expr '-(x+1)*x*(x-1)*(x-2)*(x-3)*(x-4)+x*x'
+
+	# others:
+	exp --logfile /tmp/bla.txt dummyalgo --param1 0.3 knapsack.py --interact --file data/knapsack1.txt
+	exp --logfile /tmp/aa.txt sga.SGA --Pc 0.7 knapsack.Evaluator --file data/knapsack1.txt
+	exp --logfile /tmp/aa.txt sga.SGA --Pc 0.7 knapsack.Evaluator --file data/knapsack1.txt
+	repeat -n 3 sga.SGA --Pc 0.7 knapsack.Evaluator --file data/knapsack1.txt
+	exp sga.SGA ./a.out --bla 2
+
+	# general syntax:
+	exp [--logfile ...] [--seed ...] [--postprocess] module.Class [--params...] module.Evaluator [--args...]
+	exp [--logfile ...] [--seed ...] [--postprocess] module.Class [--params...] evalprog [--args...]
+	exp [--logfile ...] [--seed ...] [--postprocess] algoprog [--params...]
+
+
+do artykulow na slok potrzebuje:
+	dzialajace implementacje qiga, sga, vqea, gaqpr, nqea, ewentualnie pso (dla macka) -- wszystko w pythonie, oparte o framework
+		efektem tych skryptow ma byc log w naszym formacie
+	mozliwosc uruchamiania tych algorytmow dla zapodanych problemow (odpowiedzialnosc exp.py)
+		dla knapsack -- ART 1
+		i slam
+	exp.py -- uruchamiacz algorytmow, wybieracz problemow
+	skrypt bblocks.py generujacy na podstawie logu wykres "chromosomes matching schema / generation"
+	skrypt graph.py generujacy typowy wykres (min/avg/max / generation)
+
+ZAMYSŁ FRAMEWORKA:
+	programy z algorytmami wypisuja na stdout i _MUSZA_ wypisywsac linijke STAT .. ... ...
+		Ewentualnie program moze tez wypisywac na koniec '## SOLUTION:' i potem linie z rozwiazaniem
+	(przykladowy: dummyalgo.c)
+	nasz framework je uruchamia, zapodaje im argumenty (i np. takze evaluator),
+		czyta ich wyjscie i generuje log w naszym formacie
+	framework udostepnia tez klasy, z ktorych mozna dziedziczyc, by latwo tworzyc takie skrypty w Pythonie
+	udostpenia tez kolekcje operatorow genetycznych itp
+	udostepnia tez skrypty do analizy logow w naszym formacie i wizualizatory logow
+	przed wykonaniem skryptow pythonowych framework opakowuje stdout, wzbogacajac wyjscie (file:line)
+
+SCENARIUSZE WYWOLYWANIA PROGRAMU OBLICZENIOWEGO:
+	skrypt w Pythonie, oparty na klasach naszego frameworka
+		obsługa wszystkiego: verbose debug, ustawianie evaluatora jako podanej klasy itp.
+		w tym przypadku framework dostaje argument typu: PythonowyModul.Klasa (z metoda .run)
+	dowolny binarny program wykonywany (dummyalgo.c), piszacy na stdout
+		mozliwa ewaluacja -- przez podproces
+        exp --cmd a.out --evalcmd /tmp/evaluatorprog
+    ewaluatory:
+        1) obiekt callable (__call__) -- tylko dla algorytmow Pythonowych, opartych na frameworku
+        2) ewaluacja za pomoca podprocesu ewaluacyjnego, dzialajacego np tak jak `| tr a-z A-Z`
+            taki podproces moglby dalej komunikowac sie ze srodowiskiem np. w postaci
+            serwera w sieci, przez gniazdo socket, lub przez fifo
+	funkcja oceniajaca napisana np w scilabie (dane np. od AMencwala)
+		mozliwa ewaluacja -- przez podproces
+	obliczenia dla problemu np. C#
+
+
+
+JAK POD MÓJ FRAMEWORK UDA SIĘ PODPINAĆ INNE BIBLIOTEKI? NP. (PYTHONOWE) OPENOPT?
+	kwestią jest chyba tylko to, by byly generowane logi w stosownym formacie
+	mozna zalozyc, ze rozne biblioteki bedzie mozna zastosowac w taki sposob,
+		ze beda generowaly logi w oczekiwanym przez nas formacie.
+		ze beda wypisywaly debug na stdout i ze beda wypisywali STAT ... (latwy warunek)
+
+LOGOWANIE: (odpowiedzialnosc klasy Logging)
+	wszystko, co wypisuje program optymalizujacy idzie do DEBUG z timestampem
+	program optymalizujacy musi wypisywac linijke np.  STAT  %d %f %f %f %f %f %f
+
+KOMENDY:
+	python exp.py sga.SGA knapsack.Evaluator --file data//knapsack1.txt
+
+	convert -resize 800 -density 400  applet-plot.pdf applet-plot.png
+	python knapsack.py -f knapsack1.txt -a  | grep -v -- '-$' | awk '{print $1 "  " $3}' | cut -d\) -f 1 | sort -n -k 2
+	./exp qiga.QIGA --theta 0.01 knapsack -f knapsack1.txt
+	./exp gaqpr.GAQPR --theta 0.01 tsp -f germany.txt
+	./exp gaqpr.GAQPR --theta 0.01 testfunc rosenbrock
+	./exp gaqpr.GAQPR --theta 0.01 testfunc -n 4 dejong  (4d)
+
+SKRYPTY:
+	./exp  -- głowny skrypt uruchomieniowy eksperymentow obliczeniowych
+	zadania: -- skrypty z klasami, posiadającymi metodę .eval
+		slam.py -- lokalizacja robota
+		tsp.py -- komiwojażer
+		realfuncs.py -- funkcje testowe do optymalizacji numerycznej
+		knapsack.py -- problem plecakowy
+		landscapes.py
+		scheduling.py -- problem kolejnościowy
+		deceiptive.py -- problemy zwodnicze
+		w tych skryptach mają być zdefiniowane klasy (lub funkcje) evaluatory.
+			evaluator ma zwracać ocenę lub parę (ocena,fenotyp)
+	algorytmy: -- skrypty z klasami, dziedziczącymi z ea.EA
+		sga.py
+			Pc, Pm, chromlen, mutation
+		es.py
+		pso.py
+		qiga.py
+			theta1, theta2
+		gaqpr.py
+		...
+	outputtery:
+		skrypt powinien móc generować PDF-a z wynikami..
+			po prostu, generować raport: tabele / wykresy / parametry itp
+		generowanie stronki z wynikami eksperymentu
+		generowanie logu tekstowego (exp1-results.txt)
+		zapis do bazy sql
+		generowanie artykułu ;)
+		domyślnie zawsze powinno być zapisywanie do /tmp/blabla-2010-04-03-1234-itp.txt
+	visualizatory:
+		wykres 3d
+		zmiana stanu pojedynczego kubitu w czasie
+		rozkład schematów
+
+./sga.py -Pm 0.3 -- real.py --xmin -10 --xmax 5 -- testfunc.py -n 4 rosenbrock
+
+powinna być możliwość wczytania wszyściutkich parametrów eksperymentu z pliku
+	(algorytm, parametry algorytmu, rodzaje operatorów, dekoder, ograniczenia),
+	jak również: podanie ich z linii poleceń
+
+te rzeczy ponizsze powinny byc unittestami: (testy po prostu, czy nie leca wyjatki)
+
+./exp --conf exp1.conf
+./exp --conf exp1.conf --dump (wypisuje parametry eksperymentu)
+./exp --conf exp1.conf --xmin -5 --xmax 10
+./exp --conf exp1.conf --func rosenbrock --xmin -5 --xmax 10
+./exp --conf exp1.conf -Pc 0.8 --func rosenbrock --xmin -5 --xmax 10
+./exp --conf exp1.conf -Pc 0.8 --func rosenbrock -n 4 --xmin -5 --xmax 10
+./exp [<experiment general settings>] sga --Pc 0.8 --Pm 0.1 --poplen 10 knapsack --file knapsack1.txt
+./exp [<experiment general settings>] sga.SGA --Pc 0.8 --Pm 0.1 --poplen 10 knapsack.pen2 --xmin 5 --xmax 8 knapsack --file knapsack1.txt
+./exp sga.SGA --crossover sga.UniformCrossover knapsack knapsack1.txt
+./exp sga.SGA --crossover 'sga.kPX -k 3' knapsack.Evaluator --file knapsack1.txt
+./exp.py sga.SGA converters.KnapsackEvaluator  --file ../knapsack/knapsack1.txt 
+./exp.py sga.SGA --Pm 0.3 testfunc.BinaryEvaluator --func rosenbrock --n 3
+
+./exp
+	[ogólne ustawienia eksperymentu] [--]
+		<modul.Algorytm> [<ustawienia_algorytmu>] [--]
+		<modul.Evaluator> [<parametry>]
+		gdzie:
+			<modul.Evaluator> to pomocnicza klaska, oferujaca .eval
+			i opakowujaca zadanie optymalizacji. jest w niej zapisana kwestia kodowania
+
+
+			(<modul.Zadanie> [<ustawienia zadania>]
+			lub
+			<modul.converter> [<ustawienia convertera>] [--]
+			<modul.Zadanie> [<ustawienia zadania>])
+
+		modul.Algorytm musi dziedziczyć z ea.EA (exp wywołuje .run())
+		modul.Evaluator musi być funkcją (przymującą genotyp) lub mieć metodę .eval
+
+
+lematy:
+	algorytmy pracują na ustalonej *reprezentacji* (raczej nie ma wiedzy, czy to kodowanie greya czy jakie jest znacznie bitów)
+	ustawianie parametrów algorytmow zróbmy generyczne (metaprogramowanie)
+	musi być możliwość uruchomienia skryptu z algorytmem osobno (parsowanie sys.argv i tak musi być - i musi być gdzieś wyciągnięte)
+	starajmy się uniknąć parsowania sys.argv w konstruktorach
+	chcemy uniknąć setAttrs w konstruktorach każdego algorytmu
+	dla uproszczenie convertery i problemy powinny chyba mieć wspólny interfejs (przekazywania parametrów i wartościowania)
+	parseArgs trzeba wyekstrahowac gdzies i uczynic wspolne dla problemow, alogyrtmow i converterow
+		-- parseArgs parsowac w staly sposob i ustawiac atrybuty klasy
+			koncowe argumenty powinny zostać importowane,
+				na zaimportowanej klasie winno zostac wywolane parseArgs,
+				a rezultat winien zostac zapisany
+		rozgraniczanie funkcja/klasa wprowadzalo zbyt wiele komplikacji
+
+np. dla optymalizacji 2d chcemy móc zakodować pierwszą zmianną na 5 bitach a drugą na 9
+gdzie takie odwzorowanie powinno się dziać?
+na pewno nie w algorytmie optymalizacji. -- bo musiałoby być powielone w każdym,
+	poza tym algorytmy nie mają wiedzy o wpływie genów na kształtowanie fenotypu
+więc może powinno być w zadaniu (knapsack,testfunc)? -- nie
+	convertery powinny być chyba jako dodatkowe, pomocnicze klasy w skryptach z zadaniami (knapsack.Evaluator itp)
+będą od tego convertery (podawane algorytmowi tak jak zadanie), a zadanie podawane converterowi
+czy ustawienia algorytmu winny mu byc przekazane w konstruktorze? czy jako sys.argv?
+	cechy rozwiązania sys.argv:
+		exp.py - nieładnie,
+		to generalnie nie jest eleganckie -
+		obiekty algorytmów tworzone są w odpowiednich skryptach i one sa importowane +
+		w algorytmie.py parsujemy sys.argv, niezaleznie czy bylismy importowani czy uruchomieni +
+		operacja ustawiania (metaprogramowanie) i tak powinna być gdzieś "wyciągnięta"
+	cechy rozwiązania z konstruktorem (bez sys.argv):
+		exp.py - ładnie, 
+		importowana jest jedynie klasa, nie obiekt algorytmu
+		z jednej strony, ustawianie może być wyciągnięte do ea.EA.__init__
+			-- jednak tak naprawdę: NIE MOŻE być tam (ale w jakimś ea.EA.setParams)
+
+
+VISUALIZATORY:
+	interfejs GUI do _porównywania_ wyników różnych algorytmów
+		narzędzie powinno operować na plikach tekstowych z wynikami pomiarów (nasz format txt)
+		narzędzie powinno umożliwiać przeglądanie wyników pomiarów
+		program ma móc prezentować wykresy 3d, pokazujące dynamikę procesu optymalizacji (np. ruch roju PSO)
+		wykresy 2D: wykresy zbieżności
+		parametry eksperymentu
+		rózne środowiska (numpy, matlab optimtool) powinny generować pliki txt (lub coś pośredniego, dającego się transformować),
+			co będzie wczytywane do naszego GUI
+		możliwość porównywania rezultatów (np. jednocześnie cząsteczki PSO + populacja GA)
+		możliwość publikowania wyników na stronie WWW
+
+
+The scientific procedure templates applied in the experiment:
+	comparison of algorithms for a given evaluator
+
+data for post-mortem analysis and reproduction of the experiment
+has been stored in the temporary directory: /tmp/report-2010-05-23-13.39.03
+
+

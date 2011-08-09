@@ -1,0 +1,380 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{color}
+\definecolor{brick}{rgb}{1,0,0}
+\definecolor{shadecolor}{rgb}{1,0.9,0.9}
+\usepackage[top=0pt, bottom=0pt]{geometry}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{framed}
+\usepackage{subfigure}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{multirow} 
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage {latexsym}
+\usepackage{listings}
+% \usepackage {latexsym} % ???
+\usepackage[bookmarks=true,bookmarksopen=true,bookmarksnumbered=true,
+	pdfpagemode=UseOutlines,pdfstartview=FitH,pdfpagelayout=SinglePage,
+	pdftoolbar=true,pdfwindowui=true, pdfmenubar=true,
+	linkcolor=brick,
+    hyperfootnotes=false,
+	colorlinks=true,pdfcenterwindow=true,pdfdisplaydoctitle=true,
+	pdftitle={Numerical Experiment Results},
+	pdfauthor={Robert Nowotniak}
+	]{hyperref}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup} 
+
+\title{\vspace*{-2cm}
+Numerical Experiment Report$^{*}$\vspace*{-1cm}}
+\date{$date}
+
+\author{}
+
+\begin{document}
+
+\maketitle
+
+## INTRODUCTION
+
+\textcolor{white}{
+\symbolfootnote[1]%
+{This report has been generated automatically by the Optimization Framework v${framework.version}\\
+\phantom{}~~~~~~\texttt{${framework.id.replace('$',r'\$')}}\\
+\phantom{}~~~~~~Copyright \copyright~Robert Nowotniak 2010}}
+%The report has been generated in 2.03 seconds.
+
+This report presents parameters, results and analysis of numerical experiment.
+In the experiment performance of the algorithms has been compared:
+#echo ', '.join($exps.keys())#.
+The ${exps['pso.PSO'].algoobj.evaluator.__class__} evaluator has been used.
+The report has been generated with the command
+(parameters not specified in the command line below have their default values):
+\setlength{\fboxrule}{2pt}
+\setlength{\fboxsep}{3pt}
+\begin{center}
+%\fbox{
+\begin{minipage}{0.8\columnwidth}
+\begin{shaded}
+\begin{verbatim}
+$cmd
+\end{verbatim}
+\end{shaded}
+\end{minipage}%
+\end{center}
+
+The scientific procedure templates applied in the experiment:
+\begin{center}
+%\fbox{
+\begin{minipage}{0.8\columnwidth}
+\begin{shaded}
+comparison of algorithms for a given evaluator
+\end{shaded}
+\end{minipage}%
+\end{center}
+
+Data for post-mortem analysis and reproduction of the experiment
+has been stored in the temporary directory:
+\begin{center}
+%\fbox{
+\begin{minipage}{0.8\columnwidth}
+\begin{shaded}
+/tmp/report-#echo time.strftime('%Y-%m-%d-%H-%M')#
+\end{shaded}
+\end{minipage}%
+\end{center}
+
+This report is organised as follows.
+In section~\ref{sec:params} parameters and conditions of the experiment are presented.
+In section~\ref{sec:results} the results obtained have been presented.
+Subsection~\ref{subsec:best} presents the best solutions found by the algorithms.
+In subsection~\ref{subsec:indplots} individual plots of the algorithms have been included.
+In subsection~\ref{subsec:cmpplots} comparison plots have been presented.
+Detailed statistics for the experiment have been presented in subsection~\ref{subsec:detstats}.
+In section~\ref{sec:code} the code of the algorithms applied has been included.
+
+## PARAMETERS SECTION
+\section{Conditions and Parameters of The Experiment}\label{sec:params}
+
+
+The experiment has been performed for the algorithms:
+#echo ', '.join($exps.keys())#
+and the ${exps['pso.PSO'].algoobj.evaluator.__class__} evaluator.
+All parameters of
+the algorithm algorithms are presented in table~\ref{tab:algoparams}.
+All parameters of the evaluator are presented in table~\ref{tab:evparams}.
+The experiment was conducted on $machine machine
+with $cpu CPU, $ram MB RAM,
+running Python ${sys.version} on ${opsys}.
+
+\subsection{Parameters of the algorithms}
+\begin{table}[H]
+#for $expname in $exps.keys()
+#set $experiment = $exps[$expname]
+##\begin{minipage}[b]{0.4\linewidth}\centering
+##\begin{table}[h]
+##\begin{center}
+\subfigure[${$experiment.algoobj.__class__}]{
+\begin{tabular}{ |r | c| }
+\hline
+parameter & value \\
+\hline
+#for param in dir($experiment.algoobj):
+    #if $param.startswith('__'):
+    #continue
+    #end if
+    #if $param in ('population', '_time0', 'iter'):
+    #continue
+    #end if
+    #if type(getattr($experiment.algoobj,$param)) not in (int,float,str,type(lambda x:x)):
+    #continue
+    #end if
+    $param & ${getattr($experiment.algoobj, $param)} \\
+#end for
+\hline
+\end{tabular}
+}
+##\end{center}
+##\end{table}
+##\end{minipage}
+#end for
+\caption{All parameters of the algorithms\label{tab:algoparams}}
+\end{table}
+
+\subsection{Parameters of the evaluator}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ |r | c| }
+\hline
+parameter & value \\
+\hline
+#for param in dir($experiment.algoobj.evaluator):
+    #if $param.startswith('__') or $param == 'evaluationCounter':
+    #continue
+    #end if
+    #if type(getattr($experiment.algoobj.evaluator,$param)) not in (int,float,str,type(lambda x:x)):
+    #continue
+    #end if
+    $param & 
+    #echo str(getattr($experiment.algoobj.evaluator, $param)).replace('_','\_')# \\
+#end for
+\hline
+\end{tabular}
+\caption{All parameters of the evaluator ${$experiment.algoobj.evaluator.__class__}\label{tab:evparams}}
+\end{center}
+\end{table}
+
+\clearpage
+
+
+## RESULTS SECTION
+\section{Results}\label{sec:results}
+Each algorithm was started $rep time(s).
+Each run ${exps['pso.PSO'].algoobj.maxiter} iteration(s) of the algorithms have been performed.
+##The total time of the experiment is ${'%.02f'%$totalTime} second(s).
+
+\subsection{Best Solutions Ever Found in The Experiment}\label{subsec:best}
+#for k in $exps:
+#set best = $exps[k].best
+
+\subsubsection{$k}
+\textbf{Genotype}: ${best.genotype}
+
+\textbf{Phenotype}: ${best.phenotype}
+
+\textbf{Fitness}: ${best.fitness}
+#end for
+
+\subsection{Individual Plots for The Algorithms}\label{subsec:indplots}
+
+In figure~\ref{fig:indplots} individual plots of the experiment for each algorithm
+have been presented.
+The plots have been generated for an average over $rep runs of each algorithm.
+The plots presents (possible) convergence of the algorithms.
+##The statistics in table \ref{tab:stats} is an average over <%='AAAA'%> run(s) of the experiment.
+
+\begin{figure}[h]
+#for k in $exps:
+#set exp = $exps[k]
+    \subfigure[$k]{
+        \includegraphics[width=0.5\textwidth]{${k.replace('.','-')}.pdf}
+    }
+#end for
+\caption{Individual Plots for The Algorithms.\label{fig:indplots}}
+\end{figure}
+
+## <%
+## 
+## # TODO to generowanie na pewno przeniesc gdzies indziej
+## 
+## from pylab import *
+## import sys
+## 
+## gen = []
+## fmax = []
+## favg = []
+## fmin = []
+## f=open('%s/avgstats.txt'%self.getVar('repdir'), 'r') # XXX
+## while True:
+##     line = f.readline().strip()
+##     if not line:
+##         break
+##     if line.startswith('#'):
+##         continue
+##     data = line.split()
+##     #print data
+##     gen.append(int(data[0]))
+##     fmax.append(float(data[3]))
+##     favg.append(float(data[4]))
+##     fmin.append(float(data[5]))
+## 
+## plot(gen, fmax, 'ro-', linewidth=1.0, ms=4, label='max')
+## plot(gen, favg, 'bx-', linewidth=1.0, label='avg')
+## plot(gen, fmin, '+-', color='gray', linewidth=1.0, label='min')
+## fill_between(gen, fmin, favg, color="gray", alpha=0.2)
+## fill_between(gen, favg, fmax, color="green", alpha=0.3)
+## 
+## xlabel('generation')
+## ylabel('fitness')
+## title('Plot of evolution')
+## xlim(xmax=self.getVar('experiment.algoobj.maxiter'))
+## #ylim(-50,35)
+## grid(True)
+## legend(loc='lower center')
+## #savefig('/tmp/bla.png')
+## #savefig('/tmp/bla.ps')
+## savefig('/tmp/bla.pdf')
+## #show()
+## 
+## %>
+
+
+
+
+
+\clearpage
+
+\subsection{Comparison Plots for The Algorithms}\label{subsec:cmpplots}
+
+The figures~\ref{fig:cmp-gen}-\ref{fig:cmp-time} presents a comparison
+of the algorithms. Best individuals in consecutive steps of the algorithms
+have been compared in average over $rep run(s) of the algorithms.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cmp-gen.pdf}
+    \caption{best fitness / generation number \label{fig:cmp-gen}}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cmp-evals.pdf}
+    \caption{best fitness / evaluation count \label{fig:cmp-evals}}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cmp-time.pdf}
+    \caption{best fitness / time (ms) \label{fig:cmp-time}}
+\end{figure}
+
+\clearpage
+
+\subsection{Statistics for The Algorithms}\label{subsec:detstats}
+
+## stats tables
+#for k in $exps.keys():
+\subsubsection{$k algorithm}
+\scriptsize{
+\begin{longtable}{ |c| c| c| l l l l| }
+\caption{Average statistics over $rep run(s) of the algorithm}\label{tab:stats}\\
+\hline
+\multirow{2}{*}{iteration} & \multirow{2}{*}{evaluations} &  \multirow{2}{*}{time(ms)} &  \multicolumn{4}{|c|}{fitness} \\
+\cline{4-7}
+& &  &   max &  avg &  min &  std\_dev \\
+\hline
+\endfirsthead
+\multicolumn{7}{c}%
+{\tablename\ \thetable{} -- continued from previous page} \\
+\hline
+\multirow{2}{*}{iteration} & \multirow{2}{*}{evaluations} &  \multirow{2}{*}{time(ms)} &  \multicolumn{4}{|c|}{fitness} \\
+\cline{4-7}
+& &  &   max &  avg &  min &  std\_dev \\
+\hline
+\endhead
+\multicolumn{7}{r}{{\textit{continued on next page...}}} \\
+\endfoot
+\endlastfoot
+#for line in $stats[$k]:
+    ${line[0]} & ${line[1]} & ${line[2]} & ${line[3]} & ${line[4]} & ${line[5]} & ${line[6]} \\
+#end for
+\hline
+\end{longtable}
+}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ |r| |r| r| l| l| l| l| }
+\hline
+\multirow{2}{*}{} & \multirow{2}{*}{evaluations} &  \multirow{2}{*}{time(ms)} &  \multicolumn{4}{|c|}{fitness} \\
+\cline{4-7}
+& &  &   max &  avg &  min &  std\_dev \\
+\hline
+\hline
+max & ${statsstats[$k][0][1]} & ${statsstats[$k][0][2]} & ${statsstats[$k][0][3]} & ${statsstats[$k][0][4]} & ${statsstats[$k][0][5]} & ${statsstats[$k][0][6]} \\
+avg & ${statsstats[$k][1][1]} & ${statsstats[$k][1][2]} & ${statsstats[$k][1][3]} & ${statsstats[$k][1][4]} & ${statsstats[$k][1][5]} & ${statsstats[$k][1][6]} \\
+min & ${statsstats[$k][2][1]} & ${statsstats[$k][2][2]} & ${statsstats[$k][2][3]} & ${statsstats[$k][2][4]} & ${statsstats[$k][2][5]} & ${statsstats[$k][2][6]} \\
+std & ${statsstats[$k][3][1]} & ${statsstats[$k][3][2]} & ${statsstats[$k][3][3]} & ${statsstats[$k][3][4]} & ${statsstats[$k][3][5]} & ${statsstats[$k][3][6]} \\
+\hline
+\end{tabular}
+\caption{Statistics for the last iterations over $rep run(s) of the $k algorithm}
+\end{center}
+\end{table}
+
+#end for
+
+
+\clearpage
+
+## CODE SECTION
+
+\section{Code of the algorithms}\label{sec:code}
+\lstset{language=Python,numbers=left,numberstyle=\footnotesize,
+	basicstyle=\small\ttfamily,showstringspaces=false,
+	breaklines=true,breakatwhitespace=false,xleftmargin=0.5cm,xrightmargin=-0.5cm}
+\lstset{basicstyle=\scriptsize,xleftmargin=-1cm,xrightmargin=-1.5cm}
+
+#import inspect
+#for k in $exps:
+    \subsection{${k}}
+    #echo $exps[k].algoobj.__doc__#
+    \begin{lstlisting}
+    #echo inspect.getsource($exps[k].algoobj.__class__)#
+    \end{lstlisting}
+    \clearpage
+#end for
+
+##The following algorithm 
+## #echo $experiment.algoobj.__doc__#
+
+
+\clearpage
+
+## ## FULL LOG SECTION
+## 
+## \section{Full log}\label{sec:fulllog}
+## #if $fulllog:
+## \scriptsize{
+## \begin{verbatim}
+## $fulllog
+## \end{verbatim}
+## }
+## #else
+## \textit{(inclusion of full log skipped)}
+## #end if
+
+\end{document}
+
+##  vim: set ft=cheetah:
