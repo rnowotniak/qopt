@@ -1,27 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int nreal = 2;
-int nfunc = 1;
+#include <cuda_runtime_api.h>
+#include <curand_kernel.h>
 
-long double C;
-long double global_bias;
-long double *trans_x;
-long double *basic_f;
-long double *bias;
+inline void __safeCall( cudaError err, const char *file, const int line )
+{
+	if( cudaSuccess != err) {
+		fprintf(stderr, "%s(%i) : cudaSafeCall() Runtime API error:\n%s\n", file, line, cudaGetErrorString(err));
+		fflush(stderr);
+		exit(-1);
+	}
+}
+#define safeCall(err)           __safeCall      (err, __FILE__, __LINE__)
 
-long double *temp_x1;
-long double *temp_x2;
-long double *temp_x3;
-long double *temp_x4;
-long double *weight;
-long double *sigma;
-long double *lambda;
-long double *norm_x;
-long double *norm_f;
-long double **o;
-long double **g;
-long double ***l;
+
+
+__constant__ const int nreal = 2;
+__constant__ const int nfunc = 1;
+
+double C;
+double global_bias;
+double *basic_f;
+double *bias;
+
+double *temp_x1; // zmienne
+double *temp_x2; // zmienne
+double *temp_x3; // zmienne
+double *temp_x4; // zmienne
+double *trans_x; // zmienne
+double *weight; // zmienne
+
+double *sigma;
+double *lambda;
+double *norm_x;
+double *norm_f;
+double **o;
+double **g;
+double ***l;
 
 void initialize()
 {
@@ -49,35 +65,37 @@ void initialize()
 void allocate_memory ()
 {
 	int i, j, k;
-	norm_x = (long double *)malloc(nreal*sizeof(long double));
-	norm_f = (long double *)malloc(nfunc*sizeof(long double));
-	trans_x = (long double *)malloc(nreal*sizeof(long double));
-	basic_f = (long double *)malloc(nfunc*sizeof(long double));
-	temp_x1 = (long double *)malloc(nreal*sizeof(long double));
-	temp_x2 = (long double *)malloc(nreal*sizeof(long double));
-	temp_x3 = (long double *)malloc(nreal*sizeof(long double));
-	temp_x4 = (long double *)malloc(nreal*sizeof(long double));
-	weight = (long double *)malloc(nfunc*sizeof(long double));
-	sigma = (long double *)malloc(nfunc*sizeof(long double));
-	lambda = (long double *)malloc(nfunc*sizeof(long double));
-	bias = (long double *)malloc(nfunc*sizeof(long double));
-	o = (long double **)malloc(nfunc*sizeof(long double));
-	l = (long double ***)malloc(nfunc*sizeof(long double));
-	g = (long double **)malloc(nreal*sizeof(long double));
+	norm_x = (double *)malloc(nreal*sizeof(double));
+	norm_f = (double *)malloc(nfunc*sizeof(double));
+	basic_f = (double *)malloc(nfunc*sizeof(double));
+
+	trans_x = (double *)malloc(nreal*sizeof(double));
+	temp_x1 = (double *)malloc(nreal*sizeof(double));
+	temp_x2 = (double *)malloc(nreal*sizeof(double));
+	temp_x3 = (double *)malloc(nreal*sizeof(double));
+	temp_x4 = (double *)malloc(nreal*sizeof(double));
+	weight = (double *)malloc(nfunc*sizeof(double));
+
+	sigma = (double *)malloc(nfunc*sizeof(double));
+	lambda = (double *)malloc(nfunc*sizeof(double));
+	bias = (double *)malloc(nfunc*sizeof(double));
+	o = (double **)malloc(nfunc*sizeof(double));
+	l = (double ***)malloc(nfunc*sizeof(double));
+	g = (double **)malloc(nreal*sizeof(double));
 	for (i=0; i<nfunc; i++)
 	{
-		o[i] = (long double *)malloc(nreal*sizeof(long double));
-		l[i] = (long double **)malloc(nreal*sizeof(long double));
+		o[i] = (double *)malloc(nreal*sizeof(double));
+		l[i] = (double **)malloc(nreal*sizeof(double));
 	}
 	for (i=0; i<nreal; i++)
 	{
-		g[i] = (long double *)malloc(nreal*sizeof(long double));
+		g[i] = (double *)malloc(nreal*sizeof(double));
 	}
 	for (i=0; i<nfunc; i++)
 	{
 		for (j=0; j<nreal; j++)
 		{
-			l[i][j] = (long double *)malloc(nreal*sizeof(long double));
+			l[i][j] = (double *)malloc(nreal*sizeof(double));
 		}
 	}
 	/* Do some trivial (common) initialization here itself */
@@ -106,10 +124,10 @@ void allocate_memory ()
 	{
 		basic_f[i] = 0.0;
 		norm_f[i] = 0.0;
-		weight[i] = 1.0/(long double)nfunc;
+		weight[i] = 1.0/(double)nfunc;
 		sigma[i] = 1.0;
 		lambda[i] = 1.0;
-		bias[i] = 100.0*(long double)i;
+		bias[i] = 100.0*(double)i;
 		for (j=0; j<nreal; j++)
 		{
 			o[i][j] = 0.0;
@@ -131,10 +149,10 @@ void allocate_memory ()
 
 
 /* code to evaluate sphere function */
-long double calc_sphere (long double *x)
+double calc_sphere (double *x)
 {
 	int i;
-	long double res;
+	double res;
 	res = 0.0;
 	for (i=0; i<nreal; i++)
 	{
@@ -143,52 +161,82 @@ long double calc_sphere (long double *x)
 	return (res);
 }
 
-void transform (long double *x, int count)
+__device__ void transform (double *x, int count)
 {
 	int i, j;
-	for (i=0; i<nreal; i++)
-	{
-		temp_x1[i] = x[i] - o[count][i];
-	}
-	for (i=0; i<nreal; i++)
-	{
-		temp_x2[i] = temp_x1[i]/lambda[count];
-	}
-	for (j=0; j<nreal; j++)
-	{
-		temp_x3[j] = 0.0;
-		for (i=0; i<nreal; i++)
-		{
-			temp_x3[j] += g[i][j]*temp_x2[i];
-		}
-	}
-	for (j=0; j<nreal; j++)
-	{
-		trans_x[j] = 0.0;
-		for (i=0; i<nreal; i++)
-		{
-			trans_x[j] += l[count][i][j]*temp_x3[i];
-		}
-	}
+	double temp_x1[nreal *sizeof(double)];
+
+//	for (i=0; i<nreal; i++)
+//	{
+//		temp_x1[i] = x[i] - o[count][i];
+//	}
+//	for (i=0; i<nreal; i++)
+//	{
+//		temp_x2[i] = temp_x1[i]/lambda[count];
+//	}
+//	for (j=0; j<nreal; j++)
+//	{
+//		temp_x3[j] = 0.0;
+//		for (i=0; i<nreal; i++)
+//		{
+//			temp_x3[j] += g[i][j]*temp_x2[i];
+//		}
+//	}
+//	for (j=0; j<nreal; j++)
+//	{
+//		trans_x[j] = 0.0;
+//		for (i=0; i<nreal; i++)
+//		{
+//			trans_x[j] += l[count][i][j]*temp_x3[i];
+//		}
+//	}
 	return;
 }
 
-long double calc_benchmark_func(long double *x)
+__global__ void calc_benchmark_func(int aa, double *x, double *result)
 {
-	long double res;
+	double res;
 	transform (x, 0);
-	basic_f[0] = calc_sphere (trans_x);
-	res = basic_f[0] + bias[0];
-	return (res);
+	//	basic_f[0] = calc_sphere (trans_x);
+	//	res = basic_f[0] + bias[0];
+	//	return (res);
+	result[0] = aa + x[0] + x[1] + nreal;
 }
 
 
 int main (int argc, char**argv)
 {
-	long double x[2];
-	x[0] = -3.931190E+01;
-	x[1] = 5.889990E+01;
-	allocate_memory();
-	initialize();
-	printf("\n\n\tObjective value = %1.15LE\n", calc_benchmark_func(x));
+
+	// tutaj powinna byc jeszcze inicjalizacja, czyli np. wczytanie 'o' z pliku itp
+	// a potem skopiowanie do device memory
+
+
+	double hostX[2];
+	hostX[0] = -3.931190E+01;
+	hostX[1] = 5.889990E+01;
+	double hostResult;
+
+	double *x = NULL;
+	double *result = NULL;
+	safeCall(cudaMalloc((void**)&x, sizeof(double) * 2));
+	safeCall(cudaMalloc((void**)&result, sizeof(double)));
+	printf("%p\n", x);
+	printf("%p\n", result);
+	safeCall(cudaMemcpy(x, hostX, sizeof(double) * 2, cudaMemcpyHostToDevice));
+
+	calc_benchmark_func<<<1,1>>>(3, x, result);
+
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err)
+		printf("error running kernel: %s\n", cudaGetErrorString(err) );
+	safeCall(cudaThreadSynchronize());
+
+	safeCall(cudaMemcpy(&hostResult, result, sizeof(double), cudaMemcpyDeviceToHost));
+
+	printf("result: %f\n", hostResult);
+
+
+	//	allocate_memory();
+	//	initialize();
+	//	printf("\n\n\tObjective value = %1.15LE\n", calc_benchmark_func(x));
 }
