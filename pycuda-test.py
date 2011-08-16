@@ -6,19 +6,26 @@ import numpy as np
 from pycuda.compiler import SourceModule
 import pycuda.autoinit
 
-nreal = 2;
-nfunc = 3;
+nreal = 4;
+nfunc = 2;
 
 dtype = np.double
 
 print 'devices:', cuda.Device.count()
 
+#   # 1 3-dimensional array (l)
+#   cuda.memcpy_htod(int(MEM) + 16 + 24 + 24 + 8,
+#           np.intp(int(cuda.to_device(np.zeros(nfunc).astype(np.intp))))) # FIX THIS XXX
+
+src = ''.join(open('kern1.cu').readlines())
+mod = SourceModule(src, arch='sm_13')
+
 # memory allocation
-GPU_ptrs = []
-MEM = cuda.mem_alloc(80); # for the structure MEM_t
-cuda.memset_d32(MEM, 0, 20) # reset the memory buffer
-cuda.memcpy_htod(int(MEM), np.double(2000)) # C
-cuda.memcpy_htod(int(MEM) + 8, np.double(0)) # global_bias
+cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
+cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
+
+cuda.memcpy_htod(mod.get_global('C')[0], np.double(2000))
+cuda.memcpy_htod(mod.get_global('global_bias')[0], np.double(0))
 
 # 6 1-dimensional arrays
 trans_x = np.zeros(nreal).astype(dtype)
@@ -27,14 +34,13 @@ temp_x1 = np.zeros(nreal).astype(dtype)
 temp_x2 = np.zeros(nreal).astype(dtype)
 temp_x3 = np.zeros(nreal).astype(dtype)
 temp_x4 = np.zeros(nreal).astype(dtype)
-temp_x4[0] = 3
+temp_x4[1] = 3
 norm_x = np.zeros(nreal).astype(dtype)
-
-arrays = [trans_x, temp_x1, temp_x2, temp_x3, temp_x4, norm_x]
-for i in xrange(6):
-    p = cuda.to_device( arrays[i] )
-    GPU_ptrs.append(p)
-    cuda.memcpy_htod(int(MEM) + 16 + i * 4, np.intp(p))
+norm_x[0] = -7;
+arrays = ['trans_x', 'temp_x1', 'temp_x2', 'temp_x3', 'temp_x4', 'norm_x']
+for var in arrays:
+    globals()[var] = cuda.to_device(globals()[var])
+    cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var]))
 
 # 6 1-dimensional arrays
 basic_f = np.zeros(nfunc).astype(dtype)
@@ -44,31 +50,48 @@ sigma[0] = 15;
 lambd = np.zeros(nfunc).astype(dtype)
 bias = np.zeros(nfunc).astype(dtype)
 norm_f = np.zeros(nfunc).astype(dtype)
-norm_f[2] = 17;
+norm_f[1] = 17;
 
-arrays = [basic_f, weight, sigma, lambd, bias, norm_f]
-for i in xrange(6):
-    p = cuda.to_device( arrays[i] )
-    GPU_ptrs.append(p)
-    cuda.memcpy_htod(int(MEM) + 16 + 24 + i * 4, np.intp(p))
+arrays = ['basic_f', 'weight', 'sigma', 'bias', 'norm_f']
+for var in arrays:
+    globals()[var] = cuda.to_device(globals()[var])
+    cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var]))
+lambd = cuda.to_device(lambd)
+cuda.memcpy_htod(mod.get_global('lambda')[0], np.intp(lambd))
 
 # 2 2-dimensional arrays (o, g)
-for i in xrange(2):
-    cuda.memcpy_htod(int(MEM) + 16 + 24 + 24 + i * 4,
-            np.intp(int(cuda.to_device(np.zeros(nfunc).astype(np.intp))))) # FIX THIS XXX
-# 1 3-dimensional array (l)
-cuda.memcpy_htod(int(MEM) + 16 + 24 + 24 + 8,
-        np.intp(int(cuda.to_device(np.zeros(nfunc).astype(np.intp))))) # FIX THIS XXX
+# MAYBE IT SHOULD BE CASTED to 1-d ARRAY for performance?
+o = np.zeros((nfunc,nreal)).astype(dtype)
+o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((2,4))
+print o
+o_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
+o_rows = []
+for i in xrange(o.shape[0]):
+    row = cuda.to_device(o[i,:])
+    o_rows.append(row)
+    cuda.memcpy_htod(int(o_gpu) + 4 * i, np.intp(row))
+cuda.memcpy_htod(mod.get_global('o')[0], np.intp(o_gpu))
 
-cuda.memcpy_htod(int(MEM) + 16 + 24 + 24 + 8 + 4, np.int32(42)) # test value
+# watch out! 'g' is nreal x nreal
+g = np.zeros((nreal,nreal)).astype(dtype)
+g = np.linspace(21,21 + nreal*nreal-1,nreal*nreal).reshape((nreal,nreal))
+print g
+g_gpu = cuda.to_device(np.zeros(nreal).astype(np.intp))
+g_rows = []
+for i in xrange(g.shape[0]):
+    row = cuda.to_device(g[i,:])
+    g_rows.append(row)
+    cuda.memcpy_htod(int(g_gpu) + 4 * i, np.intp(row))
+cuda.memcpy_htod(mod.get_global('g')[0], np.intp(g_gpu))
 
-src = ''.join(open('kern1.cu').readlines())
-mod = SourceModule(src, arch='sm_13')
-cuda.memcpy_htod(mod.get_global('ROB')[0], np.double(1410))
 f = mod.get_function('test')
 out = np.zeros(10).astype(np.double)
-f(MEM, cuda.InOut(out), block=(1,1,1))
+o_out = np.zeros(nfunc * nreal).astype(dtype)
+g_out = np.zeros(nreal * nreal).astype(dtype)
+f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), block=(1,1,1))
 print out
+print o_out
+print g_out
 
 sys.exit(0)
 
