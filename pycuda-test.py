@@ -6,7 +6,7 @@ import numpy as np
 from pycuda.compiler import SourceModule
 import pycuda.autoinit
 
-nreal = 4;
+nreal = 3;
 nfunc = 2;
 
 dtype = np.double
@@ -62,7 +62,7 @@ cuda.memcpy_htod(mod.get_global('lambda')[0], np.intp(lambd))
 # 2 2-dimensional arrays (o, g)
 # MAYBE IT SHOULD BE CASTED to 1-d ARRAY for performance?
 o = np.zeros((nfunc,nreal)).astype(dtype)
-o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((2,4))
+o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((nfunc,nreal))
 print o
 o_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
 o_rows = []
@@ -84,14 +84,33 @@ for i in xrange(g.shape[0]):
     cuda.memcpy_htod(int(g_gpu) + 4 * i, np.intp(row))
 cuda.memcpy_htod(mod.get_global('g')[0], np.intp(g_gpu))
 
+# 'l' (3d array) -- casted to 1d
+l = np.zeros((nfunc,nreal,nreal)).astype(dtype)
+l = np.linspace(3, 3 + nfunc*nreal*nreal-1,nfunc*nreal*nreal).reshape((nfunc,nreal,nreal))
+print l
+print l.flatten()
+l_gpu = cuda.to_device(l.flatten().astype(dtype))
+print l_gpu
+cuda.memcpy_htod(mod.get_global('l_flat')[0], np.intp(l_gpu))
+# g_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
+# g_layers = []
+# for i in xrange(l.shape[0]):
+#     pass
+#     row = cuda.to_device(l[i,:])
+#     g_rows.append(row)
+#     cuda.memcpy_htod(int(g_gpu) + 4 * i, np.intp(row))
+# cuda.memcpy_htod(mod.get_global('l')[0], np.intp(g_gpu))
+
 f = mod.get_function('test')
 out = np.zeros(10).astype(np.double)
 o_out = np.zeros(nfunc * nreal).astype(dtype)
 g_out = np.zeros(nreal * nreal).astype(dtype)
-f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), block=(1,1,1))
-print out
+l_out = np.zeros(nfunc * nreal * nreal).astype(dtype)
+f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), cuda.InOut(l_out), block=(1,1,1))
+print 'out:',out
 print o_out
 print g_out
+print l_out
 
 sys.exit(0)
 

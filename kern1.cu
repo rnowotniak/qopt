@@ -20,6 +20,8 @@ __device__ double **o;
 __device__ double **g;
 __device__ double ***l;
 
+__device__ double *l_flat;
+
 __device__ double calc_sphere (double *x)
 {
     int i;
@@ -78,9 +80,10 @@ __global__ void f(double *arg, double *result)
     //result[threadIdx.x] = 1;
 }
 
-__global__ void test(double *result, double *o_out, double *g_out) {
+__global__ void test(double *result, double *o_out, double *g_out, double *l_out) {
     //MEM = *foo;
     //result[0] = sizeof(MEM_t);
+    result[0] = l_flat[0];
     result[1] = C;
     result[2] = trans_x[0];
     result[3] = temp_x4[1];
@@ -107,5 +110,11 @@ __global__ void test(double *result, double *o_out, double *g_out) {
         for (int j = 0; j < nreal; j++) {
             g_out[i * nreal + j] = g[i][j];
         }
+    }
+
+    l_out[0] = 13;
+
+    for (int i = 0; i < nfunc * nreal * nreal; i++) {
+        l_out[i] = l_flat[i];
     }
 }
