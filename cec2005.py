@@ -17,15 +17,17 @@ print 'devices:', cuda.Device.count()
 src = ''.join(open('kern1.cu').readlines())
 mod = SourceModule(src, arch='sm_13')
 
-FUNCTION_NUMBER = 2
+FUNCTION_NUMBER = 3
 
 #
 # INITIALIZATION
 #
 
+o = np.zeros((nfunc,nreal)).astype(dtype)
+g = np.eye(nreal,nreal).astype(dtype)
+
 if FUNCTION_NUMBER == 1:
     fpt = ''.join(open('input_data/sphere_func_data.txt', 'r').readlines()).strip().split()
-    o = np.zeros((nfunc,nreal)).astype(dtype)
     for i in xrange(nfunc):
         for j in xrange(nreal):
             o[i,j] = dtype(fpt.pop(0))
@@ -34,7 +36,19 @@ if FUNCTION_NUMBER == 1:
     bias[0] = -450.0
 elif FUNCTION_NUMBER == 2:
     fpt = ''.join(open('input_data/schwefel_102_data.txt', 'r').readlines()).strip().split()
-    o = np.zeros((nfunc,nreal)).astype(dtype)
+    for i in xrange(nfunc):
+        for j in xrange(nreal):
+            o[i,j] = dtype(fpt.pop(0))
+    print 'o:',o
+    bias = np.zeros(nfunc).astype(dtype)
+    bias[0] = -450.0
+elif FUNCTION_NUMBER == 3:
+    fpt = ''.join(open('input_data/elliptic_M_D%d.txt' % nreal, 'r').readlines()).strip().split()
+    for i in xrange(nreal):
+        for j in xrange(nreal):
+            g[i,j] = dtype(fpt.pop(0))
+
+    fpt = ''.join(open('input_data/high_cond_elliptic_rot_data.txt', 'r').readlines()).strip().split()
     for i in xrange(nfunc):
         for j in xrange(nreal):
             o[i,j] = dtype(fpt.pop(0))
@@ -99,7 +113,6 @@ for i in xrange(o.shape[0]):
 cuda.memcpy_htod(mod.get_global('o')[0], np.intp(o_gpu))
 
 # watch out! 'g' is nreal x nreal
-g = np.eye(nreal,nreal).astype(dtype)
 #g = np.linspace(21,21 + nreal*nreal-1,nreal*nreal).reshape((nreal,nreal))
 print 'g:',g
 g_gpu = cuda.to_device(np.zeros(nreal).astype(np.intp))

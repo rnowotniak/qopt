@@ -90,10 +90,23 @@ __global__ void calc_benchmark_func_f1(double *x, double *res)
 }
 
 // F2
-__global__ void calc_benchmark_func(double *x, double *res)
+__global__ void calc_benchmark_func_f2(double *x, double *res)
 {
     transform (x, 0);
     basic_f[0] = calc_schwefel (trans_x);
+    res[0] = basic_f[0] + bias[0];
+}
+
+// F3
+__global__ void calc_benchmark_func(double *x, double *res)
+{
+    int i;
+    transform (x, 0);
+    basic_f[0] = 0.0;
+    for (i=0; i<nreal; i++)
+    {
+        basic_f[0] += trans_x[i]*trans_x[i]*pow(1.0e6,i/(nreal-1.0));
+    }
     res[0] = basic_f[0] + bias[0];
 }
 
