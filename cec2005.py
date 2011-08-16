@@ -6,8 +6,8 @@ import numpy as np
 from pycuda.compiler import SourceModule
 import pycuda.autoinit
 
-nfunc = 2;
-nreal = 2;
+nfunc = 1;
+nreal = 50;
 
 dtype = np.double
 
@@ -111,44 +111,62 @@ print l_gpu
 cuda.memcpy_htod(mod.get_global('l_flat')[0], np.intp(l_gpu))
 
 
-if True:
+bench = mod.get_function('calc_benchmark_func')
+
+def for_tests(x):
+    res = np.zeros(1, dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
+    return res[0]
+
+
+if __name__ == '__main__':
     print '--- Evaluating the benchmark function ---'
-    bench = mod.get_function('calc_benchmark_func')
-    x = np.array([5, 17], dtype)
-    # x = np.array([-39.3119, 58.8999], dtype) # opt
+    x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
+    # x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
+    # x = np.array([-39.3119, 58.8999, -46.3224, -74.6515, -16.7997, -80.5441, -10.5935,  24.9694, 89.8384, 9.1119]) # opt for 10D
+
+    x = np.array([-39.3119,58.8999,-46.3224,-74.6515,-16.7997,-80.5441,-10.5935,24.9694,89.8384,9.1119,-10.7443,-27.8558,-12.5806,7.593,74.8127,68.4959,-53.4293,78.8544,-68.5957,63.7432,31.347,-37.5016,33.8929,-88.8045,-78.7719,-66.4944,44.1972,18.3836,26.5212,84.4723,39.1769,-61.4863,-25.6038,-81.1829,58.6958,-30.8386,-72.6725,89.9257,-15.1934,-4.3337,5.343,10.5603,-77.7268,52.0859,40.3944,88.3328,-55.8306,1.3181,36.025,-69.9271]) # opt for 50D
+
     print 'x:',x
     res = np.zeros(1, dtype)
     bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
     print 'result:',res
+
+    x = np.zeros(50, dtype)
+    print 'x:',x
+    bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
+    print 'result:',res
+
     sys.exit()
 
 
-f = mod.get_function('test')
-out = np.zeros(10).astype(np.double)
-o_out = np.zeros(nfunc * nreal).astype(dtype)
-g_out = np.zeros(nreal * nreal).astype(dtype)
-l_out = np.zeros(nfunc * nreal * nreal).astype(dtype)
-f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), cuda.InOut(l_out), block=(1,1,1))
-print 'out:',out
-print o_out
-print g_out
-print l_out
+if False:
+    f = mod.get_function('test')
+    out = np.zeros(10).astype(np.double)
+    o_out = np.zeros(nfunc * nreal).astype(dtype)
+    g_out = np.zeros(nreal * nreal).astype(dtype)
+    l_out = np.zeros(nfunc * nreal * nreal).astype(dtype)
+    f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), cuda.InOut(l_out), block=(1,1,1))
+    print 'out:',out
+    print o_out
+    print g_out
+    print l_out
 
 
 
-sys.exit(0)
+    sys.exit(0)
 
-f = SourceModule(src, arch='sm_13').get_function('f')
+    f = SourceModule(src, arch='sm_13').get_function('f')
 
-sys.exit(0)
+    sys.exit(0)
 
-inp = np.linspace(-10,10,512)
-out = np.zeros(512)
-print inp.astype(np.double)
+    inp = np.linspace(-10,10,512)
+    out = np.zeros(512)
+    print inp.astype(np.double)
 
-print f(cuda.In(inp), cuda.Out(out), block=(512,1,1),grid=(1,1), time_kernel=True)
+    print f(cuda.In(inp), cuda.Out(out), block=(512,1,1),grid=(1,1), time_kernel=True)
 
-print out
+    print out
 
 
 

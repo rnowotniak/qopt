@@ -1,7 +1,6 @@
 __constant__ int nreal;
 __constant__ int nfunc;
 
-__device__ double ROB = 66;
 __device__ double C;
 __device__ double global_bias;
 __device__ double *trans_x;
