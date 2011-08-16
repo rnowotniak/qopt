@@ -29,12 +29,12 @@ __device__ double calc_sphere (double *x)
     res = 0.0;
     for (i=0; i<nreal; i++)
     {
-        res += x[threadIdx.x]*x[threadIdx.x];
+        res += x[i]*x[i];
     }
     return (res);
 }
 
-__device__ void transform (double *x, int count)
+__device__ void transform (double  * x, int count)
 {
     int i, j;
     for (i=0; i<nreal; i++)
@@ -58,20 +58,24 @@ __device__ void transform (double *x, int count)
         trans_x[j] = 0.0;
         for (i=0; i<nreal; i++)
         {
-            trans_x[j] += l[count][i][j]*temp_x3[i];
+            // trans_x[j] += l[count][i][j]*temp_x3[i];
+            trans_x[j] += l_flat[count * (nreal * nreal) + i * nreal + j] *temp_x3[i];
         }
     }
     return;
 }
 
-__global__ void calc_benchmark_func(double *x, double *results)
+__global__ void calc_benchmark_func(double *x, double *result)
 {
-    double res;
     transform (x, 0);
     basic_f[0] = calc_sphere (trans_x);
-    res = basic_f[0] + bias[0];
 
-    results[threadIdx.x] = res;
+    //result[0] = basic_f[0];
+
+    result[0] = basic_f[0] + bias[0];
+
+//
+//    results[threadIdx.x] = res;
 }
 
 __global__ void f(double *arg, double *result)
@@ -88,17 +92,9 @@ __global__ void test(double *result, double *o_out, double *g_out, double *l_out
     result[2] = trans_x[0];
     result[3] = temp_x4[1];
     result[4] = norm_x[0];
-    result[5] = norm_f[2];
-    //result[6] = o[0][1];
-    //result[7] = o[1][0];
-    //result[6] = ((double*)o)[1];
-    //result[2] = test;
-    //result[3] = trans_x[1];
-    //result[4] = sigma[0];
-    //result[5] = norm_f[2];
-    //result[6] = ROB;
-
+    result[5] = norm_f[0];
     result[6] = o[1][0];
+    result[7] = bias[0];
 
     for (int i = 0; i < nfunc; i++) {
         for (int j = 0; j < nreal; j++) {

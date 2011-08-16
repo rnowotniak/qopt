@@ -6,21 +6,35 @@ import numpy as np
 from pycuda.compiler import SourceModule
 import pycuda.autoinit
 
-nreal = 3;
 nfunc = 2;
+nreal = 2;
 
 dtype = np.double
 
 print 'devices:', cuda.Device.count()
 
-#   # 1 3-dimensional array (l)
-#   cuda.memcpy_htod(int(MEM) + 16 + 24 + 24 + 8,
-#           np.intp(int(cuda.to_device(np.zeros(nfunc).astype(np.intp))))) # FIX THIS XXX
 
 src = ''.join(open('kern1.cu').readlines())
 mod = SourceModule(src, arch='sm_13')
 
-# memory allocation
+
+#
+# INITIALIZATION
+#
+
+fpt = ''.join(open('input_data/sphere_func_data.txt', 'r').readlines()).strip().split()
+o = np.zeros((nfunc,nreal)).astype(dtype)
+for i in xrange(nfunc):
+    for j in xrange(nreal):
+        o[i,j] = dtype(fpt.pop(0))
+print 'o:',o
+bias = np.zeros(nfunc).astype(dtype)
+bias[0] = -450.0
+
+
+#
+# MEMORY ALLOCATION
+#
 cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
 cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
 
@@ -47,10 +61,10 @@ basic_f = np.zeros(nfunc).astype(dtype)
 weight = np.zeros(nfunc).astype(dtype)
 sigma = np.zeros(nfunc).astype(dtype)
 sigma[0] = 15;
-lambd = np.zeros(nfunc).astype(dtype)
-bias = np.zeros(nfunc).astype(dtype)
+lambd = np.ones(nfunc).astype(dtype)
+#bias = np.zeros(nfunc).astype(dtype) # XXX already initialized
 norm_f = np.zeros(nfunc).astype(dtype)
-norm_f[1] = 17;
+norm_f[0] = 17;
 
 arrays = ['basic_f', 'weight', 'sigma', 'bias', 'norm_f']
 for var in arrays:
@@ -61,8 +75,9 @@ cuda.memcpy_htod(mod.get_global('lambda')[0], np.intp(lambd))
 
 # 2 2-dimensional arrays (o, g)
 # MAYBE IT SHOULD BE CASTED to 1-d ARRAY for performance?
-o = np.zeros((nfunc,nreal)).astype(dtype)
-o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((nfunc,nreal))
+
+#o = np.zeros((nfunc,nreal)).astype(dtype) # XXX already initialized
+#o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((nfunc,nreal))
 print o
 o_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
 o_rows = []
@@ -73,9 +88,9 @@ for i in xrange(o.shape[0]):
 cuda.memcpy_htod(mod.get_global('o')[0], np.intp(o_gpu))
 
 # watch out! 'g' is nreal x nreal
-g = np.zeros((nreal,nreal)).astype(dtype)
-g = np.linspace(21,21 + nreal*nreal-1,nreal*nreal).reshape((nreal,nreal))
-print g
+g = np.eye(nreal,nreal).astype(dtype)
+#g = np.linspace(21,21 + nreal*nreal-1,nreal*nreal).reshape((nreal,nreal))
+print 'g:',g
 g_gpu = cuda.to_device(np.zeros(nreal).astype(np.intp))
 g_rows = []
 for i in xrange(g.shape[0]):
@@ -86,20 +101,27 @@ cuda.memcpy_htod(mod.get_global('g')[0], np.intp(g_gpu))
 
 # 'l' (3d array) -- casted to 1d
 l = np.zeros((nfunc,nreal,nreal)).astype(dtype)
-l = np.linspace(3, 3 + nfunc*nreal*nreal-1,nfunc*nreal*nreal).reshape((nfunc,nreal,nreal))
-print l
-print l.flatten()
+#l = np.linspace(3, 3 + nfunc*nreal*nreal-1,nfunc*nreal*nreal).reshape((nfunc,nreal,nreal))
+for i in xrange(nfunc):
+    l[i,:,:] = np.eye(nreal)
+print 'l:',l
+print 'l flatten:', l.flatten()
 l_gpu = cuda.to_device(l.flatten().astype(dtype))
 print l_gpu
 cuda.memcpy_htod(mod.get_global('l_flat')[0], np.intp(l_gpu))
-# g_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
-# g_layers = []
-# for i in xrange(l.shape[0]):
-#     pass
-#     row = cuda.to_device(l[i,:])
-#     g_rows.append(row)
-#     cuda.memcpy_htod(int(g_gpu) + 4 * i, np.intp(row))
-# cuda.memcpy_htod(mod.get_global('l')[0], np.intp(g_gpu))
+
+
+if True:
+    print '--- Evaluating the benchmark function ---'
+    bench = mod.get_function('calc_benchmark_func')
+    x = np.array([5, 17], dtype)
+    # x = np.array([-39.3119, 58.8999], dtype) # opt
+    print 'x:',x
+    res = np.zeros(1, dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
+    print 'result:',res
+    sys.exit()
+
 
 f = mod.get_function('test')
 out = np.zeros(10).astype(np.double)
@@ -111,6 +133,8 @@ print 'out:',out
 print o_out
 print g_out
 print l_out
+
+
 
 sys.exit(0)
 
