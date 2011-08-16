@@ -17,19 +17,30 @@ print 'devices:', cuda.Device.count()
 src = ''.join(open('kern1.cu').readlines())
 mod = SourceModule(src, arch='sm_13')
 
+FUNCTION_NUMBER = 2
 
 #
 # INITIALIZATION
 #
 
-fpt = ''.join(open('input_data/sphere_func_data.txt', 'r').readlines()).strip().split()
-o = np.zeros((nfunc,nreal)).astype(dtype)
-for i in xrange(nfunc):
-    for j in xrange(nreal):
-        o[i,j] = dtype(fpt.pop(0))
-print 'o:',o
-bias = np.zeros(nfunc).astype(dtype)
-bias[0] = -450.0
+if FUNCTION_NUMBER == 1:
+    fpt = ''.join(open('input_data/sphere_func_data.txt', 'r').readlines()).strip().split()
+    o = np.zeros((nfunc,nreal)).astype(dtype)
+    for i in xrange(nfunc):
+        for j in xrange(nreal):
+            o[i,j] = dtype(fpt.pop(0))
+    print 'o:',o
+    bias = np.zeros(nfunc).astype(dtype)
+    bias[0] = -450.0
+elif FUNCTION_NUMBER == 2:
+    fpt = ''.join(open('input_data/schwefel_102_data.txt', 'r').readlines()).strip().split()
+    o = np.zeros((nfunc,nreal)).astype(dtype)
+    for i in xrange(nfunc):
+        for j in xrange(nreal):
+            o[i,j] = dtype(fpt.pop(0))
+    print 'o:',o
+    bias = np.zeros(nfunc).astype(dtype)
+    bias[0] = -450.0
 
 
 #
@@ -124,15 +135,10 @@ if __name__ == '__main__':
     x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
     # x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
     # x = np.array([-39.3119, 58.8999, -46.3224, -74.6515, -16.7997, -80.5441, -10.5935,  24.9694, 89.8384, 9.1119]) # opt for 10D
-
-    x = np.array([-39.3119,58.8999,-46.3224,-74.6515,-16.7997,-80.5441,-10.5935,24.9694,89.8384,9.1119,-10.7443,-27.8558,-12.5806,7.593,74.8127,68.4959,-53.4293,78.8544,-68.5957,63.7432,31.347,-37.5016,33.8929,-88.8045,-78.7719,-66.4944,44.1972,18.3836,26.5212,84.4723,39.1769,-61.4863,-25.6038,-81.1829,58.6958,-30.8386,-72.6725,89.9257,-15.1934,-4.3337,5.343,10.5603,-77.7268,52.0859,40.3944,88.3328,-55.8306,1.3181,36.025,-69.9271]) # opt for 50D
-
-    print 'x:',x
-    res = np.zeros(1, dtype)
-    bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
-    print 'result:',res
+    # x = np.array([-39.3119,58.8999,-46.3224,-74.6515,-16.7997,-80.5441,-10.5935,24.9694,89.8384,9.1119,-10.7443,-27.8558,-12.5806,7.593,74.8127,68.4959,-53.4293,78.8544,-68.5957,63.7432,31.347,-37.5016,33.8929,-88.8045,-78.7719,-66.4944,44.1972,18.3836,26.5212,84.4723,39.1769,-61.4863,-25.6038,-81.1829,58.6958,-30.8386,-72.6725,89.9257,-15.1934,-4.3337,5.343,10.5603,-77.7268,52.0859,40.3944,88.3328,-55.8306,1.3181,36.025,-69.9271]) # opt for 50D
 
     x = np.zeros(50, dtype)
+    res = np.zeros(1, dtype)
     print 'x:',x
     bench(cuda.In(x), cuda.Out(res), block=(1,1,1))
     print 'result:',res

@@ -33,6 +33,23 @@ __device__ double calc_sphere (double *x)
     return (res);
 }
 
+__device__ double calc_schwefel (double *x)
+{
+    int i, j;
+    double sum1, sum2;
+    sum1 = 0.0;
+    for (i=0; i<nreal; i++)
+    {
+        sum2 = 0.0;
+        for (j=0; j<=i; j++)
+        {
+            sum2 += x[j];
+        }
+        sum1 += sum2*sum2;
+    }
+    return (sum1);
+}
+
 __device__ void transform (double  * x, int count)
 {
     int i, j;
@@ -64,17 +81,20 @@ __device__ void transform (double  * x, int count)
     return;
 }
 
-__global__ void calc_benchmark_func(double *x, double *result)
+// F1
+__global__ void calc_benchmark_func_f1(double *x, double *res)
 {
     transform (x, 0);
     basic_f[0] = calc_sphere (trans_x);
+    res[0] = basic_f[0] + bias[0];
+}
 
-    //result[0] = basic_f[0];
-
-    result[0] = basic_f[0] + bias[0];
-
-//
-//    results[threadIdx.x] = res;
+// F2
+__global__ void calc_benchmark_func(double *x, double *res)
+{
+    transform (x, 0);
+    basic_f[0] = calc_schwefel (trans_x);
+    res[0] = basic_f[0] + bias[0];
 }
 
 __global__ void f(double *arg, double *result)
