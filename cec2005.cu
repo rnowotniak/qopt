@@ -1,20 +1,21 @@
 __constant__ int nreal;
 __constant__ int nfunc;
 
+// wszystko ponizsze, co jest stale, chyba powinno byc w constant (wspolne dla wszystkich watkow)
 __device__ double C;
 __device__ double global_bias;
-__device__ double *trans_x;
-__device__ double *temp_x1;
-__device__ double *temp_x2;
-__device__ double *temp_x3;
-__device__ double *temp_x4;
-__device__ double *norm_x;
-__device__ double *basic_f; // nfunc
-__device__ double *weight; // nfunc
+__device__ double *trans_x; // RW (te chyba powinny byc w shared, ale osobne dla kazdego watku)
+__device__ double *temp_x1; // RW
+__device__ double *temp_x2; // RW
+__device__ double *temp_x3; // RW
+__device__ double *temp_x4; // RW
+__device__ double *norm_x;  // RW
+__device__ double *basic_f; // nfunc  RW
+__device__ double *weight; // nfunc   RW
 __device__ double *sigma; // nfunc
 __device__ double *lambda; // nfunc
 __device__ double *bias; // nfunc
-__device__ double *norm_f; // nfunc
+__device__ double *norm_f; // nfunc  RW
 __device__ double **o;
 __device__ double **g;
 __device__ double ***l;
@@ -98,7 +99,7 @@ __global__ void calc_benchmark_func_f2(double *x, double *res)
 }
 
 // F3
-__global__ void calc_benchmark_func(double *x, double *res)
+__global__ void calc_benchmark_func_f3(double *x, double *res)
 {
     int i;
     transform (x, 0);
