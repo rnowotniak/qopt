@@ -28,7 +28,8 @@ mod = SourceModule(src, arch='sm_13')
 # Allocation and initialization of common data structures for the benchmark functions
 #
 initialized_function = -1
-def initialize(function_number):
+def initialize(function_number, threads = 1):
+    # initialize only once for subsequent calls of the same benchmark function
     global initialized_function
     if initialized_function == function_number:
         return
@@ -36,26 +37,51 @@ def initialize(function_number):
 
     print '--- Allocating memmory, initializing benchmark function(s) ---'
 
-    global trans_x, temp_x1, temp_x2, temp_x3, temp_x4, norm_x
-    global basic_f, weight , sigma, lambd, bias, norm_f , o, g, l
-    global o_gpu, o_rows, g_gpu, g_rows, l_gpu
+    # rw data structures (separate for each thread)
+    global g_trans_x, g_temp_x1, g_temp_x2, g_temp_x3, g_temp_x4, \
+            g_norm_x,  g_basic_f, g_weight, g_norm_f
 
+    # constant (same for each thread)
+    global sigma, lambd, bias, o, g, l, o_gpu, o_rows, g_gpu, g_rows, l_gpu
+
+    # constant scalars
+    cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
+    cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
+    cuda.memcpy_htod(mod.get_global('C')[0], np.double(2000))
+    cuda.memcpy_htod(mod.get_global('global_bias')[0], np.double(0))
+
+    # rw arrays (memmory allocation only, no initialization)
+    g_trans_x = np.zeros(nreal * threads).astype(dtype)
+    g_temp_x1 = np.zeros(nreal * threads).astype(dtype)
+    g_temp_x2 = np.zeros(nreal * threads).astype(dtype)
+    g_temp_x3 = np.zeros(nreal * threads).astype(dtype)
+    g_temp_x4 = np.zeros(nreal * threads).astype(dtype)
+    g_norm_x  = np.zeros(nreal * threads).astype(dtype)
+    g_basic_f = np.zeros(nfunc * threads).astype(dtype)
+    g_weight  = np.zeros(nfunc * threads).astype(dtype)
+    g_norm_f  = np.zeros(nfunc * threads).astype(dtype)
+
+    # constant arrays
+    sigma = np.zeros(nfunc).astype(dtype)
+    lambd = np.ones(nfunc).astype(dtype)
+    bias = np.zeros(nfunc).astype(dtype)
+
+    # 2d arrays
     o = np.zeros((nfunc,nreal)).astype(dtype)
     g = np.eye(nreal,nreal).astype(dtype)
 
     if function_number == 1:
+        # wczytanie 'o' mozna bedzie pewnie zamienic na 1-linijkowy kod (o = np.matrix(''.join... itp
         fpt = ''.join(open('input_data/sphere_func_data.txt', 'r').readlines()).strip().split()
         for i in xrange(nfunc):
             for j in xrange(nreal):
                 o[i,j] = dtype(fpt.pop(0))
-        bias = np.zeros(nfunc).astype(dtype)
         bias[0] = -450.0
     elif function_number == 2:
         fpt = ''.join(open('input_data/schwefel_102_data.txt', 'r').readlines()).strip().split()
         for i in xrange(nfunc):
             for j in xrange(nreal):
                 o[i,j] = dtype(fpt.pop(0))
-        bias = np.zeros(nfunc).astype(dtype)
         bias[0] = -450.0
     elif function_number == 3:
         fpt = ''.join(open('input_data/elliptic_M_D%d.txt' % nreal, 'r').readlines()).strip().split()
@@ -67,41 +93,16 @@ def initialize(function_number):
         for i in xrange(nfunc):
             for j in xrange(nreal):
                 o[i,j] = dtype(fpt.pop(0))
-        bias = np.zeros(nfunc).astype(dtype)
         bias[0] = -450.0
 
-    cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
-    cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
-
-    cuda.memcpy_htod(mod.get_global('C')[0], np.double(2000))
-    cuda.memcpy_htod(mod.get_global('global_bias')[0], np.double(0))
-
     # 6 1-dimensional arrays
-    trans_x = np.zeros(nreal).astype(dtype)
-    trans_x[0], trans_x[1] = 3.14, 19
-    temp_x1 = np.zeros(nreal).astype(dtype)
-    temp_x2 = np.zeros(nreal).astype(dtype)
-    temp_x3 = np.zeros(nreal).astype(dtype)
-    temp_x4 = np.zeros(nreal).astype(dtype)
-    temp_x4[1] = 3
-    norm_x = np.zeros(nreal).astype(dtype)
-    norm_x[0] = -7;
-    arrays = ['trans_x', 'temp_x1', 'temp_x2', 'temp_x3', 'temp_x4', 'norm_x']
+    arrays = ['g_trans_x', 'g_temp_x1', 'g_temp_x2', 'g_temp_x3', 'g_temp_x4', 'g_norm_x']
     for var in arrays:
-        globals()[var] = cuda.to_device(globals()[var])
-        cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var]))
+        globals()[var] = cuda.to_device(globals()[var]) # send to device and save the pointer
+        cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var])) # set pointer in kernel code
 
     # 6 1-dimensional arrays
-    basic_f = np.zeros(nfunc).astype(dtype)
-    weight = np.zeros(nfunc).astype(dtype)
-    sigma = np.zeros(nfunc).astype(dtype)
-    sigma[0] = 15;
-    lambd = np.ones(nfunc).astype(dtype)
-    #bias = np.zeros(nfunc).astype(dtype) # XXX already initialized
-    norm_f = np.zeros(nfunc).astype(dtype)
-    norm_f[0] = 17;
-
-    arrays = ['basic_f', 'weight', 'sigma', 'bias', 'norm_f']
+    arrays = ['g_basic_f', 'g_weight', 'sigma', 'bias', 'g_norm_f']
     for var in arrays:
         globals()[var] = cuda.to_device(globals()[var])
         cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var]))
@@ -111,8 +112,6 @@ def initialize(function_number):
     # 2 2-dimensional arrays (o, g)
     # MAYBE IT SHOULD BE CASTED to 1-d ARRAY for performance?
 
-    #o = np.zeros((nfunc,nreal)).astype(dtype) # XXX already initialized
-    #o = np.linspace(1,1 +nfunc*nreal-1,nfunc*nreal).reshape((nfunc,nreal))
     print 'o:', o
     o_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
     o_rows = []
@@ -144,36 +143,37 @@ def initialize(function_number):
     print l_gpu
     cuda.memcpy_htod(mod.get_global('l_flat')[0], np.intp(l_gpu))
 
+    print '--- initialization done ---'
+
 
 # Actual benchmark functions
 
 def f1(x):
-    initialize(1)
+    x = np.matrix(x, dtype)
+    initialize(1, threads = x.shape[0])
     bench = mod.get_function('calc_benchmark_func_f1')
-    res = np.zeros(1, dtype)
-    # rozmiar bloku lub kraty powinien tutaj zalezec od liczby wierszy w x
-    bench(cuda.In(np.matrix(x, dtype)), cuda.Out(res), block=(1,1,1))
-    return res[0]
+    res = np.zeros(x.shape[0], dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
+    return res
 
 def f2(x):
-    initialize(2)
+    x = np.matrix(x, dtype)
+    initialize(2, threads = x.shape[0])
     bench = mod.get_function('calc_benchmark_func_f2')
-    res = np.zeros(1, dtype)
-    # rozmiar bloku lub kraty powinien tutaj zalezec od liczby wierszy w x
-    bench(cuda.In(np.matrix(x, dtype)), cuda.Out(res), block=(1,1,1))
-    return res[0]
+    res = np.zeros(x.shape[0], dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
+    return res
 
 def f3(x):
-    initialize(3)
+    x = np.matrix(x, dtype)
+    initialize(3, threads = x.shape[0])
     bench = mod.get_function('calc_benchmark_func_f3')
-    res = np.zeros(1, dtype)
-    # rozmiar bloku lub kraty powinien tutaj zalezec od liczby wierszy w x
-    bench(cuda.In(np.matrix(x, dtype)), cuda.Out(res), block=(1,1,1))
-    return res[0]
+    res = np.zeros(x.shape[0], dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
+    return res
 
 
 if __name__ == '__main__':
-    print '--- Evaluating the benchmark function ---'
     #x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
     nreal = 2
     x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
@@ -182,8 +182,12 @@ if __name__ == '__main__':
 
     # x = np.zeros(nreal, dtype)
 
-    print 'result:', f1(x)
-    print 'result:', f2([0,0])
+    result = f1(np.matrix([[0,0],[1,1]]))
+    #result = f1(np.matrix([[0,0]]))
+    print 'result: ', result
+
+    # print 'result:', f1(x)
+    # print 'result (should be ~ 3055):', f2([0,0])
 
     sys.exit()
 
