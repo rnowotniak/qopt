@@ -4,8 +4,6 @@ import sys
 import numpy as np
 import cec2005
 
-eps = 10e-5
-
 
 # sequential test
 if True:
@@ -33,8 +31,8 @@ if True:
         f = getattr(cec2005, 'f%d' % fnum)
         for i in xrange(len(xargs)):
             calculated = f(xargs[i])
-            print calculated, vals[i]
-            assert abs(calculated - vals[i]) < eps
+            print '%e %e' % (calculated[0], vals[i])
+            assert np.allclose(calculated, vals[i])
     #sys.exit(0)
 
 
@@ -71,7 +69,7 @@ for fnum in xrange(1,7):
 
     for i in xrange(xargs.shape[0]):
         print calculated[i], vals[i]
-        assert abs(calculated[i] - vals[i]) < eps
+        assert np.allclose(calculated[i], vals[i])
 
 
 # test execution time
