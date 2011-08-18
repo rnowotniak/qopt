@@ -198,4 +198,12 @@ extern "C" {
         res[GTID] = basic_f[0] + bias[0];
     }
 
+    __global__ void test_time(double *x, double *res, int n) {
+        for (int i = 0; i < n; i++) {
+            transform (x + nreal * GTID, 0);
+            basic_f[0] = calc_rosenbrock(trans_x);
+            res[GTID] = basic_f[0] + bias[0];
+        }
+    }
+
 }

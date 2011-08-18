@@ -238,9 +238,21 @@ def f6(x):
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
 
+def test_time(n = 1):
+    global time
+    x = (np.random.random((512,50)) - 0.5) * 200
+    x = np.matrix(x, dtype)
+    initialize(6, threads = x.shape[0])
+    bench = mod.get_function('test_time')
+    res = np.zeros(x.shape[0], dtype)
+    time = bench(cuda.In(x), cuda.Out(res), np.int32(n), block=(x.shape[0],1,1), time_kernel = True) # XXX
+    print 'Evaluated %d function values (nreal = %d)' % (n * 512, nreal)
+    # return microseconds
+    return time * 1000000
 
 
 if __name__ == '__main__':
+
     #x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
     nreal = 2
     # x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
