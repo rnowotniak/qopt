@@ -141,7 +141,7 @@ def initialize(function_number, threads = 1):
         for i in xrange(nfunc):
             for j in xrange(nreal):
                 o[i,j] = dtype(fpt.pop(0)) - 1
-        bias[0] = -390
+        bias[0] = 390
 
     # 6 1-dimensional arrays
     arrays = ['g_trans_x', 'g_temp_x1', 'g_temp_x2', 'g_temp_x3', 'g_temp_x4', 'g_norm_x']
