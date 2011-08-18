@@ -1,5 +1,8 @@
 #include <curand_kernel.h>
 
+#define CUDART_INF              __longlong_as_double(0x7ff0000000000000ULL)
+
+
 extern "C" {
 
     __device__ curandState *rngStates; // (sizeof(curandState) = 40 bytes)
@@ -19,6 +22,10 @@ extern "C" {
     __device__ double ***l;  // const? (nfunc x nreal x nreal) (maks 200 KB)
 
     __device__ double *l_flat;
+
+    // for function f5
+    __device__ double *A; // 2d flatten, const?
+    __device__ double *B; // const?
 
 
     // for parallel execution
@@ -149,5 +156,26 @@ extern "C" {
         res[GTID] = basic_f[0] + bias[0];
     }
 
+    // F5
+    __global__ void calc_benchmark_func_f5(double *x, double *res)
+    {
+        int i, j;
+        double *x_ = x + nreal * GTID;
+        basic_f[0] = -CUDART_INF;
+        for (i=0; i<nreal; i++)
+        {
+            res[GTID]=0.0;
+            for (j=0; j<nreal; j++)
+            {
+                res[GTID] += A[i * nreal + j]*x_[j];
+            }
+            res[GTID] = fabs(res[GTID]-B[i]);
+            if (basic_f[0] < res[GTID])
+            {
+                basic_f[0] = res[GTID];
+            }
+        }
+        res[GTID] = basic_f[0] + bias[0];
+    }
 
 }

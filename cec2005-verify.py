@@ -9,8 +9,11 @@ eps = 10e-5
 
 # sequential test
 if True:
-    for fnum in xrange(1,4):
+    for fnum in xrange(1,6):
         print 'fnum: ', fnum
+        if fnum == 4:
+            print 'noisy function (skipping)'
+            continue
         fpt = open('input_data/test_data_func%d.txt' % fnum).readlines()
         i = 0
         xargs = []
@@ -37,8 +40,11 @@ if True:
 
 # parallel test
 print 'Parallel test'
-for fnum in xrange(1,4):
+for fnum in xrange(1,6):
     print 'fnum: ', fnum
+    if fnum == 4:
+        print 'noisy function (skipping)'
+        continue
     fpt = open('input_data/test_data_func%d.txt' % fnum).readlines()
     i = 0
     xargs = []
