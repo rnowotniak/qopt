@@ -4,7 +4,7 @@
 # Copyright (C) 2011   Robert Nowotniak
 #
 
-import sys
+import sys, time
 import pycuda.driver as cuda
 import pycuda.gpuarray
 import numpy as np
@@ -19,7 +19,7 @@ dtype = np.double
 print 'devices:', cuda.Device.count()
 
 src = ''.join(open('cec2005.cu').readlines())
-mod = SourceModule(src, arch='sm_13')
+mod = SourceModule(src, arch='sm_13', no_extern_c = True)
 
 #FUNCTION_NUMBER = 1
 
@@ -37,13 +37,20 @@ def initialize(function_number, threads = 1):
 
     print '--- Allocating memmory, initializing benchmark function(s) ---'
 
+    # PRNG initialization
+    global rngStates, initRNG
+    rngStates = cuda.mem_alloc(40 * threads)  # sizeof(curandState) = 40 bytes
+    cuda.memcpy_htod(mod.get_global('rngStates')[0], np.intp(rngStates)) # set pointer in kernel code
+    initRNG = mod.get_function('initRNG')
+    initRNG(np.uint32(time.time()), block=(threads,1,1))
+
     # rw data structures (separate for each thread)
     global g_trans_x, g_temp_x1, g_temp_x2, g_temp_x3, g_temp_x4, \
             g_norm_x,  g_basic_f, g_weight, g_norm_f
 
     # constant (same for each thread)
     global sigma, lambd, bias, o, g, l, o_gpu, o_rows, g_gpu, g_rows, l_gpu
-
+    
     # constant scalars
     cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
     cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
@@ -90,6 +97,12 @@ def initialize(function_number, threads = 1):
                 g[i,j] = dtype(fpt.pop(0))
 
         fpt = ''.join(open('input_data/high_cond_elliptic_rot_data.txt', 'r').readlines()).strip().split()
+        for i in xrange(nfunc):
+            for j in xrange(nreal):
+                o[i,j] = dtype(fpt.pop(0))
+        bias[0] = -450.0
+    elif function_number == 4:
+        fpt = ''.join(open('input_data/schwefel_102_data.txt', 'r').readlines()).strip().split()
         for i in xrange(nfunc):
             for j in xrange(nreal):
                 o[i,j] = dtype(fpt.pop(0))
@@ -172,17 +185,25 @@ def f3(x):
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
 
+def f4(x):
+    x = np.matrix(x, dtype)
+    initialize(4, threads = x.shape[0])
+    bench = mod.get_function('calc_benchmark_func_f4')
+    res = np.zeros(x.shape[0], dtype)
+    bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
+    return res
+
 
 if __name__ == '__main__':
     #x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
     nreal = 2
-    x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
+    # x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
     # x = np.array([-39.3119, 58.8999, -46.3224, -74.6515, -16.7997, -80.5441, -10.5935,  24.9694, 89.8384, 9.1119]) # opt for 10D
     # x = np.array([-39.3119,58.8999,-46.3224,-74.6515,-16.7997,-80.5441,-10.5935,24.9694,89.8384,9.1119,-10.7443,-27.8558,-12.5806,7.593,74.8127,68.4959,-53.4293,78.8544,-68.5957,63.7432,31.347,-37.5016,33.8929,-88.8045,-78.7719,-66.4944,44.1972,18.3836,26.5212,84.4723,39.1769,-61.4863,-25.6038,-81.1829,58.6958,-30.8386,-72.6725,89.9257,-15.1934,-4.3337,5.343,10.5603,-77.7268,52.0859,40.3944,88.3328,-55.8306,1.3181,36.025,-69.9271]) # opt for 50D
 
     # x = np.zeros(nreal, dtype)
 
-    result = f1(np.matrix([[0,0],[1,1]]))
+    result = f4(np.matrix([[0,0],[1,1]]))
     #result = f1(np.matrix([[0,0]]))
     print 'result: ', result
 

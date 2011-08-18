@@ -1,21 +1,20 @@
+#include <curand_kernel.h>
 
-#define X 17
-#define Y X
+extern "C" {
 
-__constant__ int a = 3;
+    __device__ char str[10];
 
-//__device__ double bla[a];
+    __global__ void test(double *m1, unsigned int seed) {
 
-__global__ void test(double *m1, double *m2, double *m3, double *m4) {
+        curandState state;
+        curand_init(2012, threadIdx.x, 0, &state);
 
-    m1[0] = Y;
+        m1[0] = sizeof(curandState);
+        m1[1] = sizeof(seed);
+        m1[2] = 1 + seed;
 
-    return;
-
-    m1[blockIdx.x] = blockIdx.x;
-    m2[3] = 66;
-    m1[13] = 15;
-    m4[3] = 3.14;
+        // m1[threadIdx.x] = curand_normal(&state);
+    }
 
 }
 

@@ -32,6 +32,7 @@ if True:
             calculated = f(xargs[i])
             print calculated, vals[i]
             assert abs(calculated - vals[i]) < eps
+    #sys.exit(0)
 
 
 # parallel test
