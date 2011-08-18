@@ -86,6 +86,18 @@ extern "C" {
         return (sum1);
     }
 
+
+    __device__ double calc_rosenbrock (double *x)
+    {
+        int i;
+        double res;
+        res = 0.0;
+        for (i=0; i<nreal-1; i++)
+        {
+            res += 100.0*pow((x[i]*x[i]-x[i+1]),2.0) + 1.0*pow((x[i]-1.0),2.0);
+        }
+        return (res);
+    }
     __device__ void transform (double *x, int count)
     {
         int i, j;
@@ -175,6 +187,14 @@ extern "C" {
                 basic_f[0] = res[GTID];
             }
         }
+        res[GTID] = basic_f[0] + bias[0];
+    }
+
+    // F6
+    __global__ void calc_benchmark_func_f6(double *x, double *res)
+    {
+        transform (x + nreal * GTID, 0);
+        basic_f[0] = calc_rosenbrock(trans_x);
         res[GTID] = basic_f[0] + bias[0];
     }
 

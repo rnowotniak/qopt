@@ -9,7 +9,7 @@ eps = 10e-5
 
 # sequential test
 if True:
-    for fnum in xrange(1,6):
+    for fnum in xrange(1,7):
         print 'fnum: ', fnum
         if fnum == 4:
             print 'noisy function (skipping)'
@@ -40,7 +40,7 @@ if True:
 
 # parallel test
 print 'Parallel test'
-for fnum in xrange(1,6):
+for fnum in xrange(1,7):
     print 'fnum: ', fnum
     if fnum == 4:
         print 'noisy function (skipping)'
