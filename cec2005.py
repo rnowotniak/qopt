@@ -125,16 +125,10 @@ def initialize(function_number, threads = 1):
         for i in xrange(nreal):
             for j in xrange(nreal):
                 B[i] += A[i,j] * o[0,j]
-
-        # print 'A:',A
-        # print 'B:', B
-        # print 'o:', o
-
         A = cuda.to_device(A)
         B = cuda.to_device(B)
         cuda.memcpy_htod(mod.get_global('A')[0], np.intp(A))
         cuda.memcpy_htod(mod.get_global('B')[0], np.intp(B))
-
         bias[0] = -310.0
     elif function_number == 6:
         fpt = ''.join(open('input_data/rosenbrock_func_data.txt', 'r').readlines()).strip().split()
