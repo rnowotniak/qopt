@@ -28,7 +28,8 @@ mod = SourceModule(src, arch='sm_13', no_extern_c = True)
 # Allocation and initialization of common data structures for the benchmark functions
 #
 initialized_function = -1
-def initialize(function_number, threads = 1):
+def initialize(function_number, threads = 1, grid = (1,1)):
+    total_threads = threads * grid[0] * grid[1]
     # initialize only once for subsequent calls of the same benchmark function
     global initialized_function
     if initialized_function == function_number:
@@ -39,10 +40,10 @@ def initialize(function_number, threads = 1):
 
     # PRNG initialization
     global rngStates, initRNG
-    rngStates = cuda.mem_alloc(40 * threads)  # sizeof(curandState) = 40 bytes
+    rngStates = cuda.mem_alloc(40 * total_threads)  # sizeof(curandState) = 40 bytes
     cuda.memcpy_htod(mod.get_global('rngStates')[0], np.intp(rngStates)) # set pointer in kernel code
     initRNG = mod.get_function('initRNG')
-    initRNG(np.uint32(time.time()), block=(threads,1,1))
+    initRNG(np.uint32(time.time()), block=(threads,1,1), grid = grid)
 
     # rw data structures (separate for each thread)
     global g_trans_x, g_temp_x1, g_temp_x2, g_temp_x3, g_temp_x4, \
@@ -58,15 +59,15 @@ def initialize(function_number, threads = 1):
     cuda.memcpy_htod(mod.get_global('global_bias')[0], np.double(0))
 
     # rw arrays (memmory allocation only, no initialization)
-    g_trans_x = np.zeros(nreal * threads).astype(dtype)
-    g_temp_x1 = np.zeros(nreal * threads).astype(dtype)
-    g_temp_x2 = np.zeros(nreal * threads).astype(dtype)
-    g_temp_x3 = np.zeros(nreal * threads).astype(dtype)
-    g_temp_x4 = np.zeros(nreal * threads).astype(dtype)
-    g_norm_x  = np.zeros(nreal * threads).astype(dtype)
-    g_basic_f = np.zeros(nfunc * threads).astype(dtype)
-    g_weight  = np.zeros(nfunc * threads).astype(dtype)
-    g_norm_f  = np.zeros(nfunc * threads).astype(dtype)
+    g_trans_x = np.zeros(nreal * total_threads).astype(dtype)
+    g_temp_x1 = np.zeros(nreal * total_threads).astype(dtype)
+    g_temp_x2 = np.zeros(nreal * total_threads).astype(dtype)
+    g_temp_x3 = np.zeros(nreal * total_threads).astype(dtype)
+    g_temp_x4 = np.zeros(nreal * total_threads).astype(dtype)
+    g_norm_x  = np.zeros(nreal * total_threads).astype(dtype)
+    g_basic_f = np.zeros(nfunc * total_threads).astype(dtype)
+    g_weight  = np.zeros(nfunc * total_threads).astype(dtype)
+    g_norm_f  = np.zeros(nfunc * total_threads).astype(dtype)
 
     # constant arrays
     sigma = np.zeros(nfunc).astype(dtype)
@@ -253,6 +254,31 @@ def test_time(n = 1):
 
 if __name__ == '__main__':
 
+    nreal = 50
+    blocks = 10
+    blocksize = 512
+    rep = 100
+    x = (np.random.random(nreal * blocksize * blocks) - 0.5) * 200
+    initialize(6, threads = blocksize, grid = (1,blocks))
+    bench = mod.get_function('test_time')
+    res = np.zeros(blocks * blocksize, dtype)
+    t = bench(cuda.In(x), cuda.Out(res), np.int32(rep),block=(blocksize,1,1), grid = (1,blocks), time_kernel = True)
+    cpuperf = 512000. / 25414375
+    gpuperf = (1.0*(blocksize * blocks * rep)/(t * 1000000))
+    print 'Speedup (on %d blocks): %f' % (blocks, gpuperf / cpuperf)
+    print 'Computed %d fitness values' % (blocksize * blocks * rep)
+    print 'time: %f microseconds' % (t * 1000000)
+    f = open('/tmp/data2.txt', 'w')
+    print x[:nreal]
+    print res[0]
+    for i in xrange(res.size):
+        f.write(' '.join(map(lambda x: str(x), x[i * nreal:i * nreal + nreal])) + '\n')
+    for i in xrange(res.size):
+        f.write(str(res[i]) + '\n')
+    f.close()
+
+    sys.exit(0)
+
     #x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype)
     nreal = 2
     # x = np.array([-39.3119, 58.8999], dtype) # opt for 2d
@@ -269,35 +295,4 @@ if __name__ == '__main__':
     # print 'result (should be ~ 3055):', f2([0,0])
 
     sys.exit()
-
-
-if False:
-    f = mod.get_function('test')
-    out = np.zeros(10).astype(np.double)
-    o_out = np.zeros(nfunc * nreal).astype(dtype)
-    g_out = np.zeros(nreal * nreal).astype(dtype)
-    l_out = np.zeros(nfunc * nreal * nreal).astype(dtype)
-    f(cuda.InOut(out), cuda.Out(o_out), cuda.Out(g_out), cuda.InOut(l_out), block=(1,1,1))
-    print 'out:',out
-    print o_out
-    print g_out
-    print l_out
-
-
-
-    sys.exit(0)
-
-    f = SourceModule(src, arch='sm_13').get_function('f')
-
-    sys.exit(0)
-
-    inp = np.linspace(-10,10,512)
-    out = np.zeros(512)
-    print inp.astype(np.double)
-
-    print f(cuda.In(inp), cuda.Out(out), block=(512,1,1),grid=(1,1), time_kernel=True)
-
-    print out
-
-
 

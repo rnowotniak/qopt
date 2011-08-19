@@ -28,7 +28,7 @@ extern "C" {
     __device__ double *B; // const?
 
 
-    // for parallel execution
+    // for parallel execution (Global Thread Id)
 #define GTID ( blockIdx.y * blockDim.x + threadIdx.x )
 
     __device__ double *g_trans_x; // RW (te chyba powinny byc w shared, ale osobne dla kazdego watku,
@@ -98,6 +98,7 @@ extern "C" {
         }
         return (res);
     }
+
     __device__ void transform (double *x, int count)
     {
         int i, j;

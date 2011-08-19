@@ -76,7 +76,7 @@ if True:
 
 # test execution time
 print '---[ Execution time test ]---'
-cputimeref = 25414375 # On CPU, evaluation of 512000 takes that many microseconds
+cputimeref = 25414375 # (25s) On CPU, evaluation of 512000 takes that many microseconds
 gputime = cec2005.test_time(1000)
 print 'GPU time (1 MultiProcessor only): %f microseconds' % gputime
 print 'On CPU, it takes approx. %d microseconds. Speed-up: %g' % (cputimeref, 1.0 * cputimeref / gputime)
