@@ -2,26 +2,35 @@
 
 #define CUDART_INF              __longlong_as_double(0x7ff0000000000000ULL)
 
+#ifndef NREAL
+#error NREAL is not defined
+#endif
+#ifndef NFUNC
+#error NFUNC is not defined
+#endif
+#ifndef BLOCKSIZE
+#error BLOCKSIZE is not defined
+#endif
 
 extern "C" {
 
+    //__shared__ double buf[NREAL * BLOCKSIZE];
+
     __device__ curandState *rngStates; // (sizeof(curandState) = 40 bytes)
 
-    __constant__ int nreal;
-    __constant__ int nfunc;
+    /*CONST*/__device__ int nreal;
+    /*CONST*/__device__ int nfunc;
 
-    // wszystko ponizsze, co jest stale, chyba powinno byc w constant (wspolne dla wszystkich watkow)
-    __device__ double C;  // const?
-    __device__ double global_bias;  // const?
+    /*CONST*/__device__ double C;
+    /*CONST*/__device__ double global_bias;
 
-    __device__ double *sigma; // nfunc  // const? (4KB)
-    __device__ double *lambda; // nfunc  // const? (4KB)
-    __device__ double *bias; // nfunc  // const? (4KB)
-    __device__ double **o; // const? (nfunc x nreal) (maks 4 KB)
-    __device__ double **g; // const? (nreal x nreal) (20KB dla nreal 50)
-    __device__ double ***l;  // const? (nfunc x nreal x nreal) (maks 200 KB)
+    __device__ double *sigma; // nfunc  // const? (4KB) XXX (move to constant)
+    /*CONST*/__device__ double lambda[NFUNC]; // nfunc  // const? (4KB)
+    /*CONST*/__device__ double bias[NFUNC]; // nfunc  // const? (4KB)
+    /*CONST*/__device__ double o[NFUNC][NREAL]; // const? (nfunc x nreal) (maks 4 KB)
+    /*CONST*/__device__ double g[NREAL][NREAL]; // const? (nreal x nreal) (20KB dla nreal 50)
 
-    __device__ double *l_flat;
+    /*CONST*/__device__ double l_flat[NFUNC*NREAL*NREAL];
 
     // for function f5
     __device__ double *A; // 2d flatten, const?
@@ -92,9 +101,11 @@ extern "C" {
         int i;
         double res;
         res = 0.0;
+	//memcpy((buf + threadIdx.x * nreal), x, sizeof(double) * nreal);
         for (i=0; i<nreal-1; i++)
         {
             res += 100.0*pow((x[i]*x[i]-x[i+1]),2.0) + 1.0*pow((x[i]-1.0),2.0);
+            //res += 100.0*pow(((buf + threadIdx.x * nreal)[i]*(buf + threadIdx.x * nreal)[i]-(buf + threadIdx.x * nreal)[i+1]),2.0) + 1.0*pow(((buf + threadIdx.x * nreal)[i]-1.0),2.0);
         }
         return (res);
     }
@@ -102,9 +113,11 @@ extern "C" {
     __device__ void transform (double *x, int count)
     {
         int i, j;
+	//memcpy((buf + threadIdx.x * nreal), x, sizeof(double) * nreal);
         for (i=0; i<nreal; i++)
         {
             temp_x1[i] = x[i] - o[count][i];
+            //temp_x1[i] = (buf + threadIdx.x * nreal)[i] - o[count][i];
         }
         for (i=0; i<nreal; i++)
         {
@@ -113,9 +126,11 @@ extern "C" {
         for (j=0; j<nreal; j++)
         {
             temp_x3[j] = 0.0;
+            //(buf + threadIdx.x * nreal)[j] = 0.0;
             for (i=0; i<nreal; i++)
             {
                 temp_x3[j] += g[i][j]*temp_x2[i];
+                //(buf + threadIdx.x * nreal)[j] += g[i][j]*temp_x2[i];
             }
         }
         for (j=0; j<nreal; j++)
@@ -125,6 +140,7 @@ extern "C" {
             {
                 // trans_x[j] += l[count][i][j]*temp_x3[i];
                 trans_x[j] += l_flat[count * (nreal * nreal) + i * nreal + j] *temp_x3[i];
+                //trans_x[j] += l_flat[count * (nreal * nreal) + i * nreal + j] *(buf + threadIdx.x * nreal)[i];
             }
         }
         return;

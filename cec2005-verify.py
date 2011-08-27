@@ -76,11 +76,20 @@ if True:
 
 # test execution time
 print '---[ Execution time test ]---'
-cputimeref = 25414375 # (25s) On CPU, evaluation of 512000 takes that many microseconds
-gputime = cec2005.test_time(1000)
-print 'GPU time (1 MultiProcessor only): %f microseconds' % gputime
-print 'On CPU, it takes approx. %d microseconds. Speed-up: %g' % (cputimeref, 1.0 * cputimeref / gputime)
-assert gputime < cputimeref
+cpuperf = 512000. / 25414375 # On CPU, evaluation of 512000 takes approx. 25 seconds
+blocks = 100
+blocksize = 100
+rep = 10
+gputime = cec2005.test_time(blocksize, blocks, rep) * 1e6
+gpuperf = 1.0 * blocks * blocksize * rep / gputime
+print 'GPU time: %f microseconds' % gputime
+print 'cpuperf: %f' % cpuperf
+print 'gpuperf: %f' % gpuperf
+print 'SPEED-UP: %g' % (gpuperf / cpuperf)
+assert gpuperf > cpuperf
 
 print 'Well done.'
+
+import pycuda.driver as cuda
+cuda.Context.pop()
 

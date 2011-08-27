@@ -10,7 +10,8 @@ import time
 
 dtype = np.double
 src = ''.join(open('some-tests.cu').readlines())
-mod = SourceModule(src, arch='sm_13', no_extern_c = True)
+#mod = SourceModule(src, arch='sm_13', no_extern_c = True)
+mod = SourceModule(src, no_extern_c = True)
 
 mod.get_global('str')
 
