@@ -6,7 +6,7 @@ import cec2005
 
 
 # sequential test
-if True:
+if False:
     print '---[ Sequential test ]---'
     for fnum in xrange(1,7):
         print 'fnum: ', fnum
@@ -38,7 +38,7 @@ if True:
 
 
 # parallel test
-if True:
+if False:
     print '---[ Parallel test ]---'
     for fnum in xrange(1,7):
         print 'fnum: ', fnum

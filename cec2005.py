@@ -44,7 +44,7 @@ def initialize(function_number, threads = 1, grid = (1,1)):
 
     global mod
     # compile the kernel source for given dimension and proper blocksize
-    mod = SourceModule(src, arch='sm_20', no_extern_c = True, cache_dir = False, options= \
+    mod = SourceModule(src, arch='sm_13', no_extern_c = True, cache_dir = False, options= \
             ['--use_fast_math', '--ptxas-options=-v', \
             '-D NREAL=%d'%nreal, '-D NFUNC=%d'%nfunc, '-D BLOCKSIZE=%d'%threads])
 
@@ -256,8 +256,6 @@ def f6(x):
 def test_time(blocksize = 100, blocks = 1, repeat = 1):
     global mod
     nreal = 50
-    blocks = 100
-    blocksize = 100
     x = (np.random.random(nreal * blocksize * blocks) - 0.5) * 200
     initialize(6, threads = blocksize, grid = (1,blocks))
     bench = mod.get_function('test_time')
