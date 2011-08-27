@@ -1,4 +1,4 @@
-#include <curand_kernel.h>
+// #include <curand_kernel.h>
 
 #define CUDART_INF              __longlong_as_double(0x7ff0000000000000ULL)
 
@@ -16,21 +16,22 @@ extern "C" {
 
     //__shared__ double buf[NREAL * BLOCKSIZE];
 
-    __device__ curandState *rngStates; // (sizeof(curandState) = 40 bytes)
+    //__device__ curandState *rngStates; // (sizeof(curandState) = 40 bytes) XXX
+    __device__ void *rngStates;
 
-    /*CONST*/__device__ int nreal;
-    /*CONST*/__device__ int nfunc;
+    __constant__ int nreal;
+    __constant__ int nfunc;
 
-    /*CONST*/__device__ double C;
-    /*CONST*/__device__ double global_bias;
+    __constant__ double C;
+    __constant__ double global_bias;
 
     __device__ double *sigma; // nfunc  // const? (4KB) XXX (move to constant)
-    /*CONST*/__device__ double lambda[NFUNC]; // nfunc  // const? (4KB)
-    /*CONST*/__device__ double bias[NFUNC]; // nfunc  // const? (4KB)
-    /*CONST*/__device__ double o[NFUNC][NREAL]; // const? (nfunc x nreal) (maks 4 KB)
-    /*CONST*/__device__ double g[NREAL][NREAL]; // const? (nreal x nreal) (20KB dla nreal 50)
+    __constant__ double lambda[NFUNC]; // nfunc  // const? (4KB)
+    __constant__ double bias[NFUNC]; // nfunc  // const? (4KB)
+    __constant__ double o[NFUNC][NREAL]; // const? (nfunc x nreal) (maks 4 KB)
+    __constant__ double g[NREAL][NREAL]; // const? (nreal x nreal) (20KB dla nreal 50)
 
-    /*CONST*/__device__ double l_flat[NFUNC*NREAL*NREAL];
+    __constant__ double l_flat[NFUNC*NREAL*NREAL];
 
     // for function f5
     __device__ double *A; // 2d flatten, const?
@@ -62,7 +63,7 @@ extern "C" {
 
 
     __global__ void initRNG(unsigned int seed) {
-        curand_init(seed, GTID, 0, &rngStates[GTID]);
+        //curand_init(seed, GTID, 0, &rngStates[GTID]);
     }
 
 
@@ -180,8 +181,8 @@ extern "C" {
     __global__ void calc_benchmark_func_f4(double *x, double *res)
     {
         transform (x + nreal * GTID, 0);
-        basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*fabs(curand_normal(&rngStates[GTID])));
-        // basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*0); // no noise
+        // basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*fabs(curand_normal(&rngStates[GTID]))); XXX
+        basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*0); // XXX no noise temporarily (above is correct)
         res[GTID] = basic_f[0] + bias[0];
     }
 

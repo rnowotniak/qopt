@@ -12,7 +12,7 @@ from pycuda.compiler import SourceModule
 
 cuda.init()
 
-dev = cuda.Device(0)
+dev = cuda.Device(1)
 print dev.name()
 ctx = dev.make_context()
 

@@ -77,8 +77,8 @@ if False:
 # test execution time
 print '---[ Execution time test ]---'
 cpuperf = 512000. / 25414375 # On CPU, evaluation of 512000 takes approx. 25 seconds
-blocks = 100
 blocksize = 100
+blocks = 25
 rep = 10
 gputime = cec2005.test_time(blocksize, blocks, rep) * 1e6
 gpuperf = 1.0 * blocks * blocksize * rep / gputime
