@@ -181,7 +181,7 @@ extern "C" {
     __global__ void calc_benchmark_func_f4(double *x, double *res)
     {
         transform (x + nreal * GTID, 0);
-        // basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*fabs(curand_normal(&rngStates[GTID]))); XXX
+        // basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*fabs(curand_normal(&rngStates[GTID]))); //  XXX
         basic_f[0] = calc_schwefel(trans_x)*(1.0 + 0.4*0); // XXX no noise temporarily (above is correct)
         res[GTID] = basic_f[0] + bias[0];
     }

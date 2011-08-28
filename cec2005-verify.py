@@ -1,4 +1,7 @@
 #!/usr/bin/python
+#
+# TODO: move this to tests/
+#
 
 import sys
 import numpy as np
@@ -6,7 +9,7 @@ import cec2005
 
 
 # sequential test
-if False:
+if True:
     print '---[ Sequential test ]---'
     for fnum in xrange(1,7):
         print 'fnum: ', fnum
@@ -38,7 +41,7 @@ if False:
 
 
 # parallel test
-if False:
+if True:
     print '---[ Parallel test ]---'
     for fnum in xrange(1,7):
         print 'fnum: ', fnum

@@ -24,35 +24,33 @@ dtype = np.double
 print 'devices:', cuda.Device.count()
 
 src = ''.join(open('cec2005.cu').readlines())
-#mod = SourceModule(src, arch='sm_20', no_extern_c = True, options= \
-#        ['--use_fast_math', '--ptxas-options=-v', '-D NREAL=%d'%nreal, '-D NFUNC=%d'%nfunc])
 
 
 #
 # Allocation and initialization of common data structures for the benchmark functions
 #
-initialized_function = -1
+initialized_parameters = None
 def initialize(function_number, threads = 1, grid = (1,1)):
     total_threads = threads * grid[0] * grid[1]
     # initialize only once for subsequent calls of the same benchmark function
-    global initialized_function
-    if initialized_function == function_number:
+    global initialized_parameters
+    if initialized_parameters == (function_number, threads, grid):
         return
-    initialized_function = function_number
+    initialized_parameters = (function_number, threads, grid)
 
     print '--- Allocating memmory, initializing benchmark function(s) ---'
 
-    global mod
+    global module
     # compile the kernel source for given dimension and proper blocksize
-    mod = SourceModule(src, arch='sm_13', no_extern_c = True, cache_dir = False, options= \
+    module = SourceModule(src, arch='sm_13', no_extern_c = True, options= \
             ['--use_fast_math', '--ptxas-options=-v', \
             '-D NREAL=%d'%nreal, '-D NFUNC=%d'%nfunc, '-D BLOCKSIZE=%d'%threads])
 
     # PRNG initialization
     global rngStates, initRNG
     rngStates = cuda.mem_alloc(40 * total_threads)  # sizeof(curandState) = 40 bytes
-    cuda.memcpy_htod(mod.get_global('rngStates')[0], np.intp(rngStates)) # set pointer in kernel code
-    initRNG = mod.get_function('initRNG')
+    cuda.memcpy_htod(module.get_global('rngStates')[0], np.intp(rngStates)) # set pointer in kernel code
+    initRNG = module.get_function('initRNG')
     initRNG(np.uint32(time.time()), block=(threads,1,1), grid = grid)
 
     # rw data structures (separate for each thread)
@@ -63,10 +61,10 @@ def initialize(function_number, threads = 1, grid = (1,1)):
     global sigma, lambd, bias, o, g, l, o_gpu, o_rows, g_gpu, g_rows, l_gpu
     
     # constant scalars
-    cuda.memcpy_htod(mod.get_global('nreal')[0], np.int32(nreal))
-    cuda.memcpy_htod(mod.get_global('nfunc')[0], np.int32(nfunc))
-    cuda.memcpy_htod(mod.get_global('C')[0], np.double(2000))
-    cuda.memcpy_htod(mod.get_global('global_bias')[0], np.double(0))
+    cuda.memcpy_htod(module.get_global('nreal')[0], np.int32(nreal))
+    cuda.memcpy_htod(module.get_global('nfunc')[0], np.int32(nfunc))
+    cuda.memcpy_htod(module.get_global('C')[0], np.double(2000))
+    cuda.memcpy_htod(module.get_global('global_bias')[0], np.double(0))
 
     # rw arrays (memmory allocation only, no initialization)
     g_trans_x = np.zeros(nreal * total_threads).astype(dtype)
@@ -138,8 +136,8 @@ def initialize(function_number, threads = 1, grid = (1,1)):
                 B[i] += A[i,j] * o[0,j]
         A = cuda.to_device(A)
         B = cuda.to_device(B)
-        cuda.memcpy_htod(mod.get_global('A')[0], np.intp(A))
-        cuda.memcpy_htod(mod.get_global('B')[0], np.intp(B))
+        cuda.memcpy_htod(module.get_global('A')[0], np.intp(A))
+        cuda.memcpy_htod(module.get_global('B')[0], np.intp(B))
         bias[0] = -310.0
     elif function_number == 6:
         fpt = ''.join(open('input_data/rosenbrock_func_data.txt', 'r').readlines()).strip().split()
@@ -152,16 +150,16 @@ def initialize(function_number, threads = 1, grid = (1,1)):
     arrays = ['g_trans_x', 'g_temp_x1', 'g_temp_x2', 'g_temp_x3', 'g_temp_x4', 'g_norm_x']
     for var in arrays:
         globals()[var] = cuda.to_device(globals()[var]) # send to device and save the pointer
-        cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var])) # set pointer in kernel code
+        cuda.memcpy_htod(module.get_global(var)[0], np.intp(globals()[var])) # set pointer in kernel code
 
     # 6 1-dimensional arrays
     arrays = ['g_basic_f', 'g_weight', 'sigma', 'g_norm_f']
     for var in arrays:
         globals()[var] = cuda.to_device(globals()[var])
-        cuda.memcpy_htod(mod.get_global(var)[0], np.intp(globals()[var]))
+        cuda.memcpy_htod(module.get_global(var)[0], np.intp(globals()[var]))
     #lambd = cuda.to_device(lambd)
-    cuda.memcpy_htod(mod.get_global('lambda')[0], lambd)
-    cuda.memcpy_htod(mod.get_global('bias')[0], bias)
+    cuda.memcpy_htod(module.get_global('lambda')[0], lambd)
+    cuda.memcpy_htod(module.get_global('bias')[0], bias)
 
     # 2 2-dimensional arrays (o, g)
     # MAYBE IT SHOULD BE CASTED to 1-d ARRAY for performance?
@@ -170,12 +168,12 @@ def initialize(function_number, threads = 1, grid = (1,1)):
     #o_gpu = cuda.to_device(np.zeros(nfunc).astype(np.intp))
     #o_rows = []
     for i in xrange(o.shape[0]):
-        cuda.memcpy_htod(mod.get_global('o')[0] + i * 50 * 8, o[i,:])
+        cuda.memcpy_htod(module.get_global('o')[0] + i * 50 * 8, o[i,:])
         #row = cuda.to_device(o[i,:])
         #cuda.memcpy_htod(int(o_gpu) + np.intp().nbytes * i, np.intp(row))
         #o_rows.append(row)
         #cuda.memcpy_htod(int(o_gpu) + np.intp().nbytes * i, np.intp(row))
-    #cuda.memcpy_htod(mod.get_global('o')[0], np.intp(o_gpu))
+    #cuda.memcpy_htod(module.get_global('o')[0], np.intp(o_gpu))
 
     # watch out! 'g' is nreal x nreal
     #g = np.linspace(21,21 + nreal*nreal-1,nreal*nreal).reshape((nreal,nreal))
@@ -183,11 +181,11 @@ def initialize(function_number, threads = 1, grid = (1,1)):
     #g_gpu = cuda.to_device(np.zeros(nreal).astype(np.intp))
     #g_rows = []
     for i in xrange(g.shape[0]):
-        cuda.memcpy_htod(mod.get_global('g')[0] + i * 50 * 8, g[i,:])
+        cuda.memcpy_htod(module.get_global('g')[0] + i * 50 * 8, g[i,:])
         #row = cuda.to_device(g[i,:])
         #g_rows.append(row)
         #cuda.memcpy_htod(int(g_gpu) + np.intp().nbytes * i, np.intp(row))
-    #cuda.memcpy_htod(mod.get_global('g')[0], np.intp(g_gpu))
+    #cuda.memcpy_htod(module.get_global('g')[0], np.intp(g_gpu))
 
     # 'l' (3d array) -- flatten to 1d
     l = np.zeros((nfunc,nreal,nreal)).astype(dtype)
@@ -198,7 +196,7 @@ def initialize(function_number, threads = 1, grid = (1,1)):
     print 'l flatten:', l.flatten()
     #l_gpu = cuda.to_device(l.flatten().astype(dtype))
     #print l_gpu
-    cuda.memcpy_htod(mod.get_global('l_flat')[0], l);
+    cuda.memcpy_htod(module.get_global('l_flat')[0], l);
 
     print '--- initialization done ---'
 
@@ -208,7 +206,7 @@ def initialize(function_number, threads = 1, grid = (1,1)):
 def f1(x):
     x = np.matrix(x, dtype)
     initialize(1, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f1')
+    bench = module.get_function('calc_benchmark_func_f1')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
@@ -216,7 +214,7 @@ def f1(x):
 def f2(x):
     x = np.matrix(x, dtype)
     initialize(2, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f2')
+    bench = module.get_function('calc_benchmark_func_f2')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
@@ -224,7 +222,7 @@ def f2(x):
 def f3(x):
     x = np.matrix(x, dtype)
     initialize(3, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f3')
+    bench = module.get_function('calc_benchmark_func_f3')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
@@ -232,7 +230,7 @@ def f3(x):
 def f4(x):
     x = np.matrix(x, dtype)
     initialize(4, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f4')
+    bench = module.get_function('calc_benchmark_func_f4')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
@@ -240,7 +238,7 @@ def f4(x):
 def f5(x):
     x = np.matrix(x, dtype)
     initialize(5, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f5')
+    bench = module.get_function('calc_benchmark_func_f5')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
@@ -248,17 +246,17 @@ def f5(x):
 def f6(x):
     x = np.matrix(x, dtype)
     initialize(6, threads = x.shape[0])
-    bench = mod.get_function('calc_benchmark_func_f6')
+    bench = module.get_function('calc_benchmark_func_f6')
     res = np.zeros(x.shape[0], dtype)
     bench(cuda.In(x), cuda.Out(res), block=(x.shape[0],1,1))
     return res
 
 def test_time(blocksize = 100, blocks = 1, repeat = 1):
-    global mod
+    global module
     nreal = 50
     x = (np.random.random(nreal * blocksize * blocks) - 0.5) * 200
     initialize(6, threads = blocksize, grid = (1,blocks))
-    bench = mod.get_function('test_time')
+    bench = module.get_function('test_time')
     res = np.zeros(blocks * blocksize, dtype)
     t = bench(cuda.In(x), cuda.Out(res), np.int32(repeat),block=(blocksize,1,1), grid = (1,blocks), time_kernel = True)
     return t
