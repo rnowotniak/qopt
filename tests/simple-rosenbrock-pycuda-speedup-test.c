@@ -4,7 +4,7 @@
 #include <sys/time.h>
 
 #define BLOCK 40
-#define REPEAT 250
+#define REPEAT 2500
 #define DIM 50
 
 double rosenbrock (double *x, int dim)
@@ -21,8 +21,8 @@ double rosenbrock (double *x, int dim)
 
 double cec2005complex(double *in, int dim) {
     int i;
-    double x;
-    double y;
+    float x;
+    float y;
     for (i = 0; i < 1e6; i++) {
         x = 5.55;
         x = x + x;
@@ -65,16 +65,20 @@ int main() {
 
     double values[BLOCK];
 
+    int evaluations = 0;
+
     gettimeofday(&tv1, &tz1);
     for (j = 0; j < REPEAT; j++) {
         for (i = 0; i < BLOCK; i++) {
             values[i] = rosenbrock(((double*)DATA) + i * DIM, DIM);
+	    evaluations++;
         }
     }
     gettimeofday(&tv2, &tz2);
 
-    tdiff = (tv2.tv_sec - tv1.tv_sec) + 1.0f * (tv2.tv_usec - tv1.tv_usec) / 1e6;
-    printf("%f seconds\n", tdiff);
-    printf("performance: %f (evals / second)\n", 1.0 * BLOCK * REPEAT / tdiff);
+    tdiff = (tv2.tv_sec - tv1.tv_sec) * 1e6 + 1.0f * (tv2.tv_usec - tv1.tv_usec);
+    printf("evals: %d\n", evaluations);
+    printf("%f microseconds\n", tdiff);
+    printf("performance: %f (evals / microsecond)\n", 1.0 * BLOCK * REPEAT / tdiff);
 }
 
