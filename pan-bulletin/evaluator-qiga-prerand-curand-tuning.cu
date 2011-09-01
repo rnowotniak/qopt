@@ -19,6 +19,10 @@
 #include <cuda_runtime_api.h>
 #include <curand_kernel.h>
 
+#ifndef TARGET_FITNESS
+#define TARGET_FITNESS 1440
+#endif
+
 #define EPSILON 10e-9f
 #undef M_PI
 #undef M_PI_2
@@ -26,19 +30,6 @@
 #define M_PI	3.14159265358979323846f	/* pi float */
 #define M_PI_2	1.57079632679489661923f	/* pi/2 float */
 #define M_PI_4	0.78539816339744830962f	/* pi/4 float */
-
-/*
- * QiGA Algorithm settings and data structures
- */
-#define MAXGEN 500
-const int chromlen = 250;
-const int popsize = 10;
-__shared__ float Q[popsize][chromlen]; // quantum population
-__shared__ char P[popsize][chromlen];  // observed classical population
-__shared__ float fvals[popsize];       // fitness of the individuals
-__shared__ char best[chromlen];        // best chromosome in the population
-__shared__ float bestval;              // fitness of the best individual
-
 
 /*
  * GPU stuff
@@ -53,6 +44,20 @@ __shared__ float bestval;              // fitness of the best individual
 #ifndef GRIDHEIGHT
 #define GRIDHEIGHT 1
 #endif
+
+/*
+ * QiGA Algorithm settings and data structures
+ */
+#define MAXGEN 500
+const int chromlen = 250;
+const int popsize = 10;
+__shared__ float Q[popsize][chromlen]; // quantum population
+__shared__ char P[popsize][chromlen];  // observed classical population
+__shared__ float fvals[popsize];       // fitness of the individuals
+__shared__ char best[chromlen];        // best chromosome in the population
+__shared__ float bestval;              // fitness of the best individual
+__device__ float evalsperformed[GRIDWIDTH*GRIDHEIGHT];   // number of evaluations performed
+
 
 const int grid_width = GRIDWIDTH;
 const int grid_height = GRIDHEIGHT;
@@ -546,6 +551,8 @@ __global__ void qiga(char *BESTgmem, float *FITNESSgmem, curandState *rngStates)
 	int t = 0;
 	bestval = -1;
 
+	evalsperformed[BID] = MAXGEN * popsize;
+
 	initialize();
 	__syncthreads();
 	observe(rngStates, t);
@@ -568,6 +575,10 @@ __global__ void qiga(char *BESTgmem, float *FITNESSgmem, curandState *rngStates)
 		update();
 		__syncthreads();
 		storebest();
+		if (bestval > TARGET_FITNESS) {
+			evalsperformed[BID] = t * popsize;
+			break;
+		}
 		__syncthreads();
 	}
 
@@ -650,9 +661,9 @@ int main() {
 			float data[2][2][2];
 			int scanfret = scanf("%f %f %f %f %f",
 					&data[0][1][1], &data[1][0][0], &data[1][0][1], &data[1][1][0], &data[1][1][1]);
-            if (scanfret == EOF) {
-                break;
-            }
+			if (scanfret == EOF) {
+				break;
+			}
 			safeCall(cudaMemcpyToSymbol(lookup_table, data, sizeof(data)));
 			//float x;
 			//safeCall(cudaMemcpyFromSymbol(&x, lookup_table, sizeof(float)));
@@ -675,20 +686,24 @@ int main() {
 			gettimeofday(&stop_tm, 0);
 			//fprintf(stderr,"dev: %d, %g seconds\n", curdev, (1e6 * (stop_tm.tv_sec - start_tm.tv_sec) + (stop_tm.tv_usec - start_tm.tv_usec))/1e6);
 
+			float h_evalsperformed[GRIDWIDTH*GRIDHEIGHT];   // number of evaluations performed
+			safeCall(cudaMemcpyFromSymbol(h_evalsperformed, evalsperformed, sizeof(evalsperformed)));
+
 			safeCall(cudaMemcpy(h_best, d_best, chromlen * POPULATIONS, cudaMemcpyDeviceToHost));
 			safeCall(cudaMemcpy(h_fit, d_fit, sizeof(float) * POPULATIONS, cudaMemcpyDeviceToHost));
 
 			safeCall(cudaThreadSynchronize());
-			float avg = 0;
+			float evals_avg = 0;
 			for (int r = 0; r < POPULATIONS; r++) {
-				avg += h_fit[r];
-				//printf("-- results of rep: %d --\n", r);
-				//fwrite(h_best + r * chromlen, 1, chromlen, stdout);
-				//printf("\n");
-				//printf("fitness: %f\n", h_fit[r]);
+				evals_avg += h_evalsperformed[r];
 			}
-			avg /= POPULATIONS;
-			printf("%f\n", avg);
+			evals_avg /= POPULATIONS;
+			float fit_avg = 0;
+			for (int r = 0; r < POPULATIONS; r++) {
+				fit_avg += h_fit[r];
+			}
+			fit_avg /= POPULATIONS;
+			printf("%f %f\n", evals_avg, fit_avg);
 			// printf("d_fit: %f\n", h_fit[0]); // XXX
 
 			fflush(stdout);
