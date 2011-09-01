@@ -20,10 +20,13 @@ def eval_func(genome):
         proc.stdin.write('%s\n' % s)
         line = proc.stdout.readline()
         log.write('< ' + line)
-        result = float(line)
-        if result > 0 and result < 2000:
+        evals, avg_fit = [float(x) for x in line.split()]
+        if avg_fit > 0 and avg_fit < 2000:
             break
-    return result
+    # actual definition of new meta-fitness mf_2
+    if evals < 5000:
+        return evals
+    return evals + (1450 - avg_fit)
 
 #os.environ['LD_LIBRARY_PATH'] = '/opt/MatlabR2008b/bin/glnx86'
 proc = subprocess.Popen('./evaluator-qiga-prerand-curand-tuning', shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -61,7 +64,7 @@ def run_main():
     ga.setGenerations(50)
     ga.setPopulationSize(10)
     ga.setMutationRate(1./5/3)
-    ga.setMinimax(Consts.minimaxType['maximize'])
+    ga.setMinimax(Consts.minimaxType['minimize'])
     print ga
 
     # Do the evolution

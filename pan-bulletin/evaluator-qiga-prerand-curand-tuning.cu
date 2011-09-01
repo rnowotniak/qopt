@@ -20,7 +20,7 @@
 #include <curand_kernel.h>
 
 #ifndef TARGET_FITNESS
-#define TARGET_FITNESS 1440
+#define TARGET_FITNESS 1450
 #endif
 
 #define EPSILON 10e-9f
