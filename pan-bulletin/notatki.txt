@@ -1,0 +1,5 @@
+speedup test:
+
+
+    for w in `seq 1000 100 3000`; do echo -n "$w    "; nvcc -DGRIDWIDTH=$[w/2] -arch sm_13 speedup-test.cu && ./a.out 2>/dev/null | grep 'avg run' | awk '{print $4}'    ; done
+
