@@ -25,7 +25,7 @@ pylab.grid(True, which='minor')
 #pylab.plot(gpu[:,0], gpu[:,1], 'ro-', label='GPU (nVidia GTX 295)')
 #pylab.plot(cpu[:,0], cpu[:,1], 's-', label='CPU (Intel Core i7)')
 
-pylab.plot(data[:,0], data[:,1], 'x-', label='bla')
+pylab.plot(data[:,0], data[:,1], 'o-', label='bla', markersize=3)
 #pylab.legend(loc=1)
 pylab.ylim((105,127))
 pylab.xlim((0,10000))
