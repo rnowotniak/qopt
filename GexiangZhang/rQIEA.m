@@ -1,11 +1,12 @@
 % Fsph
 
+
 function [final_value]=rQIEA(maxNoE)
 
 global initial_flag;
 
 % initialization
-Ps=20; % the size of population
+Ps=50; % the size of population
 L=30;   % the num of parameters
 PsL=Ps*L;
 minpara=-100*ones(1,L);
@@ -57,6 +58,7 @@ while flag>0
         end
         fitness=0;
         for fitnum=1:L
+            % sphere function
             fitness=fitness+x(1,fitnum)*x(1,fitnum); 
         end
         if fitness<midminfitness
@@ -121,6 +123,7 @@ while flag>0
             posL4=max(posL1,posL2);
             temp1=Q(1,(posP1-1)*L+posL3:(posP1-1)*L+posL4);
             temp2=Q(2,(posP1-1)*L+posL3:(posP1-1)*L+posL4);
+
             Q(1,(posP1-1)*L+posL3:(posP1-1)*L+posL4)=Q(1,(posP2-1)*L+posL3:(posP2-1)*L+posL4);
             Q(2,(posP1-1)*L+posL3:(posP1-1)*L+posL4)=Q(2,(posP2-1)*L+posL3:(posP2-1)*L+posL4);
             Q(1,(posP2-1)*L+posL3:(posP2-1)*L+posL4)=temp1;
@@ -129,3 +132,5 @@ while flag>0
     end    
 end
 final_value=minfitness;
+
+
