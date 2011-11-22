@@ -9,10 +9,10 @@ global initial_flag;
 Ps=50; % the size of population
 L=30;   % the num of parameters
 PsL=Ps*L;
-minpara=-100*ones(1,L);
-MINPARA=-100;
-maxpara=100*ones(1,L);
-MAXPARA=100;
+minpara=-32*ones(1,L);
+MINPARA=-32;
+maxpara=32*ones(1,L);
+MAXPARA=32;
 range=(MAXPARA-MINPARA)*ones(1,L);
 gen=0;
 flag=1;
@@ -40,7 +40,7 @@ while flag>0
     for i=1:Ps
         for j=1:L
             if rr(1,(i-1)*L+j)<0.5
-                para=Q(1,i)^2;
+                para=Q(1,i)^2;   % is it OK?  i is in [1:Ps].   Gexiang is wrong here, I think!
             else
                 para=Q(2,i)^2;
             end
@@ -56,11 +56,39 @@ while flag>0
         for xnum=1:L
             x=[x P(1,(i-1)*L+xnum)];
         end
-        fitness=0;
-        for fitnum=1:L
-            % sphere function
-            fitness=fitness+x(1,fitnum)*x(1,fitnum); 
+        
+        % Griewank
+%         fitness=0;
+%         for fitnum=1:L
+%             fitness = fitness + x(1,fitnum) * x(1,fitnum);
+%         end
+%         fitness = fitness / 4000;
+%         prod = 1.;
+%         for fitnum=1:L
+%             prod = prod * cos(x(1,fitnum)/sqrt(fitnum));
+%         end
+%         fitness = fitness - prod + 1;
+        
+        % Schwefel
+%         fitness = 0;
+%         for fitnum = 1:L
+%             fitness = fitness + x(1,fitnum) + sin(sqrt(abs(x(1,fitnum))));
+%         end
+%         fitness = 418.9829 * L - fitness;
+
+        % Ackley
+        foo = 0;
+        for fitnum = 1:L
+            foo = foo + x(1,fitnum) * x(1,fitnum);
         end
+        foo = -20. * exp(sqrt(foo / L));
+        bar = 0;
+        for fitnum = 1:L
+            bar = bar + cos(2 * pi * x(1,fitnum));
+        end
+        bar = exp(bar / L);
+        fitness = foo - bar + 20 + exp(1);
+
         if fitness<midminfitness
             midminfitness=fitness;
             angle=Q(:,(i-1)*L+1:i*L);
@@ -131,6 +159,7 @@ while flag>0
         end
     end    
 end
+minx
 final_value=minfitness;
 
 

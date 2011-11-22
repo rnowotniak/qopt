@@ -41,7 +41,7 @@ def rotation(aa, bb, angleaa, anglebb):
 popsize = 50
 dim = 30
 
-range_ = (-100,100)
+range_ = (-30,30)
 
 Q = np.zeros([popsize, 2, dim])
 P = np.zeros([popsize, dim])
@@ -59,7 +59,7 @@ minfitness = float('inf')
 b = None
 termination = False
 NoFE = 0
-MaxNoFE = 1.5e5
+MaxNoFE = 1.5e3
 
 while not termination:
     # Construct P(t) -- very specific to rQIEA algorithm
