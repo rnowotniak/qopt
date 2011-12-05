@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH="$PATH:/opt/MatlabR2011a/bin"
+
 MATLAB_PATH=/opt/MatlabR2011a/
 
 export LD_LIBRARY_PATH=$MATLAB_PATH/bin/glnx86:$MATLAB_PATH/runtime/glnx86

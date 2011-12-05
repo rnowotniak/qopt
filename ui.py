@@ -25,7 +25,7 @@ import re
 import urwid
 
 palette = [
-        ('normal', 'dark gray', 'black'),
+        ('normal', 'light gray', 'black'),
         ('banner', 'black', 'light gray', 'standout,underline'),
         ('header', 'yellow', 'dark blue', 'bold,standout,underline'),
         ('header2', 'yellow', 'dark red', 'bold,standout,underline'),
@@ -54,14 +54,12 @@ def ui(input):
             os.kill(p.pid, 9)
         subprocesses = []
         footer1.set_text(footer1_txt + str(subprocesses))
+    elif input == 'f1':
+        urwid.Overlay(urwid.Text('blablabla ?'), top, 'center', 20, 'middle', 30)
     elif input == 'f8':
         raise urwid.ExitMainLoop()
     elif input == 'ctrl c':
         raise urwid.ExitMainLoop()
-    elif input == 'enter':
-        txt.set_text(('header', 'value: ' + ask.edit_text))
-        ask.edit_text = ''
-        return
     elif type(input) in (type(()), type([])):
         # mouse press
         return
@@ -198,7 +196,8 @@ class TreeNodeWidget(urwid.TreeWidget):
             self._w.attr = 'fm_dir'
             self.expanded = node.get_depth() == 0 or \
                     node.get_key().split('/')[-1] in \
-                    ('CUDA', 'junk', 'benchmarks', 'PL-GRID', 'experiments', 'contrib', \
+                    ('CUDA', 'benchmarks', 'PL-GRID', 'experiments', 'contrib', \
+                    # 'junk', \
                     'algorithms')
             self.update_expanded_icon()
         else:
@@ -302,7 +301,7 @@ class FM(urwid.TreeListBox):
             f = self.get_focus()[1].get_key()
             if not os.path.isdir(f):
                 walker = LineWalker(f)
-                preview.set_edit_text(str(kolumny.widget_list[2].original_widget.body[2]))
+                #preview.set_edit_text(str(kolumny.widget_list[2].original_widget.body[2]))
                 kolumny.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(urwid.ListBox(walker), 10)
                 #kolumny.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(walker, 10)
                 # s = open(f).read()
@@ -324,15 +323,15 @@ kolumny = urwid.Columns([
     ('fixed', 30, urwid.AttrMap(fm, 'fm')),
     ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
     ('weight', 3, urwid.AttrMap(urwid.ListBox(urwid.SimpleListWalker([
-        urwid.Text('Preview:'),
+        urwid.AttrMap(urwid.Text('Preview:'), 'main'),
         urwid.Divider('-'),
         urwid.BoxAdapter(urwid.Filler(preview, 'top'), 10),
         urwid.Divider('-'),
-        urwid.Text('Output:'),
+        urwid.AttrMap(urwid.Text('Output:'), 'main'),
         urwid.Divider('-'),
         output,
         urwid.Divider('-'),
-        ])), 'main')),
+        ])), 'normal')),
     ], focus_column=0, dividechars=0)
 
 
@@ -344,6 +343,7 @@ footer = urwid.Pile([
     urwid.AttrMap(footer1, 'header2'),
     urwid.AttrMap(urwid.Text([
         ('key', 'Q'),      ':Quit ',
+        ('key', 'enter'),  ':Execute ',
         ('key', 'e'),      ':edit ',
         ('key', 'E'),      ':edit in new window ',
         ('key', 'F1'),     ':Help ',
