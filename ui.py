@@ -198,7 +198,8 @@ class TreeNodeWidget(urwid.TreeWidget):
             self._w.attr = 'fm_dir'
             self.expanded = node.get_depth() == 0 or \
                     node.get_key().split('/')[-1] in \
-                    ('CUDA', 'junk', 'benchmarks', 'PL-GRID', 'experiments', 'contrib')
+                    ('CUDA', 'junk', 'benchmarks', 'PL-GRID', 'experiments', 'contrib', \
+                    'algorithms')
             self.update_expanded_icon()
         else:
             self._w.attr = 'fm_entry'
