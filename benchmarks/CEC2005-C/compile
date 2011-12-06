@@ -1,0 +1,5 @@
+# For intel c++ compiler
+# Last edited by Tiwaris on 10 March 05
+#icc -O3 -xN -tpp7 -ipo *.c -o main -lm -L./sprng/lib -llcg; strip --strip-all main
+icc -strict_ansi -long_double *.c -o main -L./sprng/lib -llcg
+

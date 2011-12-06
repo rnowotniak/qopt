@@ -1,0 +1,36 @@
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = ranlib
+CC = gcc
+CLD = $(CC)
+F77 = f77
+F77LD = $(F77)
+FFXN =  -DAdd_
+FSUFFIX = F
+
+MPIF77 = $(F77) 
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+MPIDIR = 
+MPILIB = 
+
+# If only the C call is required, then you can use the addition flag
+# -D_LONG_LONG. Fortran programs will not link then. Set F77 to echo to
+# compile the C version alone. This may run three times faster.
+
+
+CFLAGS = -O $(MPIDEF) -D$(PLAT)
+CLDFLAGS =  -O 
+FFLAGS = -fast -O3 $(MPIDEF) -D$(PLAT)
+F77LDFLAGS = -fast -O3 
+
+CPP = f77 -F
+

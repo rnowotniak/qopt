@@ -1,0 +1,90 @@
+echo
+echo lcg: Checking Default C interface:
+./check.clcg < lcg.data 2> /dev/null
+echo
+echo lcg: Checking Simple C interface:
+./check_sim.clcg < lcg.data 2> /dev/null
+echo
+echo lcg: Checking C interface with pointer checking:
+./check_ptr.clcg < lcg.data 2> /dev/null
+echo
+echo lcg: Checking Default FORTRAN interface:
+./check.flcg < lcg.data 2> /dev/null
+echo
+echo lcg: Checking Simple FORTRAN interface:
+./check_sim.flcg < lcg.data 2> /dev/null
+echo
+echo lcg: Checking FORTRAN interface with pointer checking:
+./check_ptr.flcg < lcg.data 2> /dev/null
+echo
+echo lfg: Checking Default C interface:
+./check.clfg < lfg.data 2> /dev/null
+echo
+echo lfg: Checking Simple C interface:
+./check_sim.clfg < lfg.data 2> /dev/null
+echo
+echo lfg: Checking C interface with pointer checking:
+./check_ptr.clfg < lfg.data 2> /dev/null
+echo
+echo lfg: Checking Default FORTRAN interface:
+./check.flfg < lfg.data 2> /dev/null
+echo
+echo lfg: Checking Simple FORTRAN interface:
+./check_sim.flfg < lfg.data 2> /dev/null
+echo
+echo lfg: Checking FORTRAN interface with pointer checking:
+./check_ptr.flfg < lfg.data 2> /dev/null
+echo
+echo lcg64: Checking Default C interface:
+./check.clcg64 < lcg64.data 2> /dev/null
+echo
+echo lcg64: Checking Simple C interface:
+./check_sim.clcg64 < lcg64.data 2> /dev/null
+echo
+echo lcg64: Checking C interface with pointer checking:
+./check_ptr.clcg64 < lcg64.data 2> /dev/null
+echo
+echo lcg64: Checking Default FORTRAN interface:
+./check.flcg64 < lcg64.data 2> /dev/null
+echo
+echo lcg64: Checking Simple FORTRAN interface:
+./check_sim.flcg64 < lcg64.data 2> /dev/null
+echo
+echo lcg64: Checking FORTRAN interface with pointer checking:
+./check_ptr.flcg64 < lcg64.data 2> /dev/null
+echo
+echo cmrg: Checking Default C interface:
+./check.ccmrg < cmrg.data 2> /dev/null
+echo
+echo cmrg: Checking Simple C interface:
+./check_sim.ccmrg < cmrg.data 2> /dev/null
+echo
+echo cmrg: Checking C interface with pointer checking:
+./check_ptr.ccmrg < cmrg.data 2> /dev/null
+echo
+echo cmrg: Checking Default FORTRAN interface:
+./check.fcmrg < cmrg.data 2> /dev/null
+echo
+echo cmrg: Checking Simple FORTRAN interface:
+./check_sim.fcmrg < cmrg.data 2> /dev/null
+echo
+echo cmrg: Checking FORTRAN interface with pointer checking:
+./check_ptr.fcmrg < cmrg.data 2> /dev/null
+echo
+echo mlfg: Checking Default C interface:
+./check.cmlfg < mlfg.data 2> /dev/null
+echo
+echo mlfg: Checking Simple C interface:
+./check_sim.cmlfg < mlfg.data 2> /dev/null
+echo
+echo mlfg: Checking C interface with pointer checking:
+./check_ptr.cmlfg < mlfg.data 2> /dev/null
+echo
+echo mlfg: Checking Default FORTRAN interface:
+./check.fmlfg < mlfg.data 2> /dev/null
+echo
+echo mlfg: Checking Simple FORTRAN interface:
+./check_sim.fmlfg < mlfg.data 2> /dev/null
+echo
+echo mlfg: Checking FORTRAN interface with pointer checking:
+./check_ptr.fmlfg < mlfg.data 2> /dev/null

@@ -1,0 +1,25 @@
+SHELL = /bin/sh
+include ../make.CHOICES
+SRCDIR = ../SRC
+include $(SRCDIR)/make.$(PLAT)
+
+.SUFFIXES :
+
+.SUFFIXES : .f .F
+
+
+.F.f : 
+	@if [ -f $*.i ] ; then \
+	rm $*.i ;\
+	fi 
+	$(CPP) -I../SRC -DCONVERT $*.F
+	@if [ -f $*.i ] ; then \
+	mv $*.i  $*.f ;\
+	fi 
+
+#.F.f: 
+#	$(CPP) -WF,-I$(SRCDIR)  -WF,-DCONVERT $*.F
+#	@if [ -f F$*.f ] ; then \
+#	mv F$*.f  $*.f ;\
+#	fi 
+

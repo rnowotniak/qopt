@@ -1,0 +1,178 @@
+/* Sample main to demonstrate the use of various functions */
+/* Please go through this file carefully */
+/* It demonstrates the use of various routines */
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <math.h>
+# include <sys/times.h>
+# include <unistd.h>
+
+# include "global.h"
+# include "sub.h"
+# include "rand.h"
+
+int main (int argc, char**argv)
+{
+    FILE *fpt1, *fpt2;
+    int i, j;
+    long double *x;
+    long double *f;
+    long hertz;
+    char *s;
+    char c;
+    long double temp;
+    struct tms start_time, finish_time;
+    long double elapsed_time, act_time;
+    s = (char *)malloc(100*sizeof(char));
+    if (argc<6)
+    {
+        fprintf(stderr,"\n Usage ./main n nreal range density file_name\n");
+        exit(0);
+    }
+    nfunc = (int)atoi(argv[1]);
+    nreal = (int)atoi(argv[2]);
+    bound = (long double)atof(argv[3]);
+    density = (int)atoi(argv[4]);
+    sprintf(s,"%s",argv[5]);
+    if (nfunc<1)
+    {
+        fprintf(stderr,"\n Wrong value of 'nfunc' entered\n");
+        exit(0);
+    }
+    if (nreal!=2 && nreal!=10 && nreal!=30 && nreal!=50)
+    {
+        fprintf(stderr,"\n Wrong value of 'nreal' entered, only 2, 10, 30, 50 variables are supported\n");
+        exit(0);
+    }
+    if (bound<EPS)
+    {
+        fprintf(stderr,"\n Wrong value of 'bound' entered\n");
+        exit(0);
+    }
+    if (density<10)
+    {
+        fprintf(stderr,"\n Enter at least 10 \n");
+        exit(0);
+    }
+    printf("\n Number of basic functions = %d",nfunc);
+    printf("\n Number of real variables  = %d",nreal);
+    printf("\n Variable bound            = %LE",bound);
+    printf("\n Mesh density              = %d",density);
+    printf("\n File name                 = %s",s);
+    randomize();
+    initrandomnormaldeviate();
+
+	/* nreal and nfunc need to be initialized before calling these routines */
+
+	/* Routine to allocate memory to global variables */
+    allocate_memory();
+
+	/* Routine the initalize global variables */
+    initialize();
+
+	/* provided for timing the function computation (not necessary) */
+    hertz = sysconf(_SC_CLK_TCK);
+
+	/* For test problems 15 to 25, we need to calculate a normalizing quantity */
+    /* The line (79) below should be uncommented only for functions 15 to 25 */
+	/*calc_benchmark_norm();*/    /* Comment this line for functions 1 to 14 */
+
+	/* Variable vector */
+	x = (long double *)malloc(nreal*sizeof(long double));
+
+	/* If nreal=2, then generate a 3D plot of function profile */
+	/* provided for the sake of visualizing function profiles :-) */
+	if (nreal==2)
+    {
+        f = (long double *)malloc(sizeof(long double));
+        fpt1 = fopen("gnu_plot.out","w");
+        if (fpt1==NULL)
+        {
+            fprintf(stderr,"\n Cannot open file for writing\n");
+            exit(0);
+        }
+        fpt2 = fopen("mat_plot.out","w");
+        if (fpt2==NULL)
+        {
+            fprintf(stderr,"\n Cannot open file for writing\n");
+            exit(0);
+        }
+        fprintf(fpt1,"# output data file\n");
+        /* Following loop has been hard-coded for D=2 */
+        times (&start_time);
+        for (i=-density; i<=density; i++)
+        {
+            for (j=-density; j<=density; j++)
+            {
+                x[0] = ((long double)i/(1.0*density))*bound;
+                x[1] = ((long double)j/(1.0*density))*bound;
+                f[0] = calc_benchmark_func(x);
+                fprintf(fpt1,"%LE %LE %LE\n",x[0],x[1],f[0]);
+                fprintf(fpt2,"%LE %LE %LE\n",x[0],x[1],f[0]);
+                /*printf("%LE %LE %LE\n",x[0],x[1],f[0]);*/
+            }
+            fprintf(fpt1,"\n");
+        }
+        times (&finish_time);
+        elapsed_time = (long double)(finish_time.tms_utime - start_time.tms_utime);
+        act_time = elapsed_time/(long double)hertz;
+        printf("\n Time (inc. I/O) in secs.  = %LE",act_time);
+        fclose(fpt1);
+        fclose(fpt2);
+        free (f);
+    }
+
+	/* if nreal is not equal to 2, then get variable vector from some other source */
+    else
+    {
+		/* Hard-coded for reading the variable vector from sample data files */
+        f = (long double *)malloc(10*sizeof(long double));
+        fpt1 = fopen(s,"r");
+        if (fpt1==NULL)
+        {
+            printf("\n Could not open file for reading, hence exiting \n");
+            exit(0);
+        }
+        fpt2 = fopen("output.out","w");
+        if (fpt2==NULL)
+        {
+            printf("\n Could not open file for writing, hence exiting \n");
+            exit(0);
+        }
+        for (j=0; j<10; j++)
+        {
+            for (i=0; i<nreal; i++)
+            {
+                fscanf(fpt1,"%Lf",&x[i]);
+                fprintf(fpt2,"%LE\t",x[i]);
+            }
+            do
+            {
+                fscanf(fpt1,"%c",&c);
+            }
+            while (c!='\n');
+            f[j] = calc_benchmark_func(x);
+            fprintf(fpt2,"\n");
+        }
+        for (j=0; j<10; j++)
+        {
+            fscanf(fpt1,"%Lf",&temp);
+            do
+            {
+                fscanf(fpt1,"%c",&c);
+            }
+            while (c!='\n');
+            fprintf(fpt2,"%1.20LE\t%1.20LE\t%1.20LE\n",temp,f[j],temp-f[j]);
+            printf("\n f[%d] = %LE",j+1,f[j]);
+        }
+        fclose(fpt1);
+        fclose(fpt2);
+        free (f);
+    }
+    free_memory();
+    free (x);
+    free (s);
+    printf("\nRoutine exited without any error.\n");
+    return(1);
+}

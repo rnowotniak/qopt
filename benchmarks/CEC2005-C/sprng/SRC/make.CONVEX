@@ -1,0 +1,34 @@
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = ranlib
+CC = c89
+CLD = $(CC)
+F77 = fort77
+F77LD = $(F77)
+FFXN = -DNoChange
+FSUFFIX = F
+
+MPIF77 = $(F77)
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+MPIDEF = -DSPRNG_MPI -I/opt/mpi/include #Only if you plan to use MPI
+MPIDIR =  -L/opt/mpi/lib/pa1.1
+MPILIB = -lpmpi -lmpi /usr/lib/libail.sl -lcnx_syscall
+
+CFLAGS = +O4 +U77 +Odataprefetch +Olibcalls $(MPIDEF) +e -D$(PLAT) -D_LONG_LONG
+CLDFLAGS = +O4 +U77 +Odataprefetch +Olibcalls +e
+FFLAGS = +O4  +U77 +Odataprefetch +Olibcalls $(MPIDEF)
+F77LDFLAGS = +O4  +U77 +Odataprefetch +Olibcalls
+
+CPP =fort77 -F 
+
+#The following sets inlining options. This can be deleted to get slightly 
+# more inefficient FORTRAN and simple interface codes.
+INLINEOPT = +Oinline=get_rn_int,get_rn_dbl,get_rn_flt,get_rn_int_simple,get_rn_flt_simple,get_rn_dbl_simple

@@ -1,0 +1,34 @@
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = echo
+CC = c89
+CLD = $(CC)
+#Set F77 to "echo" if no FORTRAN 77 compiler is available
+F77 = f90
+F77LD = $(F77)
+FFXN =  -DUpCase
+FSUFFIX = F
+
+MPIF77 = $(F77) 
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+# The mpt module automatically links MPI library
+MPIDIR =  
+MPILIB =  
+
+
+
+CFLAGS = -O3 -D$(PLAT) $(MPIDEF)
+CLDFLAGS =  -O3 
+FFLAGS = -F -O3 $(MPIDEF) -D$(PLAT)  -DPOINTER_SIZE=8
+F77LDFLAGS = -O3 
+
+CPP = f90 -e P -F 

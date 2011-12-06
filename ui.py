@@ -34,6 +34,7 @@ palette = [
         ('fm_entry', 'light gray', 'black'),
         ('fm_dir', 'white', 'black'),
         ('fm_selected', 'black', 'light green'),
+        ('fm_executable', 'light red', 'black'),
         ('footer', 'light green', 'dark blue', 'bold'),
         ('key', 'light green', 'dark blue', 'bold'),
         ('divider', 'light green', 'dark blue', 'bold'),
@@ -200,6 +201,8 @@ class TreeNodeWidget(urwid.TreeWidget):
                     # 'junk', \
                     'algorithms')
             self.update_expanded_icon()
+        elif os.access(node.get_key(), os.X_OK):
+            self._w.attr = 'fm_executable'
         else:
             self._w.attr = 'fm_entry'
         self._w.focus_attr = 'fm_selected'
@@ -271,6 +274,7 @@ class DirectoryNode(urwid.ParentNode):
                 sorted(filter(lambda f: os.path.isfile(k+f), os.listdir(k)))
         c = filter(lambda f: f not in ('.git', 'SdkMasterLog.csv', 'deviceQuery.txt'), c)
         c = filter(lambda f: not f.startswith('.'), c)
+        c = filter(lambda f: not f.endswith('.pyc'), c)
         c = map(lambda f: os.path.join(self.get_key(), f), c)
         return c
     def load_child_node(self, key):
@@ -309,6 +313,9 @@ class FM(urwid.TreeListBox):
         elif key == 'E':
             #os.spawnlp(os.P_NOWAIT, 'xterm', 'xterm', '-e', 'vim "%s"' % str(self.get_focus()[1].get_key()))
             os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
+        elif key in [str(c) for c in xrange(10)]:
+            # parallel = int(key)
+            footer1.set_text(key)
         self.__super.keypress(size, key)
         return key
 

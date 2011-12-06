@@ -1,0 +1,9 @@
+SPRNG provides both FORTRAN and C (also C++) interfaces for the use of
+the parallel random number generator libraries. 
+
+Further documentation is available at the following URL:  
+http://www.ncsa.uiuc.edu/Apps/CMP/RNG/RNG-home.html
+
+sprng.html.tar too contains similar documentation. Please execute: 
+zcat tar xvf sprng.html.tar.Z | tar xvof -  
+and read the file toc.html in the www directory with your web browser.

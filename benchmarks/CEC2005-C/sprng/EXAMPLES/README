@@ -1,0 +1,63 @@
+             ___ Example programs to demonstrate SPRNG use ___
+
+
+This directory contains some example programs to demonstrate the use
+of the SPRNG library. Fortran program file names end in ".F" and C
+program names end in ".c". Some programs are sequential, while other
+require MPI calls. The latter file names have the suffix "_mpi" before
+the ".c" or ".F" extension. Besides, the FORTRAN programs have an "f"
+suffix just before the "_mpi" or ".F".In the listing below, we give
+the base name for each program. (The '.C' extension is used for a
+couple of C++ examples.)
+
+For example, "sprng" will be associated with a file called "sprng.c"
+which demonstrates the default interface in C and a corresponding
+executable called "sprng", a file called "sprngf.F" which demonstrates
+the default interface in FORTRAN with a corresponding executable
+"sprngf". The corresponding files for the simple interface have a
+"-simple" suffix, namely:"sprng-simple.c", "sprng-simple",
+"sprngf-simple.F" and "sprngf-simple". 
+
+Separate programs are not available for the interface with pointer
+checking. This interface is demonstrated by defining the macro
+"CHECK_POINTERS" before including the SPRNG header file, in the
+default interface examples. We have commented out a line that defines
+this macro in each file. Please uncomment this line in order to invoke
+this interface. 
+
+Examples are provided for each interface, unless
+stated otherwise.
+
+The file 'Makefile' has the directives to compile these
+programs. "make" or "make serial" builds only the sequential
+programs. "make mpi" build only the programs that use MPI. "make all"
+builds all programs.
+
+1. sprng:        Demonstrates the use of sprng and isprng.
+
+2. sprng_mpi:    Demonstrates sprng use with one stream per process.
+
+3. fsprng_mpi:   Demonstrates use of the single precision generator.
+
+4. seed:         Demonstrates the use make_sprng_seed.
+
+5. seed_mpi:     Demonstrates the use of make_seed with MPI.
+
+6. checkpoint:   Demonstrates check-pointing to store the state of a stream.
+
+7. message_mpi:  Demonstrates passing a stream to another process.
+
+8. 2streams_mpi: Demonstrates use of multiple streams on each process. 
+                   Not available for the simple interface. 
+
+9. invalid_ID:   Demonstrates invalid ID handling in the interface with 
+                 pointer checking. It is not available in the other interfaces.
+
+10. simple:      Demonstrates SPRNG calls without initialization in the 
+                 simple interface alone.
+
+11. pi:          A simple Monte Carlo application to calculate the value of pi.
+                   Not available for the default interface.
+
+Please look at http://www.ncsa.uiuc.edu/Apps/SPRNG/www/examples.html
+for further details.

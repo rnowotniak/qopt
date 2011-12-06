@@ -1,0 +1,41 @@
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = echo
+CC = /afs/ncsa/packages/GNU/gcc-2.8.1/HPUX_10.20/bin/gcc
+#CC = c89
+CLD = $(CC)
+F77 = fort77
+F77LD = $(F77)
+FFXN =  -DNoChange
+FSUFFIX = F
+
+MPIF77 = $(F77) 
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+#
+#MPIDIR =  
+#MPILIB =  
+
+# Libraries for calls to handle command line arguments in FORTRAN
+CMDDIR = -L/usr/lib
+CMDLIB = -lU77
+
+# If only the C call is required, then you can use the addition flag
+# -D_LONG_LONG. Fortran programs will not link then. Set F77 to 'echo'
+# to build only the C version. Use of the flag mentioned above yields an
+# LCG that is about three times faster.
+
+CFLAGS =  -ansi -O2 -D$(PLAT) $(MPIDEF)
+CLDFLAGS =  -O2
+FFLAGS =  -O2 $(MPIDEF) -D$(PLAT) 
+F77LDFLAGS = -O2
+
+CPP = fort77 -F 

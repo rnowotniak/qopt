@@ -1,0 +1,36 @@
+# We no longer know if this workson the T3D. 
+# Archive and table of contents for archive
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = echo
+FSUFFIX = f
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+MPIDIR = -L/usr/local/mpp/lib
+MPILIB = -lmpi
+#
+
+# C compiler and loader
+CC = env TARGET=cray-t3d cc 
+CFLAGS =  -DT3D -O 3 $(MPIDEF) -I/usr/local/mpp/include
+CLD = $(CC)
+CLDFLAGS = -O 3 
+FFXN =  -DUpCase
+
+# FORTRAN Compiler and loader. 
+F77 = cf77 -C cray-t3d
+FFLAGS =  -O scalar3
+F77LD = cf77
+F77LDFLAGS = -O scalar3
+CPP = f90 -e P -F 
+
+MPIF77 = $(F77)
+MPICC = $(CC)
+

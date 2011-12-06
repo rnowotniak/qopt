@@ -1,0 +1,34 @@
+AR = ar
+ARFLAGS = cr
+#If your system does not have ranlib, then replace next statement with 
+#RANLIB = echo
+RANLIB = ranlib
+CC = gcc
+CLD = $(CC)
+# Set f77 to echo if you do not have a FORTRAN compiler
+F77 = g77
+#F77 = echo
+F77LD = $(F77)
+FFXN = -DAdd__
+FSUFFIX = F
+
+MPIF77 = $(F77) 
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+#MPIDIR = -L/usr/local/mpi/lib/LINUX/ch_p4
+#MPILIB = -lmpi
+
+# Please include mpi header file path, if needed
+
+CFLAGS = -O3 -DLittleEndian $(MPIDEF) -D$(PLAT) # -I/usr/local/mpi/include
+CLDFLAGS =  -O3 
+FFLAGS = -O3 $(MPIDEF) -D$(PLAT) # -I/usr/local/mpi/include
+F77LDFLAGS =  -O3 
+
+CPP = cpp -P

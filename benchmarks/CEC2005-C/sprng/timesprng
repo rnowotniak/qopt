@@ -1,0 +1,30 @@
+echo
+echo lcg: Timing C interface
+./timelcg
+echo
+echo lcg: Timing FORTRAN interface
+./timeflcg
+echo
+echo lfg: Timing C interface
+./timelfg
+echo
+echo lfg: Timing FORTRAN interface
+./timeflfg
+echo
+echo lcg64: Timing C interface
+./timelcg64
+echo
+echo lcg64: Timing FORTRAN interface
+./timeflcg64
+echo
+echo cmrg: Timing C interface
+./timecmrg
+echo
+echo cmrg: Timing FORTRAN interface
+./timefcmrg
+echo
+echo mlfg: Timing C interface
+./timemlfg
+echo
+echo mlfg: Timing FORTRAN interface
+./timefmlfg

@@ -1,0 +1,10 @@
+Following are the corrections that have been done since the code has been
+posted on the website. Thanks for pointing out any errors in the code.
+Please mail your suggestions to tiwaris@iitk.ac.in
+
+List of corrections:
+
+1. (15 March 2005) code for computing weierstrass function corrected in file def1.c, please
+use the current version.
+
+

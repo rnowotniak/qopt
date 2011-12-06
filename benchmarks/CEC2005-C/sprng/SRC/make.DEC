@@ -1,0 +1,31 @@
+AR = ar
+ARFLAGS = cr
+#If your system has ranlib, then replace next statement with the one after it.
+RANLIB = echo
+#RANLIB = ranlib
+CC = cc
+CLD = $(CC)
+F77 = f77
+F77LD = $(F77)
+FFXN =  -DAdd_
+FSUFFIX = F
+
+MPIF77 = $(F77) 
+MPICC = $(CC)
+
+# To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
+# to name of mpi library. Remove # signs from beginning of next 3 lines.
+# Also, if the previous compilation was without MPI, type: make realclean
+# before compiling for mpi.
+#
+#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
+MPIDIR = 
+MPILIB = 
+
+CFLAGS = -D$(PLAT) $(MPIDEF) -O3 -std1 -assume noaligned_objects -DLittleEndian
+CLDFLAGS =  -O3 -std1 -assume noaligned_objects
+FFLAGS = $(MPIDEF)  -O3 -D$(PLAT) -DPOINTER_SIZE=8
+F77LDFLAGS = -O3
+
+CPP = f77 -F
+
