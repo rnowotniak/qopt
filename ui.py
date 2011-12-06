@@ -274,7 +274,7 @@ class DirectoryNode(urwid.ParentNode):
                 sorted(filter(lambda f: os.path.isfile(k+f), os.listdir(k)))
         c = filter(lambda f: f not in ('.git', 'SdkMasterLog.csv', 'deviceQuery.txt'), c)
         c = filter(lambda f: not f.startswith('.'), c)
-        c = filter(lambda f: not f.endswith('.pyc'), c)
+        c = filter(lambda f: f.split('.')[-1] not in ('pyc', 'so', 'o'), c)
         c = map(lambda f: os.path.join(self.get_key(), f), c)
         return c
     def load_child_node(self, key):

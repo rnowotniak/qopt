@@ -76,7 +76,7 @@ int main (int argc, char**argv)
 
 	/* For test problems 15 to 25, we need to calculate a normalizing quantity */
     /* The line (79) below should be uncommented only for functions 15 to 25 */
-	/*calc_benchmark_norm();*/    /* Comment this line for functions 1 to 14 */
+	calc_benchmark_norm();    /* Comment this line for functions 1 to 14 */
 
 	/* Variable vector */
 	x = (long double *)malloc(nreal*sizeof(long double));
