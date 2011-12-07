@@ -1,4 +1,8 @@
 #!/usr/bin/python
+#
+# QOPT GUI in URWID
+# Copyright (C) 2011   Robert Nowotniak <robert@nowotniak.com>
+#
 
 #
 # Text
@@ -12,80 +16,16 @@
 #
 # AttrMap
 # AttrWrap (deprecated)
-#
-#
-#
 
 
 import sys
 import os
 import subprocess
 import re
-
 import urwid
 
-palette = [
-        ('normal', 'light gray', 'black'),
-        ('banner', 'black', 'light gray', 'standout,underline'),
-        ('header', 'yellow', 'dark blue', 'bold,standout,underline'),
-        ('header2', 'yellow', 'dark red', 'bold,standout,underline'),
-        ('streak', 'black', 'dark red', 'standout'),
-        ('fm', 'white', 'black', 'standout'),
-        ('fm_entry', 'light gray', 'black'),
-        ('fm_dir', 'white', 'black'),
-        ('fm_selected', 'black', 'light green'),
-        ('fm_executable', 'light red', 'black'),
-        ('footer', 'light green', 'dark blue', 'bold'),
-        ('key', 'light green', 'dark blue', 'bold'),
-        ('divider', 'light green', 'dark blue', 'bold'),
-        ('main', 'white', 'black', 'bold'),
-        ('bg', 'black', 'dark blue'),
-        ('button normal', 'light gray', 'dark blue'),
-        ('button select', 'white', 'dark green'),
-        ('pg normal', 'white', 'black', 'standout'),
-        ('pg complete', 'white', 'dark magenta'),
-        ]
 
-def ui(input):
-    if input == 'ctrl e':
-        kolumny.set_focus(0)
-        return
-    elif input == 'ctrl r':
-        kolumny.widget_list[0] = urwid.AttrMap(FM(urwid.TreeWalker(DirectoryNode('.'))), 'fm')
-        preview.set_edit_text('')
-    elif input == 'f6':
-        global subprocesses
-        for p in subprocesses:
-            main_loop.remove_watch_file(p.stdout.fileno())
-            os.kill(p.pid, 9)
-        subprocesses = []
-        debug_footer.set_text(footer1_txt + str(subprocesses))
-    elif input == 'f1':
-        urwid.Overlay(urwid.Text('blablabla ?'), top, 'center', 20, 'middle', 30)
-    elif input == 'f8':
-        raise urwid.ExitMainLoop()
-    elif input == 'ctrl c':
-        raise urwid.ExitMainLoop()
-    elif type(input) in (type(()), type([])):
-        # mouse press
-        return
-    txt.set_text(('header', 'BLA: ' + input))
-
-txt = urwid.Text(('header', "   Ctrl-R -- quit   "), align="left")
-ask = urwid.Edit(('banner', "Objective value:\n"))
-
-content = urwid.SimpleListWalker([txt,
-    urwid.Divider('-'),
-    ask,
-    urwid.Divider('-'),
-    urwid.Text(open('/etc/passwd').read(), wrap='clip'),
-    urwid.Divider('-'),
-    ])
-listbox = urwid.ListBox(content)
-
-head = urwid.AttrMap(urwid.Text('Quantum-Inspired Evolutionary Algorithms framework (C) Robert Nowotniak, 2011', align='center', wrap='clip'), 'header2')
-
-
+# LineWalker {{{
 class LineWalker(urwid.ListWalker):
     """ListWalker-compatible class for lazily reading file contents."""
     
@@ -190,7 +130,68 @@ class LineWalker(urwid.ListWalker):
         focus = self.lines[self.focus]
         focus.set_edit_text(focus.edit_text + below.edit_text)
         del self.lines[self.focus+1]
+# }}}
 
+# File Manager classes {{{
+class FM(urwid.TreeListBox):
+    def keypress(self, size, key):
+        if key == 'j':
+            key = 'down'
+        elif key == 'k':
+            key = 'up'
+        elif key == 'l':
+            key = 'right'
+        elif key == 'J':
+            key = 'end'
+        elif key == 'K':
+            key = 'home'
+        elif key == 'h':
+            key = 'left'
+        elif key == 'e':
+            os.system('vim "%s"' % str(self.get_focus()[1].get_key()))
+            ui.main_loop.draw_screen()
+        if key == 'v':
+            f = self.get_focus()[1].get_key()
+            if not os.path.isdir(f):
+                walker = LineWalker(f)
+                #preview.set_edit_text(str(main_columns.widget_list[2].original_widget.body[2]))
+                ui.main_columns.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(urwid.ListBox(walker), 10)
+                #main_columns.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(walker, 10)
+                # s = open(f).read()
+                # preview.set_edit_text(s)
+        elif key == 'E':
+            os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
+        elif key in [str(c) for c in xrange(10)]:
+            ui.nparallel = int(key)
+            ui.debug_footer.set_text('parallel: ' + str(ui.nparallel))
+        self.__super.keypress(size, key)
+        return key
+
+class FileNode(urwid.TreeNode):
+    def __init__(self, value, parent = None, depth = None):
+        urwid.TreeNode.__init__(self, value, key = value, parent = parent, depth = depth)
+    def load_widget(self):
+        return TreeNodeWidget(self)
+
+class DirectoryNode(urwid.ParentNode):
+    # key -> path
+    def __init__(self, value, parent = None, depth = 0):
+        urwid.ParentNode.__init__(self, value, key = value, parent = parent, depth = depth)
+    def load_child_keys(self):
+        k = self.get_key() + '/'
+        c = sorted(filter(lambda f: os.path.isdir(k+f), os.listdir(k))) + \
+                sorted(filter(lambda f: os.path.isfile(k+f), os.listdir(k)))
+        c = filter(lambda f: f not in ('.git', 'SdkMasterLog.csv', 'deviceQuery.txt'), c)
+        c = filter(lambda f: not f.startswith('.'), c)
+        c = filter(lambda f: f.split('.')[-1] not in ('pyc', 'so', 'o'), c)
+        c = map(lambda f: os.path.join(self.get_key(), f), c)
+        return c
+    def load_child_node(self, key):
+        if os.path.isdir(key):
+            return DirectoryNode(key, parent = self, depth = self.get_depth() + 1)
+        return FileNode(key, parent = self, depth = self.get_depth() + 1)
+    def load_widget(self):
+        return TreeNodeWidget(self)
 
 class TreeNodeWidget(urwid.TreeWidget):
     def __init__(self, node):
@@ -229,31 +230,37 @@ class TreeNodeWidget(urwid.TreeWidget):
             f = fm.get_focus()[1].get_key()
             p = subprocess.Popen([f], shell=True,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocesses.append(p)
-            debug_footer.set_text(footer1_txt + str(subprocesses))
+            ui.subprocesses.append(p)
+            debug_footer.set_text(footer1_txt + str(ui.subprocesses))
             def cb():
                 line = p.stdout.readline()
                 if line == '':
-                    main_loop.remove_watch_file(handle)
+                    ui.main_loop.remove_watch_file(handle)
                     return
                 preview.set_edit_text(preview.get_edit_text() + line)
-            handle = main_loop.watch_file(p.stdout.fileno(), cb)
+            handle = ui.main_loop.watch_file(p.stdout.fileno(), cb)
         elif key == 'enter':
-            f = fm.get_focus()[1].get_key()
+            f = ui.fm.get_focus()[1].get_key()
             if os.path.isdir(f):
                 self.expanded = not self.expanded
                 self.update_expanded_icon()
             elif os.access(f, os.X_OK): # execute this file
-                debug_footer.set_text('Executing %s in parallel %d times'% (f, nparallel))
-                for n in xrange(1, nparallel + 1):
-                    os.system('%s > /tmp/blaa.%d &' % (f, n))
+                ui.debug_footer.set_text('Executing %s in parallel %d times'% (f, ui.nparallel))
+                for n in xrange(ui.nparallel):
+                    os.system('%s > /tmp/blaa.%d &' % (f, n + 1))
+                    ui.progress_bars[n].set_completion(0)
                 def cb(loop, data):
-                    for n in xrange(0, nparallel):
-                        evals = int(subprocess.Popen(["tail", "-n", "1", "/tmp/blaa.%d"%(n+1)], \
-                                 stdout=subprocess.PIPE).communicate()[0].split()[0])
-                        progress_bars[n].set_completion(1. * evals / 99999)
-                    main_loop.set_alarm_in(0.5, cb)
-                main_loop.set_alarm_in(0.5, cb)
+                    for n in xrange(0, ui.nparallel):
+                        try:
+                            evals = int(subprocess.Popen(["tail", "-n", "1", "/tmp/blaa.%d"%(n+1)], \
+                                     stdout=subprocess.PIPE).communicate()[0].split()[0])
+                            proc = 1. * evals / 99999
+                            if proc > ui.progress_bars[n].current:
+                                ui.progress_bars[n].set_completion(proc)
+                        except Exception:
+                            pass
+                    ui.main_loop.set_alarm_in(0.5, cb)
+                ui.main_loop.set_alarm_in(0.5, cb)
             return
             preview.set_edit_text('')
             if self.is_leaf:
@@ -261,8 +268,8 @@ class TreeNodeWidget(urwid.TreeWidget):
                 if f.endswith('.py'):
                     p = subprocess.Popen(["python", f], shell=False,
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    subprocesses.append(p)
-                    debug_footer.set_text(footer1_txt + str(subprocesses))
+                    ui.subprocesses.append(p)
+                    debug_footer.set_text(footer1_txt + str(ui.subprocesses))
                     def cb():
                         line = p.stdout.readline()
                         if line == '':
@@ -274,130 +281,127 @@ class TreeNodeWidget(urwid.TreeWidget):
                     s = open(f).read()
                     preview.set_edit_text(s)
         return key
+# }}}
 
 
-class FileNode(urwid.TreeNode):
-    def __init__(self, value, parent = None, depth = None):
-        urwid.TreeNode.__init__(self, value, key = value, parent = parent, depth = depth)
-    def load_widget(self):
-        return TreeNodeWidget(self)
+# Main GUI class
+class QOPTGui:
+    palette = [
+            ('normal', 'light gray', 'black'),
+            ('banner', 'black', 'light gray', 'standout,underline'),
+            ('header', 'yellow', 'dark blue', 'bold,standout,underline'),
+            ('header2', 'yellow', 'dark red', 'bold,standout,underline'),
+            ('streak', 'black', 'dark red', 'standout'),
+            ('fm', 'white', 'black', 'standout'),
+            ('fm_entry', 'light gray', 'black'),
+            ('fm_dir', 'white', 'black'),
+            ('fm_selected', 'black', 'light green'),
+            ('fm_executable', 'light red', 'black'),
+            ('footer', 'light green', 'dark blue', 'bold'),
+            ('key', 'light green', 'dark blue', 'bold'),
+            ('divider', 'light green', 'dark blue', 'bold'),
+            ('main', 'white', 'black', 'bold'),
+            ('bg', 'black', 'dark blue'),
+            ('button normal', 'light gray', 'dark blue'),
+            ('button select', 'white', 'dark green'),
+            ('pg normal', 'white', 'black', 'standout'),
+            ('pg complete', 'white', 'dark magenta'),
+            ]
 
-class DirectoryNode(urwid.ParentNode):
-    # key -> path
-    def __init__(self, value, parent = None, depth = 0):
-        urwid.ParentNode.__init__(self, value, key = value, parent = parent, depth = depth)
-    def load_child_keys(self):
-        k = self.get_key() + '/'
-        c = sorted(filter(lambda f: os.path.isdir(k+f), os.listdir(k))) + \
-                sorted(filter(lambda f: os.path.isfile(k+f), os.listdir(k)))
-        c = filter(lambda f: f not in ('.git', 'SdkMasterLog.csv', 'deviceQuery.txt'), c)
-        c = filter(lambda f: not f.startswith('.'), c)
-        c = filter(lambda f: f.split('.')[-1] not in ('pyc', 'so', 'o'), c)
-        c = map(lambda f: os.path.join(self.get_key(), f), c)
-        return c
-    def load_child_node(self, key):
-        if os.path.isdir(key):
-            return DirectoryNode(key, parent = self, depth = self.get_depth() + 1)
-        return FileNode(key, parent = self, depth = self.get_depth() + 1)
-    def load_widget(self):
-        return TreeNodeWidget(self)
+    def __init__(self):
+        self.subprocesses = []
+        self.nparallel = 1
 
-class FM(urwid.TreeListBox):
-    def keypress(self, size, key):
-        if key == 'j':
-            key = 'down'
-        elif key == 'k':
-            key = 'up'
-        elif key == 'l':
-            key = 'right'
-        elif key == 'J':
-            key = 'end'
-        elif key == 'K':
-            key = 'home'
-        elif key == 'h':
-            key = 'left'
-        elif key == 'e':
-            os.system('vim "%s"' % str(self.get_focus()[1].get_key()))
-            main_loop.draw_screen()
-        if key == 'v':
-            f = self.get_focus()[1].get_key()
-            if not os.path.isdir(f):
-                walker = LineWalker(f)
-                #preview.set_edit_text(str(kolumny.widget_list[2].original_widget.body[2]))
-                kolumny.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(urwid.ListBox(walker), 10)
-                #kolumny.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(walker, 10)
-                # s = open(f).read()
-                # preview.set_edit_text(s)
-        elif key == 'E':
-            os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
-        elif key in [str(c) for c in xrange(10)]:
-            global nparallel
-            nparallel = int(key)
-            debug_footer.set_text('parallel: ' + str(nparallel))
-        self.__super.keypress(size, key)
-        return key
+        self.fm = FM(urwid.TreeWalker(DirectoryNode('.')))
+        self.head = urwid.AttrMap(urwid.Text('Quantum-Inspired Evolutionary Algorithms framework (C) Robert Nowotniak, 2011', align='center', wrap='clip'), 'header2')
+        self.preview = urwid.Edit('', wrap='clip', multiline=True)
+        self.output = urwid.Edit('', wrap='clip', multiline=True)
+        self.debug_footer = urwid.Text('')
+        self.footer1_txt = 'Subprocesses: '
+        self.debug_footer.set_text(self.footer1_txt + str(self.subprocesses))
+        self.footer = urwid.Pile([
+            urwid.AttrMap(self.debug_footer, 'header2'),
+            urwid.AttrMap(urwid.Text([
+                ('key', 'Q'),      ':Quit ',
+                ('key', 'enter'),  ':Execute ',
+                ('key', 'e'),      ':edit ',
+                ('key', 'E'),      ':edit in new window ',
+                ('key', 'F1'),     ':Help ',
+                ('key', 'Ctrl+R'), ':Reload directory ',
+                ('key', 'F5'),     ':Run script ',
+                ('key', 'F6'),     ':Kill subprocesses ',
+                ], wrap='clip'), 'footer')
+            ])
+        self.progress_bars = [
+                urwid.ProgressBar('pg normal', 'pg complete', .10, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .30, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+                ]
+        self.main_columns = urwid.Columns([
+            ('fixed', 30, urwid.AttrMap(self.fm, 'fm')),
+            ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
+            ('weight', 3, urwid.AttrMap(urwid.ListBox(urwid.SimpleListWalker([
+                urwid.AttrMap(urwid.Text('File preview:'), 'main'),
+                urwid.Divider('-'),
+                urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 10),
+                urwid.Divider('-'),
+                urwid.AttrMap(urwid.Text('Progress:'), 'main'),
+                ] + self.progress_bars + [
+                urwid.Divider('-'),
+                urwid.GridFlow([
+                    urwid.AttrMap(urwid.Button(str(n), self.on_result_button), 'button normal', 'button select') \
+                            for n in xrange(1,9)], 5, 2, 0, 'left'),
+                urwid.Divider('-'),
+                self.output,
+                urwid.Divider('-'),
+                ])), 'normal')),
+            ], focus_column=0, dividechars=0)
+        self.top = urwid.Frame(self.main_columns, self.head, self.footer)
 
+    def main(self):
+        self.main_loop = urwid.MainLoop(self.top, unhandled_input = self.unhandled_input, palette = QOPTGui.palette)
+        self.main_loop.run()
 
-subprocesses = []
-nparallel = 1
+    def on_result_button(self, button):
+        data = subprocess.Popen(["tail", "-n", "20", "/tmp/blaa.%s" % button.get_label()], \
+                stdout=subprocess.PIPE).communicate()[0]
+        ui.output.set_edit_text(data)
 
-fm = FM(urwid.TreeWalker(DirectoryNode('.')))
-preview = urwid.Edit('', wrap='clip', multiline=True)
-output = urwid.Edit('', wrap='clip', multiline=True)
-
-def button_cb(button):
-    data = subprocess.Popen(["tail", "-n", "20", "/tmp/blaa.%s" % button.get_label()], \
-            stdout=subprocess.PIPE).communicate()[0]
-    output.set_edit_text(data)
-
-progress_bars = [
-        urwid.ProgressBar('pg normal', 'pg complete', .10, 1),
-        urwid.ProgressBar('pg normal', 'pg complete', .30, 1),
-        urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-        ]
-
-kolumny = urwid.Columns([
-    ('fixed', 30, urwid.AttrMap(fm, 'fm')),
-    ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
-    ('weight', 3, urwid.AttrMap(urwid.ListBox(urwid.SimpleListWalker([
-        urwid.AttrMap(urwid.Text('Preview:'), 'main'),
-        urwid.Divider('-'),
-        urwid.BoxAdapter(urwid.Filler(preview, 'top'), 10),
-        urwid.Divider('-'),
-        urwid.AttrMap(urwid.Text('Progress:'), 'main'),
-        ] + progress_bars + [
-        urwid.Divider('-'),
-        urwid.GridFlow([
-            urwid.AttrMap(urwid.Button(str(n), button_cb), 'button normal', 'button select') \
-                    for n in xrange(1,9)], 5, 2, 0, 'left'),
-        urwid.Divider('-'),
-        output,
-        urwid.Divider('-'),
-        ])), 'normal')),
-    ], focus_column=0, dividechars=0)
+    def unhandled_input(self, input):
+        if input == 'ctrl e':
+            self.main_columns.set_focus(0)
+            return
+        elif input == 'ctrl r':
+            self.main_columns.widget_list[0] = urwid.AttrMap(FM(urwid.TreeWalker(DirectoryNode('.'))), 'fm')
+            self.preview.set_edit_text('')
+        elif input == 'f6':
+            for p in self.subprocesses:
+                self.main_loop.remove_watch_file(p.stdout.fileno())
+                os.kill(p.pid, 9)
+            self.subprocesses = []
+            self.debug_footer.set_text(self.footer1_txt + str(self.subprocesses))
+        elif input == 'f1':
+            urwid.Overlay(urwid.Text('blablabla ?'), self.top, 'center', 20, 'middle', 30)
+        elif input == 'f8':
+            raise urwid.ExitMainLoop()
+        elif input == 'ctrl c':
+            raise urwid.ExitMainLoop()
+        elif type(input) in (type(()), type([])):
+            # mouse press
+            return
 
 
-footer1_txt = 'Subprocesses: '
-debug_footer = urwid.Text('')
-debug_footer.set_text(footer1_txt + str(subprocesses))
 
-footer = urwid.Pile([
-    urwid.AttrMap(debug_footer, 'header2'),
-    urwid.AttrMap(urwid.Text([
-        ('key', 'Q'),      ':Quit ',
-        ('key', 'enter'),  ':Execute ',
-        ('key', 'e'),      ':edit ',
-        ('key', 'E'),      ':edit in new window ',
-        ('key', 'F1'),     ':Help ',
-        ('key', 'Ctrl+R'), ':Reload directory ',
-        ('key', 'F5'),     ':Run script ',
-        ('key', 'F6'),     ':Kill subprocesses ',
-        ], wrap='clip'), 'footer')
-    ])
 
-top = urwid.Frame(kolumny, head, footer)
+if __name__ == '__main__':
+    ui = QOPTGui()
+    ui.main()
 
-#map2 = urwid.AttrMap(fill, 'streak')
-main_loop = urwid.MainLoop(top, unhandled_input = ui, palette = palette)
-main_loop.run()
 
+
+# vim: set foldmethod=marker:
