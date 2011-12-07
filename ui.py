@@ -293,6 +293,13 @@ class TreeNodeWidget(urwid.TreeWidget):
 # }}}
 
 
+class ResultButton(urwid.Button):
+    def keypress(self, size, key):
+        if key == 'e':
+            os.system('vim "/tmp/blaa.%s"' % self.get_label())
+            ui.main_loop.draw_screen()
+        return urwid.Button.keypress(self, size, key)
+
 # Main GUI class
 class QOPTGui:
     palette = [
@@ -349,7 +356,7 @@ class QOPTGui:
                 urwid.AttrMap(urwid.Text('Progress:'), 'main'),
                 urwid.Divider('-'),
                 urwid.GridFlow([
-                    urwid.AttrMap(urwid.Button(str(n), self.on_result_button), 'button normal', 'button select') \
+                    urwid.AttrMap(ResultButton(str(n), self.on_result_button), 'button normal', 'button select') \
                             for n in xrange(1,10)], 5, 2, 0, 'left'),
                 urwid.Divider('-'),
                 self.output,
@@ -360,10 +367,10 @@ class QOPTGui:
             ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
             ('weight', 3, urwid.AttrMap(urwid.ListBox(self.slw), 'normal')),
             ], focus_column=0, dividechars=0)
-        self.top = urwid.Frame(self.main_columns, self.head, self.footer)
+        self.topframe = urwid.Frame(self.main_columns, self.head, self.footer)
 
     def main(self):
-        self.main_loop = urwid.MainLoop(self.top, unhandled_input = self.unhandled_input, palette = QOPTGui.palette)
+        self.main_loop = urwid.MainLoop(self.topframe, unhandled_input = self.unhandled_input, palette = QOPTGui.palette)
         self.main_loop.run()
 
     def on_result_button(self, button):
@@ -385,7 +392,10 @@ class QOPTGui:
             self.subprocesses = []
             self.debug_footer.set_text(self.footer1_txt + str(self.subprocesses))
         elif input == 'f1':
-            urwid.Overlay(urwid.Text('blablabla ?'), self.top, 'center', 20, 'middle', 30)
+            self.main_loop.widget = \
+                    urwid.Overlay(
+                            urwid.LineBox( Help(), 'Help'),
+                            self.topframe, 'center', 70, 'middle', 25)
         elif input == 'f8':
             raise urwid.ExitMainLoop()
         elif input == 'ctrl c':
@@ -394,6 +404,33 @@ class QOPTGui:
             # mouse press
             return
 
+class Help(urwid.ListBox):
+    def __init__(self):
+        urwid.ListBox.__init__(self,urwid.SimpleListWalker([
+            urwid.Divider(' '),
+            urwid.AttrMap(urwid.Text('Quantum Inspired Evolutionary Algorithms', 'center'), 'main'),
+            urwid.Text('Copyright (C) 2011 Robert Nowotniak <robert@nowotniak.com>', 'center'),
+            urwid.Divider(' '),
+            urwid.Divider('*'),
+            urwid.Divider(' '),
+            urwid.Text('   Keyboard shorcuts:\n'),
+            urwid.Text(
+                '      j,k    --  up/down in file editor\n'
+                '        e    --  edit the file\n'
+                '        E    --  edit the file in new window\n'
+                '    enter    --  execute the file or do a special action\n'
+                '      1-9    --  number of parallel processes\n'
+                '       F1    --  this help screen\n'
+                '       F6    --  kill all subprocesses\n'
+                '       F8    --  quit the application\n'
+                '   ctrl-e    --  back to file manager (left column)\n'
+                ),
+            urwid.GridFlow([
+                urwid.AttrMap(urwid.Button('Close', self.on_close_click),
+                    'button normal', 'button select')], 10, 0, 0, 'center')
+            ]))
+    def on_close_click(self, d):
+        ui.main_loop.widget = ui.topframe
 
 
 
