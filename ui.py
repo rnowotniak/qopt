@@ -39,7 +39,12 @@ palette = [
         ('key', 'light green', 'dark blue', 'bold'),
         ('divider', 'light green', 'dark blue', 'bold'),
         ('main', 'white', 'black', 'bold'),
-        ('bg', 'black', 'dark blue'),]
+        ('bg', 'black', 'dark blue'),
+        ('button normal', 'light gray', 'dark blue'),
+        ('button select', 'white', 'dark green'),
+        ('pg normal', 'white', 'black', 'standout'),
+        ('pg complete', 'white', 'dark magenta'),
+        ]
 
 def ui(input):
     if input == 'ctrl e':
@@ -54,7 +59,7 @@ def ui(input):
             main_loop.remove_watch_file(p.stdout.fileno())
             os.kill(p.pid, 9)
         subprocesses = []
-        footer1.set_text(footer1_txt + str(subprocesses))
+        debug_footer.set_text(footer1_txt + str(subprocesses))
     elif input == 'f1':
         urwid.Overlay(urwid.Text('blablabla ?'), top, 'center', 20, 'middle', 30)
     elif input == 'f8':
@@ -225,7 +230,7 @@ class TreeNodeWidget(urwid.TreeWidget):
             p = subprocess.Popen([f], shell=True,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             subprocesses.append(p)
-            footer1.set_text(footer1_txt + str(subprocesses))
+            debug_footer.set_text(footer1_txt + str(subprocesses))
             def cb():
                 line = p.stdout.readline()
                 if line == '':
@@ -234,6 +239,22 @@ class TreeNodeWidget(urwid.TreeWidget):
                 preview.set_edit_text(preview.get_edit_text() + line)
             handle = main_loop.watch_file(p.stdout.fileno(), cb)
         elif key == 'enter':
+            f = fm.get_focus()[1].get_key()
+            if os.path.isdir(f):
+                self.expanded = not self.expanded
+                self.update_expanded_icon()
+            elif os.access(f, os.X_OK): # execute this file
+                debug_footer.set_text('Executing %s in parallel %d times'% (f, nparallel))
+                for n in xrange(1, nparallel + 1):
+                    os.system('%s > /tmp/blaa.%d &' % (f, n))
+                def cb(loop, data):
+                    for n in xrange(0, nparallel):
+                        evals = int(subprocess.Popen(["tail", "-n", "1", "/tmp/blaa.%d"%(n+1)], \
+                                 stdout=subprocess.PIPE).communicate()[0].split()[0])
+                        progress_bars[n].set_completion(1. * evals / 99999)
+                    main_loop.set_alarm_in(0.5, cb)
+                main_loop.set_alarm_in(0.5, cb)
+            return
             preview.set_edit_text('')
             if self.is_leaf:
                 f = fm.get_focus()[1].get_key()
@@ -241,7 +262,7 @@ class TreeNodeWidget(urwid.TreeWidget):
                     p = subprocess.Popen(["python", f], shell=False,
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     subprocesses.append(p)
-                    footer1.set_text(footer1_txt + str(subprocesses))
+                    debug_footer.set_text(footer1_txt + str(subprocesses))
                     def cb():
                         line = p.stdout.readline()
                         if line == '':
@@ -252,9 +273,6 @@ class TreeNodeWidget(urwid.TreeWidget):
                 else:
                     s = open(f).read()
                     preview.set_edit_text(s)
-            else:
-                self.expanded = not self.expanded
-                self.update_expanded_icon()
         return key
 
 
@@ -311,20 +329,32 @@ class FM(urwid.TreeListBox):
                 # s = open(f).read()
                 # preview.set_edit_text(s)
         elif key == 'E':
-            #os.spawnlp(os.P_NOWAIT, 'xterm', 'xterm', '-e', 'vim "%s"' % str(self.get_focus()[1].get_key()))
             os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
         elif key in [str(c) for c in xrange(10)]:
-            # parallel = int(key)
-            footer1.set_text(key)
+            global nparallel
+            nparallel = int(key)
+            debug_footer.set_text('parallel: ' + str(nparallel))
         self.__super.keypress(size, key)
         return key
 
 
 subprocesses = []
+nparallel = 1
 
 fm = FM(urwid.TreeWalker(DirectoryNode('.')))
 preview = urwid.Edit('', wrap='clip', multiline=True)
 output = urwid.Edit('', wrap='clip', multiline=True)
+
+def button_cb(button):
+    data = subprocess.Popen(["tail", "-n", "20", "/tmp/blaa.%s" % button.get_label()], \
+            stdout=subprocess.PIPE).communicate()[0]
+    output.set_edit_text(data)
+
+progress_bars = [
+        urwid.ProgressBar('pg normal', 'pg complete', .10, 1),
+        urwid.ProgressBar('pg normal', 'pg complete', .30, 1),
+        urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
+        ]
 
 kolumny = urwid.Columns([
     ('fixed', 30, urwid.AttrMap(fm, 'fm')),
@@ -334,7 +364,12 @@ kolumny = urwid.Columns([
         urwid.Divider('-'),
         urwid.BoxAdapter(urwid.Filler(preview, 'top'), 10),
         urwid.Divider('-'),
-        urwid.AttrMap(urwid.Text('Output:'), 'main'),
+        urwid.AttrMap(urwid.Text('Progress:'), 'main'),
+        ] + progress_bars + [
+        urwid.Divider('-'),
+        urwid.GridFlow([
+            urwid.AttrMap(urwid.Button(str(n), button_cb), 'button normal', 'button select') \
+                    for n in xrange(1,9)], 5, 2, 0, 'left'),
         urwid.Divider('-'),
         output,
         urwid.Divider('-'),
@@ -343,11 +378,11 @@ kolumny = urwid.Columns([
 
 
 footer1_txt = 'Subprocesses: '
-footer1 = urwid.Text('')
-footer1.set_text(footer1_txt + str(subprocesses))
+debug_footer = urwid.Text('')
+debug_footer.set_text(footer1_txt + str(subprocesses))
 
 footer = urwid.Pile([
-    urwid.AttrMap(footer1, 'header2'),
+    urwid.AttrMap(debug_footer, 'header2'),
     urwid.AttrMap(urwid.Text([
         ('key', 'Q'),      ':Quit ',
         ('key', 'enter'),  ':Execute ',

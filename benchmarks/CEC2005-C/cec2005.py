@@ -1,21 +1,28 @@
 #!/usr/bin/python
 
 import os
+import os.path
 import sys
 import ctypes
 
 LIBS = {}
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # pliki libf%d.so to maja byc biblioteki zawierajace pelen benchmark skompilowany dla funkcji testowej %d
 
 def f(num, x):
     fnum = 'f%d' % num
     if not LIBS.has_key(fnum):
+        # load the library with proper benchmark function
         lib=ctypes.CDLL('./lib%s.so' % fnum) # , ctypes.RTLD_GLOBAL)
+        # store the loaded library in LIBS
         LIBS[fnum] = [lib, None, None]
     else:
+        # library for this function is already loaded in LIBS
         lib = LIBS[fnum][0]
     if LIBS[fnum][1] != len(x):
+        # initialize the library for the given dimension (len(x))
         nreal = len(x)
         if num >= 15:
             nfunc = 10
@@ -69,7 +76,10 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import numpy as np
 
+    print 'Generating 2D plots...'
     for fnum in xrange(15, 26):
+        print 'f_%d' % fnum
+        sys.stdout.flush()
         if fnum > 4:
             X, Y = np.linspace(-100, 100, 30), np.linspace(-100, 100, 30)
         if fnum == 4:
