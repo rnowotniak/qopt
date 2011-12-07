@@ -161,9 +161,16 @@ class FM(urwid.TreeListBox):
                 # preview.set_edit_text(s)
         elif key == 'E':
             os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
-        elif key in [str(c) for c in xrange(10)]:
+        elif key in [str(c) for c in xrange(1,10)]:
             ui.nparallel = int(key)
-            ui.debug_footer.set_text('parallel: ' + str(ui.nparallel))
+            ui.debug_footer.set_text('Number of parallel processes: ' + str(ui.nparallel))
+            for n in xrange(len(ui.progress_bars)):
+                ui.slw.pop(5) # XXX ? make it more flexible
+            ui.progress_bars = []
+            for n in xrange(ui.nparallel):
+                pb = urwid.ProgressBar('pg normal', 'pg complete', 0, 1)
+                ui.progress_bars.append(pb)
+                ui.slw.insert(5, pb)
         self.__super.keypress(size, key)
         return key
 
@@ -219,32 +226,34 @@ class TreeNodeWidget(urwid.TreeWidget):
             n = os.path.basename(self.get_node().get_key())
         if self.get_node().__class__ == DirectoryNode:
             return '[%s/]' % n
+        elif n.endswith('.py'):
+            return n.rsplit('.', 1)[0] + ' [P]'
         else:
             return n
     def selectable(self):
         return True
     def keypress(self, size, key):
         key = self.__super.keypress(size, key)
-        if key == 'r':
-            preview.set_edit_text('')
-            f = fm.get_focus()[1].get_key()
-            p = subprocess.Popen([f], shell=True,
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            ui.subprocesses.append(p)
-            debug_footer.set_text(footer1_txt + str(ui.subprocesses))
-            def cb():
-                line = p.stdout.readline()
-                if line == '':
-                    ui.main_loop.remove_watch_file(handle)
-                    return
-                preview.set_edit_text(preview.get_edit_text() + line)
-            handle = ui.main_loop.watch_file(p.stdout.fileno(), cb)
-        elif key == 'enter':
+#       if key == 'r':
+#           preview.set_edit_text('')
+#           f = fm.get_focus()[1].get_key()
+#           p = subprocess.Popen([f], shell=True,
+#                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#           ui.subprocesses.append(p)
+#           debug_footer.set_text(footer1_txt + str(ui.subprocesses))
+#           def cb():
+#               line = p.stdout.readline()
+#               if line == '':
+#                   ui.main_loop.remove_watch_file(handle)
+#                   return
+#               preview.set_edit_text(preview.get_edit_text() + line)
+#           handle = ui.main_loop.watch_file(p.stdout.fileno(), cb)
+        if key == 'enter':
             f = ui.fm.get_focus()[1].get_key()
             if os.path.isdir(f):
                 self.expanded = not self.expanded
                 self.update_expanded_icon()
-            elif os.access(f, os.X_OK): # execute this file
+            elif os.access(f, os.X_OK): # execute this file  TODO: or .endswith('.py')
                 ui.debug_footer.set_text('Executing %s in parallel %d times'% (f, ui.nparallel))
                 for n in xrange(ui.nparallel):
                     os.system('%s > /tmp/blaa.%d &' % (f, n + 1))
@@ -305,7 +314,7 @@ class QOPTGui:
             ('button normal', 'light gray', 'dark blue'),
             ('button select', 'white', 'dark green'),
             ('pg normal', 'white', 'black', 'standout'),
-            ('pg complete', 'white', 'dark magenta'),
+            ('pg complete', 'white', 'dark green'),
             ]
 
     def __init__(self):
@@ -313,7 +322,7 @@ class QOPTGui:
         self.nparallel = 1
 
         self.fm = FM(urwid.TreeWalker(DirectoryNode('.')))
-        self.head = urwid.AttrMap(urwid.Text('Quantum-Inspired Evolutionary Algorithms framework (C) Robert Nowotniak, 2011', align='center', wrap='clip'), 'header2')
+        self.head = urwid.AttrMap(urwid.Text('Quantum-Inspired Evolutionary Algorithms (C) Robert Nowotniak, 2011', align='center', wrap='clip'), 'header2')
         self.preview = urwid.Edit('', wrap='clip', multiline=True)
         self.output = urwid.Edit('', wrap='clip', multiline=True)
         self.debug_footer = urwid.Text('')
@@ -326,40 +335,30 @@ class QOPTGui:
                 ('key', 'enter'),  ':Execute ',
                 ('key', 'e'),      ':edit ',
                 ('key', 'E'),      ':edit in new window ',
-                ('key', 'F1'),     ':Help ',
+                # ('key', 'F1'),     ':Help ',
                 ('key', 'Ctrl+R'), ':Reload directory ',
-                ('key', 'F5'),     ':Run script ',
                 ('key', 'F6'),     ':Kill subprocesses ',
                 ], wrap='clip'), 'footer')
             ])
-        self.progress_bars = [
-                urwid.ProgressBar('pg normal', 'pg complete', .10, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .30, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                urwid.ProgressBar('pg normal', 'pg complete', .85, 1),
-                ]
-        self.main_columns = urwid.Columns([
-            ('fixed', 30, urwid.AttrMap(self.fm, 'fm')),
-            ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
-            ('weight', 3, urwid.AttrMap(urwid.ListBox(urwid.SimpleListWalker([
+        self.progress_bars = [ ]
+        self.slw = urwid.SimpleListWalker([
                 urwid.AttrMap(urwid.Text('File preview:'), 'main'),
                 urwid.Divider('-'),
                 urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 10),
                 urwid.Divider('-'),
                 urwid.AttrMap(urwid.Text('Progress:'), 'main'),
-                ] + self.progress_bars + [
                 urwid.Divider('-'),
                 urwid.GridFlow([
                     urwid.AttrMap(urwid.Button(str(n), self.on_result_button), 'button normal', 'button select') \
-                            for n in xrange(1,9)], 5, 2, 0, 'left'),
+                            for n in xrange(1,10)], 5, 2, 0, 'left'),
                 urwid.Divider('-'),
                 self.output,
                 urwid.Divider('-'),
-                ])), 'normal')),
+                ])
+        self.main_columns = urwid.Columns([
+            ('fixed', 30, urwid.AttrMap(self.fm, 'fm')),
+            ('fixed', 1, urwid.AttrMap(urwid.Filler(urwid.Text(' ' * 5), 'top'), 'header2' )),
+            ('weight', 3, urwid.AttrMap(urwid.ListBox(self.slw), 'normal')),
             ], focus_column=0, dividechars=0)
         self.top = urwid.Frame(self.main_columns, self.head, self.footer)
 
