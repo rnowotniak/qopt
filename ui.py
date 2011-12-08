@@ -225,7 +225,7 @@ class TreeNodeWidget(urwid.TreeWidget):
             self._w.attr = 'fm_dir'
             self.expanded = node.get_depth() == 0 or \
                     node.get_key().split('/')[-1] in \
-                    ('CUDA', 'benchmarks', 'PL-GRID', 'experiments', 'contrib', \
+                    ('CUDA', 'benchmarks', 'PL-GRID', 'EXPERIMENTS', 'contrib', \
                     # 'junk', \
                     'algorithms')
             self.update_expanded_icon()
@@ -249,20 +249,6 @@ class TreeNodeWidget(urwid.TreeWidget):
         return True
     def keypress(self, size, key):
         key = self.__super.keypress(size, key)
-#       if key == 'r':
-#           preview.set_edit_text('')
-#           f = fm.get_focus()[1].get_key()
-#           p = subprocess.Popen([f], shell=True,
-#                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#           ui.subprocesses.append(p)
-#           debug_footer.set_text(footer1_txt + str(ui.subprocesses))
-#           def cb():
-#               line = p.stdout.readline()
-#               if line == '':
-#                   ui.main_loop.remove_watch_file(handle)
-#                   return
-#               preview.set_edit_text(preview.get_edit_text() + line)
-#           handle = ui.main_loop.watch_file(p.stdout.fileno(), cb)
         if key == 'enter':
             f = ui.fm.get_focus()[1].get_key()
             if os.path.isdir(f):
@@ -299,26 +285,6 @@ class TreeNodeWidget(urwid.TreeWidget):
                     else:
                         ui.debug_footer.set_text('All the subprocesses have terminated.')
                 ui.main_loop.set_alarm_in(0.5, cb)
-            return
-            # XXX remove below
-            preview.set_edit_text('')
-            if self.is_leaf:
-                f = fm.get_focus()[1].get_key()
-                if f.endswith('.py'):
-                    p = subprocess.Popen(["python", f], shell=False,
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    ui.subprocesses.append(p)
-                    debug_footer.set_text(footer1_txt + str(ui.subprocesses))
-                    def cb():
-                        line = p.stdout.readline()
-                        if line == '':
-                            main_loop.remove_watch_file(handle)
-                            return
-                        preview.set_edit_text(preview.get_edit_text() + line)
-                    handle = main_loop.watch_file(p.stdout.fileno(), cb)
-                else:
-                    s = open(f).read()
-                    preview.set_edit_text(s)
         return key
 # }}}
 
@@ -539,8 +505,14 @@ def tail(filename, nlines = 10):
         while n < nlines:
             if f.read(1) == '\n':
                 n += 1
-            f.seek(-2, 1)
-        f.seek(2, 1)
+            try:
+                f.seek(-2, 1)
+            except Exception:
+                # no more lines before
+                f.seek(-1, 1)
+                break
+        if n == nlines:
+            f.seek(2, 1)
         result = f.read(endpos - f.tell())
         f.close()
     except Exception, e:

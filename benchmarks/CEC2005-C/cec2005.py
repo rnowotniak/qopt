@@ -77,10 +77,10 @@ if __name__ == '__main__':
     import numpy as np
 
     print 'Generating 2D plots...'
-    for fnum in xrange(15, 26):
-        print 'f_%d' % fnum
+    for fnum in xrange(1, 26):
+        print '%d ' % fnum
         sys.stdout.flush()
-        if fnum > 4:
+        if fnum < 4:
             X, Y = np.linspace(-100, 100, 30), np.linspace(-100, 100, 30)
         if fnum == 4:
             X, Y = np.linspace(0, 100, 30), np.linspace(-100, 0, 30)
