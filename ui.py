@@ -164,11 +164,7 @@ class FM(urwid.TreeListBox):
             f = self.get_focus()[1].get_key()
             if not os.path.isdir(f):
                 walker = LineWalker(f)
-                #preview.set_edit_text(str(main_columns.widget_list[2].original_widget.body[2]))
-                ui.main_columns.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(urwid.ListBox(walker), 10)
-                #main_columns.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(walker, 10)
-                # s = open(f).read()
-                # preview.set_edit_text(s)
+                ui.main_columns.widget_list[2].original_widget.body[2] = urwid.BoxAdapter(urwid.ListBox(walker), 5)
         elif key == 'E':
             os.system('bash -c "xterm&disown"')# % str(self.get_focus()[1].get_key()))
         elif key in [str(c) for c in xrange(1,10)]:
@@ -275,9 +271,15 @@ class TreeNodeWidget(urwid.TreeWidget):
             elif os.access(f, os.X_OK): # execute this file  TODO: or .endswith('.py')
                 ui.debug_footer.set_text('Executing %s in parallel %d times'% (f, ui.nparallel))
                 for n in xrange(ui.nparallel):
-                    os.system('%s > %s/output.%d &' % (f, ui.resultsDir, n + 1))
+                    proc = subprocess.Popen(['%s' % f], shell = False, close_fds = True, \
+                            stdout = open("%s/output.%d"%(ui.resultsDir,n+1), 'w'), stderr=subprocess.STDOUT)
+                    ui.subprocesses.append(proc)
                     ui.progress_bars[n].set_completion(0)
                 def cb(loop, data):
+                    for p in ui.subprocesses:
+                        # check if the subprocess has finished already
+                        if type(p.poll()) == int:
+                            ui.subprocesses.remove(p)
                     for n in xrange(0, ui.nparallel):
                         lines = tail("%s/output.%d"%(ui.resultsDir,n+1), 20)
                         if n == map(lambda b: b.state, ui.resultsRadioButtons).index(True):
@@ -291,9 +293,14 @@ class TreeNodeWidget(urwid.TreeWidget):
                                 ui.progress_bars[n].set_completion(proc)
                         except Exception:
                             pass
-                    ui.main_loop.set_alarm_in(0.5, cb)
+                    ui.debug_footer.set_text(ui.debug_footer.get_text()[0] + ".")
+                    if ui.subprocesses:
+                        ui.main_loop.set_alarm_in(0.5, cb)
+                    else:
+                        ui.debug_footer.set_text('All the subprocesses have terminated.')
                 ui.main_loop.set_alarm_in(0.5, cb)
             return
+            # XXX remove below
             preview.set_edit_text('')
             if self.is_leaf:
                 f = fm.get_focus()[1].get_key()
@@ -381,7 +388,7 @@ class QOPTGui:
         self.slw = urwid.SimpleListWalker([
                 urwid.AttrMap(urwid.Text('File preview:'), 'bold'),
                 urwid.Divider('-'),
-                urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 10),
+                urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 5),
                 urwid.Divider('-'),
                 urwid.AttrMap(urwid.Text('Progress:'), 'bold'),
                 # ProgressBars are dynamically inserted here
@@ -419,11 +426,11 @@ class QOPTGui:
             self.main_columns.widget_list[0] = urwid.AttrMap(FM(urwid.TreeWalker(DirectoryNode('.'))), 'fm')
             self.preview.set_edit_text('')
         elif input == 'f6':
-            for p in self.subprocesses:
-                self.main_loop.remove_watch_file(p.stdout.fileno())
+            for p in ui.subprocesses:
                 os.kill(p.pid, 9)
+                os.waitpid(p.pid, 0)
             self.subprocesses = []
-            self.debug_footer.set_text(self.footer1_txt + str(self.subprocesses))
+            self.debug_footer.set_text('All subprocesses has been killed.')
         elif input == 'f1':
             self.main_loop.widget = \
                     urwid.Overlay(
