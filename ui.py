@@ -175,12 +175,20 @@ class FM(urwid.TreeListBox):
             ui.nparallel = int(key)
             ui.debug_footer.set_text('Number of parallel processes: ' + str(ui.nparallel))
             for n in xrange(len(ui.progress_bars)):
-                ui.slw.pop(5) # XXX ? make it more flexible
+                ui.slw.pop(5) # XXX make it more flexible
             ui.progress_bars = []
             for n in xrange(ui.nparallel):
                 pb = urwid.ProgressBar('pg normal', 'pg complete', 0, 1)
                 ui.progress_bars.append(pb)
                 ui.slw.insert(5, pb)
+            # insert ResultButtons GridFlow
+            ui.resultsRadioButtons = []
+            ui.slw.pop(6 + ui.nparallel) # XXX make it more flexible
+            ui.slw.insert(6 + ui.nparallel, urwid.GridFlow([
+                urwid.AttrMap(
+                    ResultButton(ui.resultsRadioButtons, str(n), ui.on_result_button), \
+                            'button normal', 'button select') \
+                            for n in xrange(1, ui.nparallel + 1)], 5, 2, 0, 'left'))
         self.__super.keypress(size, key)
         return key
 
@@ -376,12 +384,9 @@ class QOPTGui:
                 urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 10),
                 urwid.Divider('-'),
                 urwid.AttrMap(urwid.Text('Progress:'), 'bold'),
+                # ProgressBars are dynamically inserted here
                 urwid.Divider('-'),
-                urwid.GridFlow([
-                    urwid.AttrMap(
-                        ResultButton(self.resultsRadioButtons, str(n), self.on_result_button), \
-                                'button normal', 'button select') \
-                                for n in xrange(1,10)], 5, 2, 0, 'left'),
+                urwid.GridFlow([], 5, 2, 0, 'left'), # GridFlow with ResultButtons is dynamically replaced
                 urwid.Divider('-'),
                 self.output,
                 urwid.Divider('-'),
@@ -532,8 +537,8 @@ def tail(filename, nlines = 10):
         result = f.read(endpos - f.tell())
         f.close()
     except Exception, e:
-        if e.errno == 2:
-            return '(no such file or file empty)'
+        #if e.errno == 2:
+        return '(no such file or file empty)'
     return result
 
 
