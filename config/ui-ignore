@@ -1,0 +1,11 @@
+^\.git$
+.*deviceQuery\.txt$
+.*SdkMasterLog\.csv$
+.*\.gitignore$
+.*\.so$
+.*\.o$
+.*\.pyc$
+.*\.swp$
+junk
+old
+benchmarks/CEC2005-C/.*\.(txt|c|orig,h)

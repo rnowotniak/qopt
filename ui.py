@@ -22,6 +22,7 @@ import sys
 import os
 import subprocess
 import re
+import fnmatch
 import urwid
 
 
@@ -134,6 +135,15 @@ class LineWalker(urwid.ListWalker):
 
 # File Manager classes {{{
 class FM(urwid.TreeListBox):
+    IGNORE_PATTERNS = []
+
+    def __init__(self, value):
+        urwid.TreeListBox.__init__(self, value)
+
+        f = open('config/ui-ignore')
+        FM.IGNORE_PATTERNS = [p.strip() for p in f.readlines()]
+        f.close()
+
     def keypress(self, size, key):
         if key == 'j':
             key = 'down'
@@ -188,10 +198,11 @@ class DirectoryNode(urwid.ParentNode):
         k = self.get_key() + '/'
         c = sorted(filter(lambda f: os.path.isdir(k+f), os.listdir(k))) + \
                 sorted(filter(lambda f: os.path.isfile(k+f), os.listdir(k)))
-        c = filter(lambda f: f not in ('.git', 'SdkMasterLog.csv', 'deviceQuery.txt'), c)
-        c = filter(lambda f: not f.startswith('.'), c)
-        c = filter(lambda f: f.split('.')[-1] not in ('pyc', 'so', 'o'), c)
-        c = map(lambda f: os.path.join(self.get_key(), f), c)
+        c = map(lambda f: os.path.join(self.get_key(), f), c)  # full paths
+        c = map(lambda f: f.replace('./', '', 1), c) # paths relative to main qopt dir
+        for pat in FM.IGNORE_PATTERNS:
+            c = filter(lambda f: not re.match(pat, f), c)
+        c = map(lambda f: os.path.join(os.path.dirname(__file__), f), c) # full paths
         return c
     def load_child_node(self, key):
         if os.path.isdir(key):
@@ -256,14 +267,18 @@ class TreeNodeWidget(urwid.TreeWidget):
             elif os.access(f, os.X_OK): # execute this file  TODO: or .endswith('.py')
                 ui.debug_footer.set_text('Executing %s in parallel %d times'% (f, ui.nparallel))
                 for n in xrange(ui.nparallel):
-                    os.system('%s > /tmp/blaa.%d &' % (f, n + 1))
+                    os.system('%s > %s/output.%d &' % (f, ui.resultsDir, n + 1))
                     ui.progress_bars[n].set_completion(0)
                 def cb(loop, data):
                     for n in xrange(0, ui.nparallel):
+                        lines = tail("%s/output.%d"%(ui.resultsDir,n+1), 20)
+                        if n == map(lambda b: b.state, ui.resultsRadioButtons).index(True):
+                            # ResultButton n is selected, so update output view accordingly
+                            ui.output.set_edit_text(lines)
                         try:
-                            evals = int(subprocess.Popen(["tail", "-n", "1", "/tmp/blaa.%d"%(n+1)], \
-                                     stdout=subprocess.PIPE).communicate()[0].split()[0])
-                            proc = 1. * evals / 99999
+                            # try to upgrade progress bar
+                            evals = int( lines.split('\n')[-1].split()[0] )
+                            proc = 1. * evals / ui.maxEvals
                             if proc > ui.progress_bars[n].current:
                                 ui.progress_bars[n].set_completion(proc)
                         except Exception:
@@ -293,12 +308,15 @@ class TreeNodeWidget(urwid.TreeWidget):
 # }}}
 
 
-class ResultButton(urwid.Button):
+class ResultButton(urwid.RadioButton):
+    def __init__(self, group, label, callback):
+        urwid.RadioButton.__init__(self, group, label, on_state_change = callback)
+
     def keypress(self, size, key):
         if key == 'e':
-            os.system('vim "/tmp/blaa.%s"' % self.get_label())
+            os.system('vim "%s/output.%s"' % (ui.resultsDir, self.get_label()))
             ui.main_loop.draw_screen()
-        return urwid.Button.keypress(self, size, key)
+        return urwid.RadioButton.keypress(self, size, key)
 
 # Main GUI class
 class QOPTGui:
@@ -316,17 +334,20 @@ class QOPTGui:
             ('footer', 'light green', 'dark blue', 'bold'),
             ('key', 'light green', 'dark blue', 'bold'),
             ('divider', 'light green', 'dark blue', 'bold'),
-            ('main', 'white', 'black', 'bold'),
+            ('bold', 'white', 'black', 'bold'),
             ('bg', 'black', 'dark blue'),
             ('button normal', 'light gray', 'dark blue'),
             ('button select', 'white', 'dark green'),
             ('pg normal', 'white', 'black', 'standout'),
             ('pg complete', 'white', 'dark green'),
+            ('message', 'yellow', 'dark red'),
             ]
 
     def __init__(self):
         self.subprocesses = []
         self.nparallel = 1
+        self.maxEvals = 100000
+        self.resultsDir = '/tmp/qopt'
 
         self.fm = FM(urwid.TreeWalker(DirectoryNode('.')))
         self.head = urwid.AttrMap(urwid.Text('Quantum-Inspired Evolutionary Algorithms (C) Robert Nowotniak, 2011', align='center', wrap='clip'), 'header2')
@@ -348,16 +369,19 @@ class QOPTGui:
                 ], wrap='clip'), 'footer')
             ])
         self.progress_bars = [ ]
+        self.resultsRadioButtons = []
         self.slw = urwid.SimpleListWalker([
-                urwid.AttrMap(urwid.Text('File preview:'), 'main'),
+                urwid.AttrMap(urwid.Text('File preview:'), 'bold'),
                 urwid.Divider('-'),
                 urwid.BoxAdapter(urwid.Filler(self.preview, 'top'), 10),
                 urwid.Divider('-'),
-                urwid.AttrMap(urwid.Text('Progress:'), 'main'),
+                urwid.AttrMap(urwid.Text('Progress:'), 'bold'),
                 urwid.Divider('-'),
                 urwid.GridFlow([
-                    urwid.AttrMap(ResultButton(str(n), self.on_result_button), 'button normal', 'button select') \
-                            for n in xrange(1,10)], 5, 2, 0, 'left'),
+                    urwid.AttrMap(
+                        ResultButton(self.resultsRadioButtons, str(n), self.on_result_button), \
+                                'button normal', 'button select') \
+                                for n in xrange(1,10)], 5, 2, 0, 'left'),
                 urwid.Divider('-'),
                 self.output,
                 urwid.Divider('-'),
@@ -373,10 +397,14 @@ class QOPTGui:
         self.main_loop = urwid.MainLoop(self.topframe, unhandled_input = self.unhandled_input, palette = QOPTGui.palette)
         self.main_loop.run()
 
-    def on_result_button(self, button):
-        data = subprocess.Popen(["tail", "-n", "20", "/tmp/blaa.%s" % button.get_label()], \
-                stdout=subprocess.PIPE).communicate()[0]
-        ui.output.set_edit_text(data)
+    def on_result_button(self, button, checked):
+        if not checked:
+            return
+        try:
+            data = tail("%s/output.%s"%(ui.resultsDir,button.get_label()), 20)
+            ui.output.set_edit_text(data)
+        except Exception, e:
+            ShowMessage(str(e), 'Error')
 
     def unhandled_input(self, input):
         if input == 'ctrl e':
@@ -394,8 +422,15 @@ class QOPTGui:
         elif input == 'f1':
             self.main_loop.widget = \
                     urwid.Overlay(
-                            urwid.LineBox( Help(), 'Help'),
+                            urwid.LineBox( HelpDialog(), 'Help'),
                             self.topframe, 'center', 70, 'middle', 25)
+        elif input == 'ctrl p':
+            self.main_loop.widget = \
+                    urwid.Overlay(
+                            urwid.LineBox( ConfigDialog(), 'Configuration'),
+                            self.topframe, 'center', 70, 'middle', 25)
+        elif input == 'f2':
+            ShowMessage('Blabla blablabla bla', 'Message foo')
         elif input == 'f8':
             raise urwid.ExitMainLoop()
         elif input == 'ctrl c':
@@ -404,11 +439,53 @@ class QOPTGui:
             # mouse press
             return
 
-class Help(urwid.ListBox):
+class ShowMessage():
+    def __init__(self, msg, title = 'Message'):
+        ui.main_loop.widget = \
+                urwid.Overlay(urwid.AttrMap(urwid.LineBox(
+                    urwid.ListBox(urwid.SimpleListWalker([
+                        urwid.Text( msg ),
+                        urwid.GridFlow([
+                            urwid.AttrMap(urwid.Button('OK', self.on_ok_click),
+                                'button normal', 'button select')], 10, 0, 0, 'center')
+                        ])), title), 'message'),
+                ui.topframe, 'center', 70, 'middle', msg.count('\n') + 6)
+    def on_ok_click(self, d):
+        ui.main_loop.widget = ui.topframe
+
+
+class ConfigDialog(urwid.ListBox):
+    def __init__(self):
+        self.evalsIntEdit = urwid.IntEdit(default = ui.maxEvals)
+        self.resultsDirEdit = urwid.Edit('', ui.resultsDir)
+        urwid.ListBox.__init__(self,urwid.SimpleListWalker([
+            urwid.Text('This is the configuration screen for QOpt.\n\n\n'),
+            urwid.AttrMap(urwid.Text('Maximum number of evaluations:'), 'bold'),
+            self.evalsIntEdit,
+            urwid.Divider(' '),
+            urwid.AttrMap(urwid.Text('Results directory:'), 'bold'),
+            self.resultsDirEdit,
+            urwid.GridFlow([
+                urwid.AttrMap(urwid.Button('Close', self.on_close_click),
+                    'button normal', 'button select')], 10, 0, 0, 'center')
+            ]))
+    def on_close_click(self, d):
+        ui.main_loop.widget = ui.topframe
+        try: ui.maxEvals = int(self.evalsIntEdit.get_edit_text())
+        except Exception: pass
+        try:
+            os.mkdir(self.resultsDirEdit.get_edit_text())
+            ui.resultsDir = self.resultsDirEdit.get_edit_text()
+        except OSError, e:
+            if e.errno != 17:
+                raise
+        ui.debug_footer.set_text('Max evals: %d' % ui.maxEvals)
+
+class HelpDialog(urwid.ListBox):
     def __init__(self):
         urwid.ListBox.__init__(self,urwid.SimpleListWalker([
             urwid.Divider(' '),
-            urwid.AttrMap(urwid.Text('Quantum Inspired Evolutionary Algorithms', 'center'), 'main'),
+            urwid.AttrMap(urwid.Text('Quantum Inspired Evolutionary Algorithms', 'center'), 'bold'),
             urwid.Text('Copyright (C) 2011 Robert Nowotniak <robert@nowotniak.com>', 'center'),
             urwid.Divider(' '),
             urwid.Divider('*'),
@@ -422,8 +499,9 @@ class Help(urwid.ListBox):
                 '      1-9    --  number of parallel processes\n'
                 '       F1    --  this help screen\n'
                 '       F6    --  kill all subprocesses\n'
-                '       F8    --  quit the application\n'
                 '   ctrl-e    --  back to file manager (left column)\n'
+                '   ctrl-p    --  configuration dialog\n'
+                '       F8    --  quit the application\n'
                 ),
             urwid.GridFlow([
                 urwid.AttrMap(urwid.Button('Close', self.on_close_click),
@@ -432,6 +510,31 @@ class Help(urwid.ListBox):
     def on_close_click(self, d):
         ui.main_loop.widget = ui.topframe
 
+
+def tail(filename, nlines = 10):
+    try:
+        f = open(filename, 'r')
+        f.seek(-1, 2)
+        while True:
+            ch = f.read(1)
+            if ch != '\n':
+                f.seek(-2, 1)
+            else:
+                break
+        f.seek(-2, 1)
+        endpos = f.tell() + 1
+        n = 0
+        while n < nlines:
+            if f.read(1) == '\n':
+                n += 1
+            f.seek(-2, 1)
+        f.seek(2, 1)
+        result = f.read(endpos - f.tell())
+        f.close()
+    except Exception, e:
+        if e.errno == 2:
+            return '(no such file or file empty)'
+    return result
 
 
 if __name__ == '__main__':
