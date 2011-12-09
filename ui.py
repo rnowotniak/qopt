@@ -250,7 +250,11 @@ class TreeNodeWidget(urwid.TreeWidget):
     def keypress(self, size, key):
         key = self.__super.keypress(size, key)
         if key == 'enter':
+            if len(ui.progress_bars) == 0:
+                ui.debug_footer.set_text('Set the number of processes first!')
+                return
             f = ui.fm.get_focus()[1].get_key()
+            ui.basename = os.path.basename(f)  # XXX fix this
             if os.path.isdir(f):
                 self.expanded = not self.expanded
                 self.update_expanded_icon()
@@ -258,7 +262,8 @@ class TreeNodeWidget(urwid.TreeWidget):
                 ui.debug_footer.set_text('Executing %s in parallel %d times'% (f, ui.nparallel))
                 for n in xrange(ui.nparallel):
                     proc = subprocess.Popen(['%s' % f], shell = False, close_fds = True, \
-                            stdout = open("%s/output.%d"%(ui.resultsDir,n+1), 'w'), stderr=subprocess.STDOUT)
+                            stdout = open(getResultsFilename(n + 1), 'w'), stderr=subprocess.STDOUT)
+                            #stdout = open("%s/output.%d"%(ui.resultsDir,n+1), 'w'), stderr=subprocess.STDOUT)
                     ui.subprocesses.append(proc)
                     ui.progress_bars[n].set_completion(0)
                 def cb(loop, data):
@@ -267,7 +272,7 @@ class TreeNodeWidget(urwid.TreeWidget):
                         if type(p.poll()) == int:
                             ui.subprocesses.remove(p)
                     for n in xrange(0, ui.nparallel):
-                        lines = tail("%s/output.%d"%(ui.resultsDir,n+1), 20)
+                        lines = tail(getResultsFilename(n+1), 20)
                         if n == map(lambda b: b.state, ui.resultsRadioButtons).index(True):
                             # ResultButton n is selected, so update output view accordingly
                             ui.output.set_edit_text(lines)
@@ -295,7 +300,7 @@ class ResultButton(urwid.RadioButton):
 
     def keypress(self, size, key):
         if key == 'e':
-            os.system('vim "%s/output.%s"' % (ui.resultsDir, self.get_label()))
+            os.system('vim "%s"' % getResultsFilename(int(self.get_label())))
             ui.main_loop.draw_screen()
         return urwid.RadioButton.keypress(self, size, key)
 
@@ -379,7 +384,7 @@ class QOPTGui:
         if not checked:
             return
         try:
-            data = tail("%s/output.%s"%(ui.resultsDir,button.get_label()), 20)
+            data = tail(getResultsFilename(int(button.get_label())), 20)
             ui.output.set_edit_text(data)
         except Exception, e:
             ShowMessage(str(e), 'Error')
@@ -388,8 +393,13 @@ class QOPTGui:
         if input == 'ctrl e':
             self.main_columns.set_focus(0)
             return
+        if input == 'ctrl w':
+            self.main_columns.set_focus(2)
+            self.main_columns.widget_list[2].original_widget.set_focus(8 + len(self.progress_bars))
+            return
         elif input == 'ctrl r':
-            self.main_columns.widget_list[0] = urwid.AttrMap(FM(urwid.TreeWalker(DirectoryNode('.'))), 'fm')
+            self.fm = FM(urwid.TreeWalker(DirectoryNode('.')))
+            self.main_columns.widget_list[0] = urwid.AttrMap(self.fm, 'fm')
             self.preview.set_edit_text('')
         elif input == 'f6':
             for p in ui.subprocesses:
@@ -488,6 +498,13 @@ class HelpDialog(urwid.ListBox):
     def on_close_click(self, d):
         ui.main_loop.widget = ui.topframe
 
+def getResultsFilename(n):
+    try:
+        subdir = "%s/%s"%(ui.resultsDir, ui.basename)
+        os.mkdir(subdir)
+    except Exception:
+        pass
+    return "%s/output.%d"%(subdir, n)
 
 def tail(filename, nlines = 10):
     try:
@@ -517,7 +534,7 @@ def tail(filename, nlines = 10):
         f.close()
     except Exception, e:
         #if e.errno == 2:
-        return '(no such file or file empty)'
+        return '(waiting for the results...)'
     return result
 
 

@@ -5,6 +5,8 @@ import sys
 import random
 import copy
 
+import time
+
 import testfuncs
 #import ctestfuncs
 
@@ -152,7 +154,7 @@ kstep = 5
 bounds = [(-600,600)]*30
 EPSILON = 1e-6
 
-sys.argv = ['', '1', '0.5', '0.5']
+sys.argv = ['', '4', '0.5', '0.5']
 
 if sys.argv[1] == '1':
     fitness_function = testfuncs.f1
@@ -164,7 +166,7 @@ if sys.argv[1] == '1':
     XI = float(sys.argv[2])
     DELTA = float(sys.argv[3])
 
-    maxiter = 200
+    maxiter = 2000
 elif sys.argv[1] == '2':
     fitness_function = testfuncs.f2
     bounds = [(-10,10)]*30
@@ -195,8 +197,9 @@ elif sys.argv[1] == '4':
     K = 4
     G = 30
     kstep = 20
-    XI = float(sys.argv[2])
-    DELTA = float(sys.argv[3])
+    XI = 0.5
+    DELTA = 0.5
+    maxiter = 1000
 
 
 # initialization
@@ -297,6 +300,7 @@ while iter <= maxiter:
                 Q[i][j][2] = 1. / Q[i][j][1] / popsize
         
     iter += 1
+    time.sleep(.025) # XXX remove this ;)
 
 #print C[0]
 

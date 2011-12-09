@@ -69,7 +69,7 @@ if __name__ == '__main__':
     import numpy as np
 
     import matplotlib
-    matplotlib.use('pdf')
+    matplotlib.use('cairo')
     from mpl_toolkits.mplot3d import Axes3D
     from matplotlib import cm
     from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter, ScalarFormatter
@@ -123,5 +123,5 @@ if __name__ == '__main__':
 
         plt.title('$F_{%d}(x,y)$'%fnum)
 
-        plt.savefig('/tmp/f_%d.pdf'%fnum, bbox_inches='tight')
+        plt.savefig('/tmp/qopt/cec2005.py/f_%d.png'%fnum, bbox_inches='tight')
         #plt.show()

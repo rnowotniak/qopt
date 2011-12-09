@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ssh plgrid 'df -h;quota'
+
