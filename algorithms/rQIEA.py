@@ -8,8 +8,8 @@ import math
 import numpy as np
 import random
 
-random.seed(1)
-np.random.seed(1)
+# random.seed(1)
+# np.random.seed(1)
 
 def evaluate(x):
     # sphere function
@@ -38,88 +38,92 @@ def rotation(aa, bb, angleaa, anglebb):
     else:
         print 'error in rotation'
 
-popsize = 50
-dim = 30
 
-range_ = (-30,30)
+class rQIEA():
 
-Q = np.zeros([popsize, 2, dim])
-P = np.zeros([popsize, dim])
+    def __init__(self):
+        self.popsize = 20
+        self.dim = 10
+        self.range_ = (-100,100)
+        self.iter = 0
+        self.minfitness = float('inf')
+        self.b = None
+        self.termination = False
+        self.NoFE = 0
+        self.MaxNoFE = 1e5
+
+    def initialize(self):
+        self.Q = np.zeros([self.popsize, 2, self.dim])
+        self.P = np.zeros([self.popsize, self.dim])
+        # Initialize Q(self.iter)
+        for i in xrange(self.popsize):
+            self.Q[i][0] = np.random.random((1, self.dim)) * 2 - 1
+            self.Q[i][1] = np.sqrt(1-self.Q[i][0]**2)
+
+    def run(self):
+        while not self.termination:
+            # Construct P(self.iter) -- very specific to rQIEA algorithm
+            for i in xrange(self.popsize):
+                self.P[i] = self.range_[0] + np.array([q[random.choice((0,1))] for q in (self.Q[i]**2).transpose()]) \
+                        * (self.range_[1] - self.range_[0])
+
+            # Evaluate P(self.iter)
+            midminfitness = float('inf')
+            for i in xrange(self.popsize):
+                fitness = self.evaluate(self.P[i])
+                if fitness < midminfitness:
+                    midminfitness = fitness
+                    angle = np.matrix(self.Q[i], copy=True)
+                    midx = self.P[i]
+
+            # Store the best solution in self.b
+            if midminfitness < self.minfitness:
+                self.minfitness = midminfitness
+                anglemin = angle
+                self.b = np.matrix(midx, copy=True)
 
 
-t = 0
+            # check termination
+            self.NoFE += self.popsize
+            if self.NoFE >= self.MaxNoFE:
+                self.termination = True
+                continue
 
-# Initialize Q(t)
-for i in xrange(popsize):
-    Q[i][0] = np.random.random((1, dim)) * 2 - 1
-    Q[i][1] = np.sqrt(1-Q[i][0]**2)
+            # Update Q(self.iter) using Q-gates
+            for i in xrange(self.popsize):
+                for j in xrange(self.dim):
+                    aa = self.Q[i][0][j]
+                    bb = self.Q[i][1][j]
+                    angleaa = anglemin[0,j]
+                    anglebb = anglemin[1,j]
+                    k = np.pi / (100 + np.mod(self.iter, 100))
+                    theta = k * rotation(aa, bb, angleaa, anglebb)
+                    G = np.matrix([ \
+                            [np.cos(theta), -np.sin(theta)], \
+                            [np.sin(theta),  np.cos(theta)]])
+                    self.Q[i][:,j] = np.dot(G, np.matrix(self.Q[i])[:,j]).transpose() # actual rotation
+
+            # Recombination
+            Pc = 0.05
+            for i in xrange(self.popsize):
+                if random.random() < Pc:
+                    q1 = random.randint(0, self.popsize - 1)
+                    q2 = random.randint(0, self.popsize - 1)
+                    h1 = random.choice(xrange(self.dim + 1))
+                    h2 = random.choice(xrange(self.dim + 1))
+                    if h2 < h1:
+                        h1, h2 = h2, h1
+                    temp = np.matrix(self.Q[q1], copy=True)[:,h1:h2]
+                    np.matrix(self.Q[q1], copy=False)[:,h1:h2] = np.matrix(self.Q[q2])[:,h1:h2] # possibly swap alphas to betas also here
+                    np.matrix(self.Q[q2], copy=False)[:,h1:h2] = temp
+
+            self.iter += 1
+
+        return [self.b, self.minfitness]
 
 
-minfitness = float('inf')
-b = None
-termination = False
-NoFE = 0
-MaxNoFE = 1.5e3
-
-while not termination:
-    # Construct P(t) -- very specific to rQIEA algorithm
-    for i in xrange(popsize):
-        P[i] = range_[0] + np.array([q[random.choice((0,1))] for q in (Q[i]**2).transpose()]) \
-                * (range_[1] - range_[0])
-
-    # Evaluate P(t)
-    midminfitness = float('inf')
-    for i in xrange(popsize):
-        fitness = evaluate(P[i])
-        if fitness < midminfitness:
-            midminfitness = fitness
-            angle = np.matrix(Q[i], copy=True)
-            midx = P[i]
-
-    # Store the best solution in b
-    if midminfitness < minfitness:
-        minfitness = midminfitness
-        anglemin = angle
-        b = np.matrix(midx, copy=True)
-
-
-    # check termination
-    NoFE += popsize
-    if NoFE >= MaxNoFE:
-        termination = True
-        continue
-
-    # Update Q(t) using Q-gates
-    for i in xrange(popsize):
-        for j in xrange(dim):
-            aa = Q[i][0][j]
-            bb = Q[i][1][j]
-            angleaa = anglemin[0,j]
-            anglebb = anglemin[1,j]
-            k = np.pi / (100 + np.mod(t, 100))
-            theta = k * rotation(aa, bb, angleaa, anglebb)
-            G = np.matrix([ \
-                    [np.cos(theta), -np.sin(theta)], \
-                    [np.sin(theta),  np.cos(theta)]])
-            Q[i][:,j] = np.dot(G, np.matrix(Q[i])[:,j]).transpose() # actual rotation
-
-    # Recombination
-    Pc = 0.05
-    for i in xrange(popsize):
-        if random.random() < Pc:
-            q1 = random.randint(0, popsize - 1)
-            q2 = random.randint(0, popsize - 1)
-            h1 = random.choice(xrange(dim + 1))
-            h2 = random.choice(xrange(dim + 1))
-            if h2 < h1:
-                h1, h2 = h2, h1
-            temp = np.matrix(Q[q1], copy=True)[:,h1:h2]
-            np.matrix(Q[q1], copy=False)[:,h1:h2] = np.matrix(Q[q2])[:,h1:h2] # possibly swap alphas to betas also here
-            np.matrix(Q[q2], copy=False)[:,h1:h2] = temp
-
-    t += 1
-
-print b
-print minfitness
-
+if __name__ == '__main__':
+    rqiea = rQIEA()
+    rqiea.initialize()
+    print rqiea.run()
 
