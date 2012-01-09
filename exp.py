@@ -1,5 +1,8 @@
 #!/usr/bin/python
 #
+#  Ten skrypt bedzie chyba tak naprawde do wywalenia
+#  
+#
 # Glowny uruchamiacz pojedynczego eksperymentu obliczeniego
 # Odpowiedzialnosc:
 #     parsowanie argumentow, importowanie klas, ustawienia parametrow, uruchomienie algorytmu,

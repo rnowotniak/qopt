@@ -34,7 +34,7 @@ class Individual:
         return '(%s, %s, %g)' % (str(self.genotype), str(self.phenotype), float(self.fitness))
 
 
-class OptAlgorithm:
+class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
 
     def __init__(self):
         print 'OptAlgorithm constructor'
@@ -42,6 +42,7 @@ class OptAlgorithm:
         self.evaluator = None
         self.best = None # the best individual ever found
         self._time0 = None # timestamp at the start of algorithm
+        self.evolutiondata = []
 
     def initialize(self):
         pass

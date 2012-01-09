@@ -39,6 +39,35 @@ def plot(filename, *args,**kwargs):
     pylab.ylim(ymax=kwargs.get('ymax'))
     return pylab
 
+class Plot():
+    def __init__(self, alg, clear = True):
+        if clear:
+            pylab.cla()
+        if isinstance(alg, list):
+            # plot an average evolution
+            print [numpy.vstack(a.evolutiondata) for a in alg]
+            data = numpy.mean([numpy.vstack(a.evolutiondata) for a in alg], 0)
+            pylab.plot(data[:,0], data[:,1], 'x-')
+            pylab.xlim(xmax = data[:,0][-1])
+            #pylab.xlim(xmax = data[:,0][-1])
+            # plot all evolutions
+            #for a in alg:
+            #    data = numpy.vstack(a.evolutiondata)
+            #    pylab.plot(data[:,0], data[:,1], 'x-')
+            #    pylab.xlim(xmax = data[:,0][-1])
+        elif True: # XXX isinstance(alg, qopt.framework.OptAlgorithm):
+            data = numpy.vstack(alg.evolutiondata)
+            pylab.plot(data[:,0], data[:,1], 'x-')
+            pylab.xlim(xmax = data[:,0][-1])
+        else:
+            assert False
+        pylab.xlabel('evaluation count')
+        pylab.ylabel('objective function')
+        pylab.grid(True)
+
+    def save(self, filename):
+        pylab.savefig(filename, bbox_inches='tight')
+
 if __name__ == '__main__':
     #f = sys.argv[1]
     opts,args = getopt.getopt(sys.argv[1:], '', ['--cmpbest'])
@@ -46,7 +75,7 @@ if __name__ == '__main__':
         f = args[0]
     else:
         f = '/tmp/bla.txt'
-    p = plot(f,0,1,2,3,4,5,6,xlabel='generation', title='Plot')
+    p = plot(f,xlabel='generation', title='Plot')
     #p.legend(('evals', 'time'))
     p.savefig('/tmp/zzzz.png')
 
