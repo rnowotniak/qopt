@@ -45,9 +45,8 @@ class Plot():
             pylab.cla()
         if isinstance(alg, list):
             # plot an average evolution
-            print [numpy.vstack(a.evolutiondata) for a in alg]
             data = numpy.mean([numpy.vstack(a.evolutiondata) for a in alg], 0)
-            pylab.plot(data[:,0], data[:,1], 'x-')
+            pylab.plot(data[:,0], data[:,1], '-')
             pylab.xlim(xmax = data[:,0][-1])
             #pylab.xlim(xmax = data[:,0][-1])
             # plot all evolutions
@@ -57,13 +56,16 @@ class Plot():
             #    pylab.xlim(xmax = data[:,0][-1])
         elif True: # XXX isinstance(alg, qopt.framework.OptAlgorithm):
             data = numpy.vstack(alg.evolutiondata)
-            pylab.plot(data[:,0], data[:,1], 'x-')
+            pylab.plot(data[:,0], data[:,1], '-')
             pylab.xlim(xmax = data[:,0][-1])
         else:
             assert False
         pylab.xlabel('evaluation count')
         pylab.ylabel('objective function')
         pylab.grid(True)
+
+    def pylab(self):
+        return pylab
 
     def save(self, filename):
         pylab.savefig(filename, bbox_inches='tight')

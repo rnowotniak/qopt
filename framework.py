@@ -35,9 +35,10 @@ class Individual:
 
 
 class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
+                      # the integrated class should be the base class for algorithms (population-based heuritic)
 
     def __init__(self):
-        print 'OptAlgorithm constructor'
+        # print 'OptAlgorithm constructor'
         self.maxiter = 20
         self.evaluator = None
         self.best = None # the best individual ever found
@@ -54,12 +55,11 @@ class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
         #    self.population = load(self.initpopfile)
         self.iter = 0
         while self.iter < self.maxiter:
-            self.iter += 1
-            print 'iter ' + str(self.iter)
+            #print 'iter ' + str(self.iter)
             self.step()
-
-        print '## SOLUTION:'
-        print str(self.best)
+            self.iter += 1
+        # print '## SOLUTION:'
+        # print str(self.best)
 
     def step(self):
         pass
@@ -74,7 +74,7 @@ class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
 class EA(OptAlgorithm):
     def __init__(self):
         OptAlgorithm.__init__(self)
-        print 'EA constructor'
+        # print 'EA constructor'
         self.popsize = 10
         self.population = []
 
@@ -86,7 +86,7 @@ class EA(OptAlgorithm):
             b = max(self.population, key=lambda ind:ind.fitness) # minmax issue
             if b.fitness > self.best.fitness: # minmax issue
                 self.best = copy.deepcopy(b)
-        Logging.stat(self)
+        # Logging.stat(self)   # XXX logging removed
         print self
         self.operators()
 

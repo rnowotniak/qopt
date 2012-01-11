@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import framework
+import qopt.framework as framework
 import sys
 import random
 
@@ -34,9 +34,10 @@ class SGA(framework.GA):
         self.population = framework.OnePointMutation(self.population, self.Pm)
 
 if __name__ == '__main__':
-    import knapsack
+    import qopt
+    import qopt.problems.knapsack as knapsack
     k = knapsack.Evaluator()
-    k.file = 'data/knapsack1.txt'
+    k.file = qopt.path + '/problems/knapsack1.txt'
 
     sga = SGA()
     sga.evaluator = k

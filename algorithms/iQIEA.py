@@ -6,13 +6,15 @@ import random
 import copy
 import math
 
+import qopt.framework
+
 # import psyco
 # psyco.full()
 
 # random.seed(3)
 
-from matplotlib.path import Path
-from matplotlib.patches import PathPatch
+# from matplotlib.path import Path
+# from matplotlib.patches import PathPatch
 #import matplotlib.pyplot as plt
 import numpy as np
 
@@ -110,9 +112,10 @@ def selection(pop, howmany):
 #plt.savefig('/tmp/qpop.pdf', bbox_inches='tight')
 
 
-class iQIEA():
+class iQIEA(qopt.framework.EA):
 
     def __init__(self):
+        qopt.framework.EA.__init__(self)
         self.evaluation_counter = 0
 
         # defaults
@@ -137,80 +140,79 @@ class iQIEA():
                 height = 1. / width / self.popsize
                 q.append([center,1.*width, height])
             self.Q.append(q)
-
-    def run(self):
         self.iter = 0
         self.evolutiondata = [] # XXX
         self.evaluation_counter = 0
-        while self.iter <= self.maxiter:
-            pdfs = self.getPDFs(self.Q)
-            # pdfs = [ [(x,w,h), (x,w,h), (x,w,h), ...], [(x,w,h), (x,w,h), (x,w,h), ...], ... ]
-            #if self.iter == 35:
-            #    drawPDFs(pdfs)
-            #    sys.exit(0)
 
-            E = [self.observe(pdfs) for i in xrange(self.K)]
-            # E = [[9.400, -19.846], [8.604, -13.675], ...
+    def step(self):
+        pdfs = self.getPDFs(self.Q)
+        # pdfs = [ [(x,w,h), (x,w,h), (x,w,h), ...], [(x,w,h), (x,w,h), (x,w,h), ...], ... ]
+        #if self.iter == 35:
+        #    drawPDFs(pdfs)
+        #    sys.exit(0)
 
-            #E = evaluate(E)
+        E = [self.observe(pdfs) for i in xrange(self.K)]
+        # E = [[9.400, -19.846], [8.604, -13.675], ...
+
+        #E = evaluate(E)
+        # E = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
+
+        # --- proof that the sampling is correct
+        # plt.clf()
+        # plt.hold(True)
+        # for g in xrange(G):
+        #     ax = plt.subplot(1, G, g + 1)
+        #     for n in xrange(1000):
+        #         ax.plot(observe(pdfs)[g], random.random(), '*')
+        #         ax.set_xlim((-10,20))
+        #         ax.set_ylim((0,1))
+        # plt.savefig('/tmp/e.pdf')
+        # ---
+
+        if self.iter == 0:
+            oldC = None
+            fi = None
+            self.C = E
+            self.C = self.evaluate(self.C)
+            # C = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
+            self.C = sorted(self.C, cmp = lambda x,y: cmp(x[1], y[1])) # minmax issue
+            # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
+        else:
+            if self.iter%self.kstep == 0: # every kstep-th iteration
+                oldC = copy.deepcopy(self.C)
+            E = self.crossover(E, self.C)
+            E = self.evaluate(E)
             # E = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
+            self.C = selection(E + self.C, self.K)
+            print self.evaluation_counter, self.C[0][1]
+            self.best = self.C[0]
+            #if self.C[0][1] < EPSILON:
+            #    sys.exit(0)
+            # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
+            # C is also already sorted now
 
-            # --- proof that the sampling is correct
-            # plt.clf()
-            # plt.hold(True)
-            # for g in xrange(G):
-            #     ax = plt.subplot(1, G, g + 1)
-            #     for n in xrange(1000):
-            #         ax.plot(observe(pdfs)[g], random.random(), '*')
-            #         ax.set_xlim((-10,20))
-            #         ax.set_ylim((0,1))
-            # plt.savefig('/tmp/e.pdf')
-            # ---
-
-            if self.iter == 0:
-                oldC = None
-                fi = None
-                C = E
-                C = self.evaluate(C)
-                # C = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
-                C = sorted(C, cmp = lambda x,y: cmp(x[1], y[1])) # minmax issue
-                # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
-            else:
-                if self.iter%self.kstep == 0: # every kstep-th iteration
-                    oldC = copy.deepcopy(C)
-                E = self.crossover(E, C)
-                E = self.evaluate(E)
-                # E = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
-                C = selection(E + C, self.K)
-                print self.evaluation_counter, C[0][1]
-                #if C[0][1] < EPSILON:
-                #    sys.exit(0)
-                # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
-                # C is also already sorted now
-
-            if self.iter%self.kstep == 0 and oldC:
-                improved = 0
-                for i in xrange(len(C)):
-                    if C[i][1] < oldC[i][1]: # minmax issue
-                        improved += 1
-                fi = 1.0 * improved / len(C)
-            # update Q(t)
-            for i in xrange(self.popsize):
-                for j in xrange(self.G):
-                    self.Q[i][j][0] = C[i][0][j] # translate center of the i-th pulse
-                    if self.iter % self.kstep or not oldC:
-                        continue
-                    # scale the pulse width (update the height also)
-                    #print Q[0]
-                    if fi < 0.2:
-                        self.Q[i][j][1] *= self.DELTA
-                    elif fi > 0.2:
-                        self.Q[i][j][1] /= self.DELTA
-                    if self.Q[i][j][1] > 0:
-                        self.Q[i][j][2] = 1. / self.Q[i][j][1] / self.popsize
-                
-            self.iter += 1
-            self.evolutiondata.append((self.evaluation_counter, C[0][1])) # XXX move to step in upper class
+        if self.iter%self.kstep == 0 and oldC:
+            improved = 0
+            for i in xrange(len(self.C)):
+                if self.C[i][1] < oldC[i][1]: # minmax issue
+                    improved += 1
+            fi = 1.0 * improved / len(self.C)
+        # update Q(t)
+        for i in xrange(self.popsize):
+            for j in xrange(self.G):
+                self.Q[i][j][0] = self.C[i][0][j] # translate center of the i-th pulse
+                if self.iter % self.kstep or not oldC:
+                    continue
+                # scale the pulse width (update the height also)
+                #print Q[0]
+                if fi < 0.2:
+                    self.Q[i][j][1] *= self.DELTA
+                elif fi > 0.2:
+                    self.Q[i][j][1] /= self.DELTA
+                if self.Q[i][j][1] > 0:
+                    self.Q[i][j][2] = 1. / self.Q[i][j][1] / self.popsize
+        #self.iter += 1
+        self.evolutiondata.append((self.evaluation_counter, self.C[0][1])) # XXX move to step in upper class
 
         #print C[0]
 
@@ -306,6 +308,7 @@ if __name__ == '__main__':
     iqiea = iQIEA()
     sys.argv = 'rcqiea.py 3 0.78 0.421'.split()
     sys.argv = 'rcqiea.py 3 0.5 0.1'.split()
+    sys.argv = 'rcqiea.py 3 0.23 0.785'.split()
     if sys.argv[1] == '1':
         iqiea.fitness_function = testfuncs_f1
         iqiea.bounds = [(-30,30)]*30
@@ -329,13 +332,13 @@ if __name__ == '__main__':
     elif sys.argv[1] == '3':
         iqiea.fitness_function = testfuncs_f3
         iqiea.bounds = [(-600,600)]*30
-        iqiea.popsize = 5
+        iqiea.popsize = 10
         iqiea.K = 10
         iqiea.G = 30
         iqiea.kstep = 5
         iqiea.XI = float(sys.argv[2])
         iqiea.DELTA = float(sys.argv[3])
-        iqiea.maxiter = 500
+        iqiea.maxiter = 800
     elif sys.argv[1] == '4':
         iqiea.fitness_function = testfuncs_f4
         iqiea.bounds = [(-10,10)]*30
@@ -345,7 +348,6 @@ if __name__ == '__main__':
         iqiea.kstep = 20
         iqiea.XI = float(sys.argv[2])
         iqiea.DELTA = float(sys.argv[3])
-    iqiea.initialize()
     iqiea.run()
 
 
