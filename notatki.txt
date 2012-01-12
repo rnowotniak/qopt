@@ -1,12 +1,33 @@
 FRAMEWORK NALEŻY UPROŚCIĆ, ABY MÓC GO FAKTYCZNEI WYKORZYSTAĆ W ROZPRAWIE!!
-NP. PODSYSTEM GENEROWANIA RAPORTÓW NALEŻY GDZIEŚ ODŁĄCZYĆ
+NP. PODSYSTEM GENEROWANIA RAPORTÓW NALEŻY GDZIEŚ ODŁĄCZYĆ^H^H^H^H^H USUNĄĆ
 
 Aktualne wymagania wobec frameworka!:
 	zestaw klas, z ktorych mozna sobie dziedziczyc, aby zrobic nowy EA
-	proste logowanie tego, co jest kierowane na stdout
+	proste logowanie tego, co jest kierowane na stdout  -- ZREZYGNOWAC
 	zestaw funkcji, ktorych mozna uzyc np. jako operatorow genetycznych, metod selekcji
 	skrypty pomocnicze: generowanie wykresów danego typu, avg.py itp
 
+--------8<--------8<--------8<--------8<--------8<--------8<--------8<
+Aktualnie pożądane API, do którego dążymy:
+
+import qopt
+import qopt.benchmarks.CEC2005.cec2005 as cec2005
+import qopt.analysis.plots  (?)
+import qopt.analysis.banach
+import qopt.analysis.bblocks
+import qopt.algorithms.rQIEA
+import qopt.algorithms.iQIEA
+import qopt.problems.slam
+import qopt.problems.featuresel
+import qopt.problems.fuzzy
+import qopt.problems.fode
+import qopt.problems.elctro
+import qopt.plgrid (?)
+import qopt.cuda.qiga  (?)
+import qopt.cuda.gaqpr  (?)
+import qopt.tools.pyevolve (?)
+
+--------8<--------8<--------8<--------8<--------8<--------8<--------8<
 
 Wyobrazic sobie te eksperymenty, ktore faktycznie bedziemy wykonywac podczas
 pracy nad rozprawa i podczas pracy nad artykulami, i na podstawie tego wyobrazenia

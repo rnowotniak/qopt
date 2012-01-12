@@ -60,6 +60,7 @@ class rQIEA():
             self.Q[i][0] = np.random.random((1, self.dim)) * 2 - 1
             self.Q[i][1] = np.sqrt(1-self.Q[i][0]**2)
 
+    # XXX -> step
     def run(self):
         while not self.termination:
             # Construct P(self.iter) -- very specific to rQIEA algorithm
