@@ -44,6 +44,7 @@ class rQIEA():
     def __init__(self):
         self.popsize = 20
         self.dim = 10
+        # XXX range_ -> bounds
         self.range_ = (-100,100)
         self.iter = 0
         self.minfitness = float('inf')

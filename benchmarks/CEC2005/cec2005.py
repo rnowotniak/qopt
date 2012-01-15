@@ -4,10 +4,55 @@ import os
 import os.path
 import sys
 import ctypes
+from math import pi
 
 LIBS = {}
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+_FUNCTIONS_DATA =  (
+        #     bounds     opt           plot_bounds       plot_density
+        ( (-100, 100), -450, ( (-100, 100),  (-100, 100)), 30 ), # f1       
+        ( (-100, 100), -450, ( (-100, 100),  (-100, 100)), 30 ), # f2
+        ( (-100, 100), -450, ( (-100, 100),  (-100, 100)), 30 ), # f3
+        ( (-100, 100), -450, (    (0, 100),    (-100, 0)), 30 ), # f4
+        ( (-100, 100), -310, ( (-200, 200),  (-200, 200)), 30 ), # f5
+        ( (-100, 100),  390, (    (78, 82),   (-52, -47)), 30 ), # f6
+        (   (-0, 600), -180, ((-340, -250),    (-100, 0)), 30 ), # f7
+        (   (-32, 32), -140, (   (-40, 40),    (-40, 40)), 70 ), # f8
+        (     (-5, 5), -330, (     (-5, 5),      (-5, 5)), 50 ), # f9
+        (     (-5, 5), -330, (     (-5, 5),      (-5, 5)), 50 ), # f10
+        (   (-.5, .5),   90, (   (-.5, .5),    (-.5, .5)), 60 ), # f11
+        (   (-pi, pi), -460, (     (-4, 4),      (-4, 4)), 50 ), # f12
+        (     (-3, 1), -130, (    (-2, -1),     (-2, -1)), 50 ), # f13
+        ( (-100, 100), -300, (  (-90, -50),     (-40, 0)), 70 ), # f14
+        (     (-5, 5),  120, (     (-5, 5),      (-5, 5)), 60 ), # f15
+        (     (-5, 5),  120, (     (-5, 5),      (-5, 5)), 60 ), # f16
+        (     (-5, 5),  120, (     (-5, 5),      (-5, 5)), 60 ), # f17
+        (     (-5, 5),   10, (     (-5, 5),      (-5, 5)), 60 ), # f18
+        (     (-5, 5),   10, (     (-5, 5),      (-5, 5)), 60 ), # f19
+        (     (-5, 5),   10, (     (-5, 5),      (-5, 5)), 60 ), # f20
+        (     (-5, 5),  360, (     (-5, 5),      (-5, 5)), 60 ), # f21
+        (     (-5, 5),  360, (     (-5, 5),      (-5, 5)), 60 ), # f22
+        (     (-5, 5),  360, (     (-5, 5),      (-5, 5)), 60 ), # f23
+        (     (-5, 5),  260, (     (-5, 5),      (-5, 5)), 60 ), # f24
+        (      (2, 5),  260, (     (-5, 5),      (-5, 5)), 60 )  # f25
+        )
+
+def fgenerator(num):
+    def fun(arg):
+        return f(num, arg)
+    return fun
+
+FUNCTIONS = {}
+for fnum in xrange(1, 26):
+    FUNCTIONS['f%d' % fnum] = {
+            'fun'          : fgenerator(fnum),
+            'bounds'       : _FUNCTIONS_DATA[fnum - 1][0],
+            'opt'          : _FUNCTIONS_DATA[fnum - 1][1],
+            'plot_bounds'  : _FUNCTIONS_DATA[fnum - 1][2],
+            'plot_density' : _FUNCTIONS_DATA[fnum - 1][3]
+            }
 
 # pliki libf%d.so to maja byc biblioteki zawierajace pelen benchmark skompilowany dla funkcji testowej %d
 
@@ -45,12 +90,6 @@ def f(num, x):
     x = arr(*x)
     return lib.calc_benchmark_func(x)
 
-
-def fgenerator(num):
-    def fun(arg):
-        return f(num, arg)
-    return fun
-
 for fnum in xrange(1, 26):
     globals()['f%d' % fnum] = fgenerator(fnum)
 
@@ -80,32 +119,10 @@ if __name__ == '__main__':
     for fnum in xrange(1, 26):
         print '%d ' % fnum
         sys.stdout.flush()
-        if fnum < 4:
-            X, Y = np.linspace(-100, 100, 30), np.linspace(-100, 100, 30)
-        if fnum == 4:
-            X, Y = np.linspace(0, 100, 30), np.linspace(-100, 0, 30)
-        elif fnum == 5:
-            X, Y = np.linspace(-200, 200, 30), np.linspace(-200, 200, 30)
-        elif fnum == 6:
-            X, Y = np.linspace(78, 82, 30), np.linspace(-47, -52, 30)
-        elif fnum == 7:
-            X, Y = np.linspace(-350, -250, 30), np.linspace(-100, 0, 30)
-        elif fnum == 8:
-            X, Y = np.linspace(-40, 40, 70), np.linspace(-40, 40, 70)
-        elif fnum == 9:
-            X, Y = np.linspace(-5, 5, 50), np.linspace(-5, 5, 50)
-        elif fnum == 10:
-            X, Y = np.linspace(-5, 5, 50), np.linspace(-5, 5, 50)
-        elif fnum == 11:
-            X, Y = np.linspace(-.5, .5, 60), np.linspace(-.5, .5, 60)
-        elif fnum == 12:
-            X, Y = np.linspace(-4, 4, 50), np.linspace(-4, 4, 50)
-        elif fnum == 13:
-            X, Y = np.linspace(-2, -1, 50), np.linspace(-2, -1, 50)
-        elif fnum == 14:
-            X, Y = np.linspace(-90, -50, 70), np.linspace(-40, 0, 70)
-        elif fnum >= 15:
-            X, Y = np.linspace(-5, 5, 60), np.linspace(-5, 5, 60)
+
+        X = np.linspace(*(FUNCTIONS['f%d'%fnum]['plot_bounds'][0] + (FUNCTIONS['f%d'%fnum]['plot_density'],)))
+        Y = np.linspace(*(FUNCTIONS['f%d'%fnum]['plot_bounds'][1] + (FUNCTIONS['f%d'%fnum]['plot_density'],)))
+
         fig = plt.figure()
         ax = fig.gca(projection='3d')
 
@@ -120,8 +137,7 @@ if __name__ == '__main__':
 
         ax.set_xlabel('$X$')
         ax.set_ylabel('$Y$')
-
         plt.title('$F_{%d}(x,y)$'%fnum)
 
-        plt.savefig('/tmp/qopt/cec2005.py/f_%d.png'%fnum, bbox_inches='tight')
-        #plt.show()
+        plt.savefig('/tmp/f_%d.png'%fnum, bbox_inches='tight')
+
