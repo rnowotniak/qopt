@@ -35,22 +35,50 @@ import math
 import qopt
 import qopt.benchmarks.CEC2005.cec2005 as cec2005
 import qopt.algorithms.iQIEA as iQIEA
-# import qopt.benchmarks.knapsack
-# import qopt.benchmarks.tsp
-# import qopt.benchmarks....
+import qopt.algorithms.SGA as SGA
 import qopt.analysis.plot as plot
 import copy
 
-runs = 1
+FNUM = int(sys.argv[1])
 
-print cec2005.f1([0.0] * 10)
+plot_limits = (
+        (10000, -500, 8000),  # f1
+        (10000, None, 25000),  # f2
+        (10000, None, .2e9),  # f3
+        (10000, None, 20000),  # f4
+        (10000, None, 15000),  # f5
+        (10000, None, .1e9),  # f6
+        (10000, None, 2500),  # f7
+        (10000, None, None),  # f8
+        (10000, None, -200),  # f9
+        (10000, None, -200),  # f10
+        (10000, None, None),  # f11
+        (10000, None, 150000),  # f12
+        (10000, -150, -100),  # f13
+        (10000, None, None),  # f14
+        (10000, None, None),  # f15
+        (10000, None, 700),  # f16
+        (10000, None, 700),  # f17
+        (10000, None, 1300),  # f18
+        (10000, None, 1300),  # f19
+        (10000, None, 1300),  # f20
+        (10000, None, 2000),  # f21
+        (10000, None, 1700),  # f22
+        (10000, None, 1800),  # f23
+        (10000, None, 1700),  # f24
+        (10000, None, 2400),  # f25
+        )
+
+runs = 5
+BFUNC = cec2005.FUNCTIONS['f' + str(FNUM)]
 
 max_evaluation = 10000
+dim = 10
 
 iqiea = iQIEA.iQIEA()
-iqiea.fitness_function = cec2005.f2
-iqiea.G = 10
-iqiea.bounds = [(-100,100)] * iqiea.G
+iqiea.fitness_function = BFUNC['fun']
+iqiea.G = dim
+iqiea.bounds = [BFUNC['bounds']] * iqiea.G
 iqiea.popsize = 10
 iqiea.K = 10
 iqiea.kstep = 10
@@ -58,29 +86,25 @@ iqiea.XI = .1
 iqiea.DELTA = .5
 iqiea.maxiter = max_evaluation / iqiea.K
 
+
 algs = []
-for run in xrange(5):
-    # qopt.tic()
+for run in xrange(runs):
+    #qopt.tic()
     iqiea.run()
     algs.append(copy.deepcopy(iqiea))
-    # print qopt.toc()
+    #print qopt.toc()
 plot1 = plot.Plot(algs)
-plot1.save('/tmp/foo.pdf')
+#plot1.pylab().ylim(ymax = 10000)
 
-###
-sys.exit(0)
-###
+sgadata = np.matrix(';'.join(open('/tmp/sga/f%s/avg' % str(FNUM)).readlines()))
+plot1.pylab().plot(sgadata[:,0], sgadata[:,1], 'x-', label='SGA')
+plot1.pylab().legend()
+if plot_limits[FNUM - 1][0]:
+    plot1.pylab().xlim(xmax = plot_limits[FNUM - 1][0])
+if plot_limits[FNUM - 1][1]:
+    plot1.pylab().ylim(ymin = plot_limits[FNUM - 1][1])
+if plot_limits[FNUM - 1][2]:
+    plot1.pylab().ylim(ymax = plot_limits[FNUM - 1][2])
 
-for n in xrange(1):
-    print n
-    sys.stdout.flush()
-    rqiea = rQIEA()
-    rqiea.initialize()
-    rqiea.evaluate = cec2005.fgenerator(n + 1)
-    results = []
-    for run in xrange(runs):
-        result = rqiea.run()
-        results.append(result)
-
-print results
+plot1.save('/tmp/plot-f%d.pdf' % FNUM)
 

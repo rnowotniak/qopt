@@ -21,6 +21,7 @@ import qopt.problems.slam
 import qopt.problems.featuresel
 import qopt.problems.fuzzy
 import qopt.problems.fode
+import qopt.problems.wavelet
 import qopt.problems.elctro
 import qopt.plgrid (?)
 import qopt.cuda.qiga  (?)
