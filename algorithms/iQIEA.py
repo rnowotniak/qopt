@@ -144,7 +144,7 @@ class iQIEA(qopt.framework.EA):
         self.evolutiondata = [] # XXX
         self.evaluation_counter = 0
 
-    def step(self):
+    def generation(self):
         pdfs = self.getPDFs(self.Q)
         # pdfs = [ [(x,w,h), (x,w,h), (x,w,h), ...], [(x,w,h), (x,w,h), (x,w,h), ...], ... ]
         #if self.iter == 35:

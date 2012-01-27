@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #
-# Glowny kod frameworka
+# QOpt framework
+# Copyright (C) 2012   Robert Nowotniak
 #
 
 import random
@@ -22,62 +23,18 @@ PRNGseed = None
 id = '$Id$'
 version = '0.' + re.sub(r'[^0-9]', '', '$Revision$')
 
-# byc moze to tez powinno zostac uproszczone? XXX
 class Individual:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.genotype = None
-        self.phenotype = None
         self.fitness = None
-        self.cet = None
-        # self.xsite
+        # self.phenotype = None
+        # self.cet = None
+        # ...
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
     
     def __str__(self):
         return '(%s, %s, %g)' % (str(self.genotype), str(self.phenotype), float(self.fitness))
-
-
-class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
-                      # the integrated class should be the base class for algorithms (population-based heuritic)
-
-    # konwencja numerowania generacji:
-    # na etapie inicjalizacji: generacja zerowa,
-    # przy rozpoczeciu pierwszej generacji: generacja pierwsza
-    # (inkrementacja na poczatku tej glownej petli)
-
-    def __init__(self):
-        # print 'OptAlgorithm constructor'
-        self.maxiter = 20
-        self.evaluator = None
-        self.minmax = 'min'
-        self.best = None # the best individual ever found
-        self._time0 = None # timestamp at the start of algorithm
-        self.evolutiondata = [] # XXX zrobic .history zamiast tego
-
-    def initialize(self):
-        pass
-
-    def run(self):
-        self.iter = 0
-        self.initialize()
-        self._time0 = time.time()
-        #if self.initpopfile:
-        #    self.population = load(self.initpopfile)
-        while self.iter < self.maxiter: # XXX -> termination
-            self.iter += 1
-            #print 'iter ' + str(self.iter)
-            self.step()
-            # add .history handling here
-        # print '## SOLUTION:'
-        # print str(self.best)
-
-    def step(self):
-        pass
-
-    # allows to pickle objects of this class
-    def __getstate__(self):
-        result = self.__dict__.copy()
-        if result['evaluator']:
-            result['evaluator'].__call__ = None
-        return result  
 
 #
 # Moze dorobic taka ciekawa rzecz: XXX
@@ -90,39 +47,73 @@ class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
 #   tzn. np. robic pickle(self, '/tmp/blaa.id')
 #
 #
-class EA(OptAlgorithm):
+class EA:
+    """ the base class for evolutionary algorithms (population-based heuritics) """
+
     def __init__(self):
-        OptAlgorithm.__init__(self)
-        # print 'EA constructor'
         self.popsize = 10
         self.population = []
+        self.best = None # the best individual ever found
 
-    def step(self):
-        self.evaluation()
-        if not self.best:
-            self.best = copy.deepcopy(max(self.population, key=lambda ind:ind.fitness)) # minmax issue
-        else:
-            b = max(self.population, key=lambda ind:ind.fitness) # minmax issue
-            if b.fitness > self.best.fitness: # minmax issue
-                self.best = copy.deepcopy(b)
-        # Logging.stat(self)   # XXX logging removed
-        print self
-        self.operators()
+        self.evaluator = None
+        self.minmax = min
+        self.__time0 = None # timestamp at the start of algorithm
+
+        # XXX do poprawy
+        self.maxiter = 20
+        self.evolutiondata = [] # XXX zrobic .history zamiast tego
 
     def initialize(self):
-        pass
-
-    def evaluation(self):
-        print 'EA evaluating'
-        for ind in self.population:
-            res = self.evaluator(ind.genotype)
-            if type(res) == tuple:
-                ind.fitness, ind.phenotype = res
-            else:
-                ind.fitness, ind.phenotype = res, None
+        pass # abstract
 
     def operators(self):
-        pass
+        pass # abstract
+
+    def run(self):
+        # konwencja numerowania generacji:
+        # na etapie inicjalizacji: generacja zerowa,
+        # przy rozpoczeciu pierwszej generacji: generacja pierwsza
+        # (inkrementacja na poczatku tej glownej petli)
+        self.iter = 0
+        self.initialize()
+        self.__time0 = time.time()
+        while self.iter < self.maxiter: # XXX -> termination
+            self.iter += 1
+            #print 'iter ' + str(self.iter)
+            self.generation()
+            # XXX add .history handling here
+
+    def generation(self): # this function is volatile to minmax issue
+        """ this function should be overriden in whole by complex EA algorithms """
+        # evaluate
+        fvalues = self.evaluate(self.population)
+        # store the best solution
+        index_of_best = fvalues.index(self.minmax(fvalues))
+        best_in_population = Individual(
+                genotype = copy.deepcopy(self.population[index_of_best]),
+                fitness = fvalues[index_of_best])
+        if self.best == None:
+            self.best = best_in_population
+        elif self.minmax(best_in_population.fitness, self.best.fitness) is best_in_population.fitness:
+            self.best = best_in_population
+        # operators
+        self.operators()
+
+    def evaluate(self, population):
+        # print 'EA evaluating'
+        results = []
+        for ind in population:
+            res = self.evaluator(ind)
+            results.append(res)
+        return results
+
+
+    # allows to pickle objects of this class
+    # def __getstate__(self):
+    #     result = self.__dict__.copy()
+    #     if result['evaluator']:
+    #         result['evaluator'].__call__ = None
+    #     return result  
 
     def __str__(self):
         if not self.population:
@@ -137,10 +128,10 @@ class GA(EA):
         self.chromlen = 10
 
 
-class ExecutableAlgorithm(OptAlgorithm):
+class ExecutableAlgorithm(EA):
     """The algorithm implemented in external executable file"""
     def __init__(self, *args):
-        OptAlgorithm.__init__(self)
+        EA.__init__(self)
         self.best = Individual()
         self.maxiter = 130
         self.proc=subprocess.Popen(
@@ -154,149 +145,14 @@ class ExecutableAlgorithm(OptAlgorithm):
             print line,
 
 
-# XXX -- to jest zbyt zagmatwane, trzeba raczej usunac to zupelnie
-# i zamiast tego zrobic magiczne .history
-#
-# Odpowiedzialnoscia tej klasy jest tworzenie pliku z logiem (w tym naszym ustalonym formacie).
-# Ta klasa ma zastepowac strumien sys.stdout.
-# Na __stdout__  kopiuje wszystko bez ruszania czegokolwiek.
-# Wszystkie linie zaczynaja sie od #, oprocz linii STAT.
-class Logging:
-
-    statregexp = re.compile(r'^.*\bSTAT\s+([\w.+-]+\s+){6}[\w.+-]+')
-
-    def __init__(self, logfilename, algo=None):
-        self.logfilename = logfilename
-        self.logfile = open(self.logfilename, 'w+')
-        self.newline = True # indicates if the last line printed ends with the new line character
-        self.debugmode = False
-        sys.stdout = self
-        if algo:
-            # log the preamble
-            self.header(algo)
-
-    def write(self, msg):
-        sys.__stdout__.write(msg) # copy msg to __stdout__
-
-        # settle the format of the log line
-        if self.debugmode:
-            frame = traceback.extract_stack()[-2]
-            prefix = '#%s:%d# ' % (frame[0].split('/')[-1], frame[1])
-        elif self.newline and msg.startswith('#'):
-            prefix = '#'
-        else:
-            prefix = '# '
-
-        if self.newline:
-            self.logfile.write(prefix)
-        self.logfile.write(re.sub('\n(?=[^$])', '\n'+prefix, msg))
-
-        self.logfile.flush()
-        self.newline = msg.endswith('\n')
-
-    def close(self):
-        Logging.postprocess(self.logfilename)
-        if sys.stdout == self:
-            sys.stdout = sys.__stdout__
-
-    def __getattr__(self, name):
-        return sys.__stdout__.__getattr__(name)
-
-    def header(self,algo):
-        print '# Numerical Experiment'
-        print '%s' % time.strftime('%Y-%m-%d %H:%M:%S %Z')
-        print ''
-        print '# DESCRIPTION:'
-        print '%s\n' % algo.__doc__
-        print '# COMMAND:'
-        cmd = ''
-        for a in sys.argv:
-            if a.count(' '):
-                a = "'%s'" % a
-            cmd += a + ' '
-        print '%s\n' % cmd
-        print '# PARAMETERS:'
-        print 'algorithm = %s' % (algo.__class__)
-        print 'evaluator = %s' % (algo.evaluator.__class__)
-        print 'PRNGseed = %f' % PRNGseed
-        print
-        for c in (algo, algo.evaluator):
-            for param in dir(c):
-                if param.startswith('__'):
-                    continue
-                if param in ('population'):
-                    # it is not an attribute
-                    continue
-                if type(getattr(c,param)) not in (int,float,str,type(lambda x:x)):
-                    continue
-                print '%s.%s = %s' % (c.__class__.__name__, param, getattr(c,param))
-            print
-        print
-        print '# DEBUG:'
-        self.debugmode = True
-
-    @staticmethod
-    def stat(algo):
-        fs = map(lambda ind: ind.fitness, algo.population)
-        best = max(fs)  # minmax issue
-        worst = min(fs)  # minmax issue
-        avg = sum(fs) / len(algo.population)
-        stddev = numpy.std(fs)
-        print 'STAT  %d %d  %.03f   %g  %g  %g  %g' % \
-                (algo.iter, \
-                algo.evaluator.evaluationCounter,\
-                (time.time() - algo._time0)*1000, \
-                best, avg, worst, stddev)
-
-
-    # log nie moze byc wygenerowany od razu w pozadanym formacie w jednym przebiegu.
-    # po wygenerowaniu logu musi byc postprocessing.
-    # Odpowiedzialnosc tej funkcji: utworzenie sekcji DATA, przeniesienie sekcji SOLUTION
-    @staticmethod
-    def postprocess(filename):
-        stats = StringIO.StringIO()
-        solution = StringIO.StringIO()
-
-        # read the logfile and store the data
-        logfile = open(filename, 'r')
-        while True:
-            line = logfile.readline()
-            if not line:
-                break
-            if re.match(r'^## DATA:', line):
-                raise Exception('%s is an already postprocessed file' % filename)
-            if Logging.statregexp.match(line):
-                stats.write(re.sub(r'^.*\bSTAT\b\s+', '', line))
-            if re.match(r'.*## SOLUTION:$', line.strip()):
-                solution.write(''.join( \
-                        [re.sub(r'^#[^ #]+# ', '# ', l) for l in logfile.readlines()]))
-                solution.write(''.join(logfile.readlines()))
-                break
-
-        # read the logfile again and write the result file
-        logfile.seek(0)
-        tmpfd, tmpname = tempfile.mkstemp()
-        f2 = open(tmpname, 'w')
-        while True:
-            line = logfile.readline()
-            if not line:
-                break
-            if line.startswith('## DEBUG:'):
-                f2.write('## DATA:\n')
-                f2.write('# iter     evals   time    best   avg   worst  std_dev\n')
-                f2.write(stats.getvalue())
-                f2.write('\n')
-                f2.write('## SOLUTION:\n')
-                f2.write(solution.getvalue())
-                f2.write('\n')
-            f2.write(line)
-        f2.close()
-        stats.close()
-        solution.close()
-        os.rename(tmpname, filename)
 
 
 
+
+
+
+
+# --------8<--------8<--------8<--------8<--------8<--------8<--------8<
 # To nie jest juz core framework -- ponizsze CHYBA nalezy przeniesc do jakiegos operators.py
 # **   OPERATORY   **
 
