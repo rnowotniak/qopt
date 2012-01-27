@@ -169,7 +169,7 @@ class iQIEA(qopt.framework.EA):
         # plt.savefig('/tmp/e.pdf')
         # ---
 
-        if self.iter == 0:
+        if self.iter == 1:
             oldC = None
             fi = None
             self.C = E

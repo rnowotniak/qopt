@@ -22,6 +22,7 @@ PRNGseed = None
 id = '$Id$'
 version = '0.' + re.sub(r'[^0-9]', '', '$Revision$')
 
+# byc moze to tez powinno zostac uproszczone? XXX
 class Individual:
     def __init__(self):
         self.genotype = None
@@ -37,27 +38,34 @@ class Individual:
 class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
                       # the integrated class should be the base class for algorithms (population-based heuritic)
 
+    # konwencja numerowania generacji:
+    # na etapie inicjalizacji: generacja zerowa,
+    # przy rozpoczeciu pierwszej generacji: generacja pierwsza
+    # (inkrementacja na poczatku tej glownej petli)
+
     def __init__(self):
         # print 'OptAlgorithm constructor'
         self.maxiter = 20
         self.evaluator = None
+        self.minmax = 'min'
         self.best = None # the best individual ever found
         self._time0 = None # timestamp at the start of algorithm
-        self.evolutiondata = []
+        self.evolutiondata = [] # XXX zrobic .history zamiast tego
 
     def initialize(self):
         pass
 
     def run(self):
+        self.iter = 0
         self.initialize()
         self._time0 = time.time()
         #if self.initpopfile:
         #    self.population = load(self.initpopfile)
-        self.iter = 0
-        while self.iter < self.maxiter:
+        while self.iter < self.maxiter: # XXX -> termination
+            self.iter += 1
             #print 'iter ' + str(self.iter)
             self.step()
-            self.iter += 1
+            # add .history handling here
         # print '## SOLUTION:'
         # print str(self.best)
 
@@ -71,6 +79,17 @@ class OptAlgorithm:   # TODO:  integrate this with EA  (simplify)
             result['evaluator'].__call__ = None
         return result  
 
+#
+# Moze dorobic taka ciekawa rzecz: XXX
+#   .history (?)
+#   ta magiczna tablica zawieralaby stan zmiennych z kolejnych generacji algorytmu,
+#   tzn. moze byloby sie po wykonaniu algorytmu odwolywac np:
+#   alg1.history[nrgen].best  albo  alg1.history[nrgen].Q   (ile RAM-u by to bralo?)
+#   nalezaloby to uwzglednic w .step
+#   Mozna byloby tez po calym eksperymencie latwo zapisywac stan i go potem latwo debugowac,
+#   tzn. np. robic pickle(self, '/tmp/blaa.id')
+#
+#
 class EA(OptAlgorithm):
     def __init__(self):
         OptAlgorithm.__init__(self)
@@ -135,6 +154,9 @@ class ExecutableAlgorithm(OptAlgorithm):
             print line,
 
 
+# XXX -- to jest zbyt zagmatwane, trzeba raczej usunac to zupelnie
+# i zamiast tego zrobic magiczne .history
+#
 # Odpowiedzialnoscia tej klasy jest tworzenie pliku z logiem (w tym naszym ustalonym formacie).
 # Ta klasa ma zastepowac strumien sys.stdout.
 # Na __stdout__  kopiuje wszystko bez ruszania czegokolwiek.
