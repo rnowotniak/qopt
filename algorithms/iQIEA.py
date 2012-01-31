@@ -122,7 +122,7 @@ class iQIEA(qopt.framework.EA):
         self.popsize = 10
         self.K = 10 # size of classical population
         self.G = 30  # number of genes
-        self.maxiter = 5000
+        self.tmax = 5000
         self.XI = 0.1 # crossover rate
         self.DELTA = 0.5 # contraction factor
         self.kstep = 5
@@ -140,14 +140,14 @@ class iQIEA(qopt.framework.EA):
                 height = 1. / width / self.popsize
                 q.append([center,1.*width, height])
             self.Q.append(q)
-        self.iter = 0
+        self.t = 0
         self.evolutiondata = [] # XXX
         self.evaluation_counter = 0
 
     def generation(self):
         pdfs = self.getPDFs(self.Q)
         # pdfs = [ [(x,w,h), (x,w,h), (x,w,h), ...], [(x,w,h), (x,w,h), (x,w,h), ...], ... ]
-        #if self.iter == 35:
+        #if self.t == 35:
         #    drawPDFs(pdfs)
         #    sys.exit(0)
 
@@ -169,7 +169,7 @@ class iQIEA(qopt.framework.EA):
         # plt.savefig('/tmp/e.pdf')
         # ---
 
-        if self.iter == 1:
+        if self.t == 1:
             oldC = None
             fi = None
             self.C = E
@@ -178,7 +178,7 @@ class iQIEA(qopt.framework.EA):
             self.C = sorted(self.C, cmp = lambda x,y: cmp(x[1], y[1])) # minmax issue
             # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
         else:
-            if self.iter%self.kstep == 0: # every kstep-th iteration
+            if self.t%self.kstep == 0: # every kstep-th iteration
                 oldC = copy.deepcopy(self.C)
             E = self.crossover(E, self.C)
             E = self.evaluate(E)
@@ -191,7 +191,7 @@ class iQIEA(qopt.framework.EA):
             # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
             # C is also already sorted now
 
-        if self.iter%self.kstep == 0 and oldC:
+        if self.t%self.kstep == 0 and oldC:
             improved = 0
             for i in xrange(len(self.C)):
                 if self.C[i][1] < oldC[i][1]: # minmax issue
@@ -201,7 +201,7 @@ class iQIEA(qopt.framework.EA):
         for i in xrange(self.popsize):
             for j in xrange(self.G):
                 self.Q[i][j][0] = self.C[i][0][j] # translate center of the i-th pulse
-                if self.iter % self.kstep or not oldC:
+                if self.t % self.kstep or not oldC:
                     continue
                 # scale the pulse width (update the height also)
                 #print Q[0]
@@ -211,7 +211,7 @@ class iQIEA(qopt.framework.EA):
                     self.Q[i][j][1] /= self.DELTA
                 if self.Q[i][j][1] > 0:
                     self.Q[i][j][2] = 1. / self.Q[i][j][1] / self.popsize
-        #self.iter += 1
+        #self.t += 1
         self.evolutiondata.append((self.evaluation_counter, self.C[0][1])) # XXX move to step in upper class
 
         #print C[0]
@@ -318,7 +318,7 @@ if __name__ == '__main__':
         iqiea.kstep = 10
         iqiea.XI = float(sys.argv[2])
         iqiea.DELTA = float(sys.argv[3])
-        iqiea.maxiter = 200
+        iqiea.tmax = 200
     elif sys.argv[1] == '2':
         iqiea.fitness_function = testfuncs_f2
         iqiea.bounds = [(-10,10)]*30
@@ -328,7 +328,7 @@ if __name__ == '__main__':
         iqiea.kstep = 8
         iqiea.XI = float(sys.argv[2])
         iqiea.DELTA = float(sys.argv[3])
-        iqiea.maxiter = 500
+        iqiea.tmax = 500
     elif sys.argv[1] == '3':
         iqiea.fitness_function = testfuncs_f3
         iqiea.bounds = [(-600,600)]*30
@@ -338,7 +338,7 @@ if __name__ == '__main__':
         iqiea.kstep = 5
         iqiea.XI = float(sys.argv[2])
         iqiea.DELTA = float(sys.argv[3])
-        iqiea.maxiter = 800
+        iqiea.tmax = 800
     elif sys.argv[1] == '4':
         iqiea.fitness_function = testfuncs_f4
         iqiea.bounds = [(-10,10)]*30

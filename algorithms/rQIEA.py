@@ -49,7 +49,6 @@ class rQIEA(qopt.framework.EA):
         self.popsize = 20
         self.dim = 10
         self.bounds = (-100,100) # it should be an array [(-100, 100), (-100, 100), ...)] XXX
-        self.iter = 0
         self.minfitness = float('inf')
         self.b = None
         self.termination = False
@@ -60,7 +59,7 @@ class rQIEA(qopt.framework.EA):
     def initialize(self):
         self.Q = np.zeros([self.popsize, 2, self.dim])
         self.P = np.zeros([self.popsize, self.dim])
-        # Initialize Q(self.iter)
+        # Initialize Q(self.t)
         for i in xrange(self.popsize):
             self.Q[i][0] = np.random.random((1, self.dim)) * 2 - 1
             self.Q[i][1] = np.sqrt(1-self.Q[i][0]**2) # XXX should be positive or negative
@@ -72,14 +71,14 @@ class rQIEA(qopt.framework.EA):
         return fvalues
 
     def updateQ(self):
-        # Update Q(self.iter) using Q-gates
+        # Update Q(self.t) using Q-gates
         for i in xrange(self.popsize):
             for j in xrange(self.dim):
                 alpha = self.Q[i][0][j]
                 beta = self.Q[i][1][j]
                 alphabest = self.bestq[0,j]
                 betabest = self.bestq[1,j]
-                k = np.pi / (100 + np.mod(self.iter, 100))
+                k = np.pi / (100 + np.mod(self.t, 100))
                 theta = k * rotation(alpha, beta, alphabest, betabest)
                 G = np.matrix([ \
                         [np.cos(theta), -np.sin(theta)], \
@@ -100,9 +99,8 @@ class rQIEA(qopt.framework.EA):
                 np.matrix(self.Q[q1], copy=False)[:,h1:h2] = np.matrix(self.Q[q2])[:,h1:h2] # possibly swap alphas to betas also here
                 np.matrix(self.Q[q2], copy=False)[:,h1:h2] = temp
 
-    # XXX -> generation
-    def step(self):
-        # Observe, Construct P(self.iter) -- very specific to rQIEA algorithm
+    def generation(self):
+        # Observe, Construct P(self.t) -- very specific to rQIEA algorithm
         for i in xrange(self.popsize):
             for j in xrange(self.dim):
                 r = random.random()
@@ -146,7 +144,7 @@ class rQIEA(qopt.framework.EA):
         self.updateQ()
 
         self.recombination()
-        print self.iter
+        print self.t
 
 
 if __name__ == '__main__':
@@ -154,7 +152,7 @@ if __name__ == '__main__':
     # set parameters
     rqiea.popsize = 6
     rqiea.dim = 3
-    rqiea.maxiter = 10000 / rqiea.popsize
+    rqiea.tmax = 10000 / rqiea.popsize
     rqiea.fitness_function = sphere
     print rqiea.run()
     print rqiea.best

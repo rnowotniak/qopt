@@ -2,15 +2,13 @@ FRAMEWORK NALEŻY UPROŚCIĆ, ABY MÓC GO FAKTYCZNEI WYKORZYSTAĆ W ROZPRAWIE!!
 NP. PODSYSTEM GENEROWANIA RAPORTÓW NALEŻY GDZIEŚ ODŁĄCZYĆ^H^H^H^H^H USUNĄĆ
 
 Aktualne rzeczy do zrobienia:
-	prosty model obiektowy (run, step -> generation?, evaluate, initialize) - usunac OptAlgorithm
+	prosty model obiektowy (run, generation, evaluate, initialize)
 	wyprostowanie kilku kwestii
 		minmax   (.minmax = min   or   .minmax = max)
 		termination
 		cuda
 		evaluation vs framework ( -> evaluate )
 		.history
-		generation()
-		Individual
 		algorytmy w C (na pewno wykluczyc przetwarzanie stdout)
 	
 
@@ -71,8 +69,7 @@ TODO:
 			
 
 WYBÓR PUNKTU POCZĄTKOWEGO DLA RÓZNYCH ALGORYTMÓW (INICJALIZACJA) - NP. TEST KILKU ALGORYTMOW Z TEGO SAMEGO PUNKTU STARTOWEGO
-	-- OptAlgorithm::Run: po etapie initialize() - wczytanie populacji z pliku
-	bardzo dobre rozwiązanie
+	to można chyba dosc dobrze zalatwic przed RNG seed i bedzie prosciej
 
 WYWOŁANIA SKRYPTÓW NA BIEŻĄCE POTRZEBY:
 	# na potrzeby art. o bblocks:

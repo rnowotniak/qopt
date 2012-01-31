@@ -17,7 +17,7 @@ class PSO(framework.EA):
         self.maxVelocity = 0.05
         self.dimensions = 2
         self.gbest = None
-        self.maxiter = 200
+        self.tmax = 200
 
     def initialize(self):
         self.population = []

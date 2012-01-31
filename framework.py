@@ -11,18 +11,15 @@ import time
 import sys
 import os
 import re
-import numpy
-import traceback,inspect,re
-import StringIO
-import tempfile
 import subprocess
 
 
 PRNGseed = None
 
-id = '$Id$'
-version = '0.' + re.sub(r'[^0-9]', '', '$Revision$')
-
+#
+# Klasa pomocnicza, w ktorej mozna agregowac informacje o osobniku,
+# np. individual1.fitness, individual1.genotype, individual1.whatever
+#
 class Individual:
     def __init__(self, **kwargs):
         self.genotype = None
@@ -34,7 +31,7 @@ class Individual:
             setattr(self, k, kwargs[k])
     
     def __str__(self):
-        return '(%s, %s, %g)' % (str(self.genotype), str(self.phenotype), float(self.fitness))
+        return '(%s, %g)' % (str(self.genotype), float(self.fitness))
 
 #
 # Moze dorobic taka ciekawa rzecz: XXX
@@ -53,15 +50,16 @@ class EA:
     def __init__(self):
         self.popsize = 10
         self.population = []
-        self.best = None # the best individual ever found
+        self.best = None # the best individual ever found (Individual object or its genotype directly)
+        self.t = 0 # generation number
 
         self.evaluator = None
+        self.evaluation_counter = 0
         self.minmax = min
         self.__time0 = None # timestamp at the start of algorithm
 
-        # XXX do poprawy
-        self.maxiter = 20
-        self.evolutiondata = [] # XXX zrobic .history zamiast tego
+        self.tmax = None
+        self.history = []
 
     def initialize(self):
         pass # abstract
@@ -69,19 +67,27 @@ class EA:
     def operators(self):
         pass # abstract
 
+    def termination(self):
+        # General termination conditions. This method can be overriden
+        if hasattr(self, 'tmax') and self.tmax is not None:
+            return self.t > self.tmax
+        if hasattr(self, 'maxNoFE') and self.maxNoFE is not None:
+            return self.evaluation_counter > self.maxNoFE
+        assert False, 'No termination conditions given'
+
     def run(self):
         # konwencja numerowania generacji:
         # na etapie inicjalizacji: generacja zerowa,
         # przy rozpoczeciu pierwszej generacji: generacja pierwsza
         # (inkrementacja na poczatku tej glownej petli)
-        self.iter = 0
+        self.t = 0
         self.initialize()
         self.__time0 = time.time()
-        while self.iter < self.maxiter: # XXX -> termination
-            self.iter += 1
-            #print 'iter ' + str(self.iter)
+        while not self.termination():
+            self.t += 1
+            #print 't ' + str(self.t)
             self.generation()
-            # XXX add .history handling here
+            self.__save_history()
 
     def generation(self): # this function is volatile to minmax issue
         """ this function should be overriden in whole by complex EA algorithms """
@@ -105,8 +111,13 @@ class EA:
         for ind in population:
             res = self.evaluator(ind)
             results.append(res)
+        self.evaluation_counter += len(population)
         return results
 
+    def __save_history(self):
+        copy1 = copy.deepcopy(self)
+        del copy1.history
+        self.history.append(copy1)
 
     # allows to pickle objects of this class
     # def __getstate__(self):
@@ -133,7 +144,7 @@ class ExecutableAlgorithm(EA):
     def __init__(self, *args):
         EA.__init__(self)
         self.best = Individual()
-        self.maxiter = 130
+        self.tmax = 130
         self.proc=subprocess.Popen(
                  args,
                 shell=False,stdout=subprocess.PIPE, close_fds=True)
@@ -155,6 +166,7 @@ class ExecutableAlgorithm(EA):
 # --------8<--------8<--------8<--------8<--------8<--------8<--------8<
 # To nie jest juz core framework -- ponizsze CHYBA nalezy przeniesc do jakiegos operators.py
 # **   OPERATORY   **
+# --------8<--------8<--------8<--------8<--------8<--------8<--------8<
 
 def RouletteSelection(population):
     # TODO: zle dziala dla ujemnych

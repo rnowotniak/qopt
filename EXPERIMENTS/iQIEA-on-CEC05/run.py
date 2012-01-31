@@ -56,7 +56,7 @@ iqiea.K = 10
 iqiea.kstep = 10
 iqiea.XI = .1
 iqiea.DELTA = .5
-iqiea.maxiter = max_evaluation / iqiea.K
+iqiea.tmax = max_evaluation / iqiea.K
 
 algs = []
 for run in xrange(5):
