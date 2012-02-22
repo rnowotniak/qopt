@@ -1,0 +1,135 @@
+# This requires the output trace files from the TestBenchmarks
+# program. They can be used directly with GnuPlot.
+
+set terminal latex
+
+set xlabel "Iteration"
+set ylabel "\\rotatebox{90}{Fitness}"
+
+# You may need to alter the boxwidth.
+set boxwidth 1500
+
+set logscale y
+
+#set yrange [0.0001:1000]
+set title "Ackley"
+set output "Comparison-Ackley.tex"
+plot \
+ "PSO-FitnessTraceMean-Ackley.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Ackley.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Ackley.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Ackley.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+#set yrange [*:*]
+
+set title "Griewank"
+set output "Comparison-Griewank.tex"
+plot \
+ "PSO-FitnessTraceMean-Griewank.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Griewank.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Griewank.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Griewank.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Penalized1"
+set output "Comparison-Penalized1.tex"
+plot \
+ "PSO-FitnessTraceMean-Penalized1.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Penalized1.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Penalized1.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Penalized1.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Penalized2"
+set output "Comparison-Penalized2.tex"
+plot \
+ "PSO-FitnessTraceMean-Penalized2.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Penalized2.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Penalized2.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Penalized2.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "QuarticNoise"
+set output "Comparison-QuarticNoise.tex"
+plot \
+ "PSO-FitnessTraceMean-QuarticNoise.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-QuarticNoise.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-QuarticNoise.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-QuarticNoise.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Rastrigin"
+set output "Comparison-Rastrigin.tex"
+plot \
+ "PSO-FitnessTraceMean-Rastrigin.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Rastrigin.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Rastrigin.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Rastrigin.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Rosenbrock"
+set output "Comparison-Rosenbrock.tex"
+plot \
+ "PSO-FitnessTraceMean-Rosenbrock.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Rosenbrock.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Rosenbrock.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Rosenbrock.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Schwefel 1-2"
+set output "Comparison-Schwefel1-2.tex"
+plot \
+ "PSO-FitnessTraceMean-Schwefel1-2.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Schwefel1-2.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Schwefel1-2.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Schwefel1-2.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Schwefel 2-21"
+set output "Comparison-Schwefel2-21.tex"
+plot \
+ "PSO-FitnessTraceMean-Schwefel2-21.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Schwefel2-21.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Schwefel2-21.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Schwefel2-21.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Schwefel 2-22"
+set output "Comparison-Schwefel2-22.tex"
+plot \
+ "PSO-FitnessTraceMean-Schwefel2-22.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Schwefel2-22.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Schwefel2-22.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Schwefel2-22.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Sphere"
+set output "Comparison-Sphere.tex"
+plot \
+ "PSO-FitnessTraceMean-Sphere.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Sphere.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Sphere.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Sphere.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5
+
+set title "Step"
+set output "Comparison-Step.tex"
+plot \
+ "PSO-FitnessTraceMean-Step.txt" using 1:2 title "PSO" with lines lt 1, \
+ "PSO-FitnessTraceQuartiles-Step.txt" using 1:3:2:6:5 every 2::0 notitle with candlesticks whiskerbars lt 1, \
+ "" using 1:4:4:4:4 every 2::0 notitle with candlesticks lt 1, \
+ "MOL-FitnessTraceMean-Step.txt" using 1:2 title "MOL" with lines lt 5, \
+ "MOL-FitnessTraceQuartiles-Step.txt" using 1:3:2:6:5 every 2::1 notitle with candlesticks whiskerbars lt 5, \
+ "" using 1:4:4:4:4 every 2::1 notitle with candlesticks lt 5

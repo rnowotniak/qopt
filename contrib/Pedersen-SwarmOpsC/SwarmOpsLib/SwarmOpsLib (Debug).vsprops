@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="SwarmOpsLib (Debug)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;C:\Users\Magnus\Documents\Development\Libraries\HvassLabs-C&quot;"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="SwarmOpsLib.lib"
+		AdditionalLibraryDirectories="&quot;C:\Users\Magnus\Documents\Development\Libraries\HvassLabs-C\Lib\debug&quot;"
+	/>
+</VisualStudioPropertySheet>

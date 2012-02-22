@@ -1,0 +1,23 @@
+# This requires the output from the TestMesh program for
+# an optimizer that has only two behavioural parameters.
+# The output must then be formatted for GnuPlot, see the
+# sample file.
+
+set terminal postscript enhanced landscape monochrome
+
+set xlabel "{/Symbol f}_g"
+set ylabel "{/Symbol w}"
+
+set grid
+set style data lines
+
+set log cb
+set view map
+
+
+# Rastrigin ###############
+
+set title "Rastrigin"
+
+set output "MESH-PSO-VG-Rastrigin-Flat.eps"
+splot "MESH-PSO-VG-Rastrigin.txt" using 2:1:3 notitle with pm3d

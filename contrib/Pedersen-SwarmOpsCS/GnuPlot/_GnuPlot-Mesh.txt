@@ -1,0 +1,33 @@
+# This requires the output from the TestMesh program for
+# an optimizer that has only two behavioural parameters.
+# The output must then be formatted for GnuPlot, see the
+# sample file.
+
+set terminal postscript enhanced landscape monochrome
+
+set contour base
+set cntrparam bspline
+
+set xlabel "{/Symbol w}"
+set ylabel "{/Symbol f}_g"
+set zlabel "Meta-Fitness" rotate left
+set logscale z
+
+set grid
+# set dgrid3d 40, 40
+set style data lines
+
+# Rastrigin ###############
+
+set title "Rastrigin"
+
+#set cntrparam levels incremental 1000, 10
+set cntrparam levels 5
+
+set view 140, 40, 1, 1
+set output "MESH-PSO-VG-Rastrigin-1.eps"
+splot "MESH-PSO-VG-Rastrigin.txt" using 1:2:3 notitle
+
+set view 140, 220, 1, 1
+set output "MESH-PSO-VG-Rastrigin-2.eps"
+splot "MESH-PSO-VG-Rastrigin.txt" using 1:2:3 notitle
