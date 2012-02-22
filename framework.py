@@ -59,6 +59,7 @@ class EA:
         self.__time0 = None # timestamp at the start of algorithm
 
         self.tmax = None
+        self.maxNoFE = None
         self.history = []
 
     def initialize(self):
@@ -67,12 +68,21 @@ class EA:
     def operators(self):
         pass # abstract
 
+    def evaluate(self, population):
+        # print 'EA evaluating'
+        results = []
+        for ind in population:
+            res = self.evaluator(ind)
+            results.append(res)
+        self.evaluation_counter += len(population)
+        return results
+
     def termination(self):
         # General termination conditions. This method can be overriden
         if hasattr(self, 'tmax') and self.tmax is not None:
-            return self.t > self.tmax
+            return self.t >= self.tmax
         if hasattr(self, 'maxNoFE') and self.maxNoFE is not None:
-            return self.evaluation_counter > self.maxNoFE
+            return self.evaluation_counter >= self.maxNoFE
         assert False, 'No termination conditions given'
 
     def run(self):
@@ -105,20 +115,13 @@ class EA:
         # operators
         self.operators()
 
-    def evaluate(self, population):
-        # print 'EA evaluating'
-        results = []
-        for ind in population:
-            res = self.evaluator(ind)
-            results.append(res)
-        self.evaluation_counter += len(population)
-        return results
 
     def __save_history(self):
         copy1 = copy.deepcopy(self)
         del copy1.history
         self.history.append(copy1)
 
+    # -- to byc moze bedzie potrzebne --
     # allows to pickle objects of this class
     # def __getstate__(self):
     #     result = self.__dict__.copy()

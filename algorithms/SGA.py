@@ -41,4 +41,5 @@ if __name__ == '__main__':
 
     sga = SGA()
     sga.evaluator = k
+    sga.tmax = 100
     sga.run()
