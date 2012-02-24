@@ -59,36 +59,46 @@ for fnum in xrange(1, 26):
 def f(num, x):
     fnum = 'f%d' % num
     if not LIBS.has_key(fnum):
-        # load the library with proper benchmark function
-        lib=ctypes.CDLL('./lib%s.so' % fnum) # , ctypes.RTLD_GLOBAL)
-        # store the loaded library in LIBS
-        LIBS[fnum] = [lib, None, None]
-    else:
-        # library for this function is already loaded in LIBS
-        lib = LIBS[fnum][0]
-    if LIBS[fnum][1] != len(x):
-        # initialize the library for the given dimension (len(x))
-        nreal = len(x)
-        if num >= 15:
-            nfunc = 10
-        else:
-            nfunc = 2
-        LIBS[fnum][1] = nreal
-        LIBS[fnum][2] = nfunc
-        ctypes.c_int.in_dll(lib, 'nreal').value = nreal
-        ctypes.c_int.in_dll(lib, 'nfunc').value = nfunc
-        lib.randomize()
-        lib.initrandomnormaldeviate()
-        lib.allocate_memory()
-        lib.initialize()
-        print
-        if num >= 15:
-            lib.calc_benchmark_norm()
-        lib.calc_benchmark_func.restype = ctypes.c_longdouble
-        lib.calc_benchmark_func.argtypes = [ctypes.c_longdouble * nreal]
+        lib=ctypes.CDLL('./lib%s.so' % fnum)
+        LIBS[fnum] = lib
+        LIBS[fnum].evaluate.restype = ctypes.c_longdouble
+    LIBS[fnum].evaluate.argtypes = [ctypes.c_longdouble * len(x), ctypes.c_int]
     arr = ctypes.c_longdouble * len(x)
     x = arr(*x)
-    return lib.calc_benchmark_func(x)
+    return LIBS[fnum].evaluate(x, len(x))
+
+## (previously the benchmark functions initialization was performed here in Python directly)
+#   if not LIBS.has_key(fnum):
+#       # load the library with proper benchmark function
+#       lib=ctypes.CDLL('./lib%s.so' % fnum) # , ctypes.RTLD_GLOBAL)
+#       # store the loaded library in LIBS
+#       LIBS[fnum] = [lib, None, None]
+#   else:
+#       # library for this function is already loaded in LIBS
+#       lib = LIBS[fnum][0]
+#   if LIBS[fnum][1] != len(x):
+#       # initialize the library for the given dimension (len(x))
+#       nreal = len(x)
+#       if num >= 15:
+#           nfunc = 10
+#       else:
+#           nfunc = 2
+#       LIBS[fnum][1] = nreal
+#       LIBS[fnum][2] = nfunc
+#       ctypes.c_int.in_dll(lib, 'nreal').value = nreal
+#       ctypes.c_int.in_dll(lib, 'nfunc').value = nfunc
+#       lib.randomize()
+#       lib.initrandomnormaldeviate()
+#       lib.allocate_memory()
+#       lib.initialize()
+#       print
+#       if num >= 15:
+#           lib.calc_benchmark_norm()
+#       lib.calc_benchmark_func.restype = ctypes.c_longdouble
+#       lib.calc_benchmark_func.argtypes = [ctypes.c_longdouble * nreal]
+#   arr = ctypes.c_longdouble * len(x)
+#   x = arr(*x)
+#   return lib.calc_benchmark_func(x)
 
 for fnum in xrange(1, 26):
     globals()['f%d' % fnum] = fgenerator(fnum)

@@ -19,7 +19,7 @@ CFLAGS=-Df$(FNUM) -Wall -Werror -ansi -pedantic -g
 #LDFLAGS=-s
 
 # OBJS := $(patsubst %.c,%.o,$(wildcard *.c))
-OBJS := aux.o def1.o def2.o def3.o def4.o main.o rand.o
+OBJS := aux.o def1.o def2.o def3.o def4.o main.o rand.o funwrapper.o
 
 MAIN = main
 
