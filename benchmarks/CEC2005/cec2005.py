@@ -8,7 +8,9 @@ from math import pi
 
 LIBS = {}
 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
+for fnum in xrange(1, 26):
+    LIBS['f%d' % fnum] = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + '/libf%s.so' % fnum)
+    LIBS['f%d' % fnum].evaluate.restype = ctypes.c_longdouble
 
 _FUNCTIONS_DATA =  (
         #     bounds     opt           plot_bounds       plot_density
@@ -48,6 +50,7 @@ FUNCTIONS = {}
 for fnum in xrange(1, 26):
     FUNCTIONS['f%d' % fnum] = {
             'fun'          : fgenerator(fnum),
+            'cfun'         : LIBS['f%d' % fnum].evaluate,
             'bounds'       : _FUNCTIONS_DATA[fnum - 1][0],
             'opt'          : _FUNCTIONS_DATA[fnum - 1][1],
             'plot_bounds'  : _FUNCTIONS_DATA[fnum - 1][2],
@@ -58,10 +61,10 @@ for fnum in xrange(1, 26):
 
 def f(num, x):
     fnum = 'f%d' % num
-    if not LIBS.has_key(fnum):
-        lib=ctypes.CDLL('./lib%s.so' % fnum)
-        LIBS[fnum] = lib
-        LIBS[fnum].evaluate.restype = ctypes.c_longdouble
+#    if not LIBS.has_key(fnum):
+#        lib=ctypes.CDLL('./lib%s.so' % fnum)
+#        LIBS[fnum] = lib
+#        LIBS[fnum].evaluate.restype = ctypes.c_longdouble
     LIBS[fnum].evaluate.argtypes = [ctypes.c_longdouble * len(x), ctypes.c_int]
     arr = ctypes.c_longdouble * len(x)
     x = arr(*x)

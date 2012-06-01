@@ -6,10 +6,12 @@
 
 function sa_demo
 disp('Simulating ... it will take a minute or so!');
+global initial_flag;
+initial_flag = 0;
 % Lower and upper bounds
-Lb=[-2 -2];
-Ub=[2 2];
-nd=length(Lb);
+nd=10;
+Lb=-100 * ones(1,nd);
+Ub=100 * ones(1,nd);
 
 % Initializing parameters and settings
 T_init =1.0;    % Initial temperature
@@ -51,8 +53,11 @@ best=guess; % initially guessed values
 % ftp://ftp.wiley.com/public/sci_tech_med/engineering_optimization   %
 % ----------------------------------------------------------------   %
 
+N_iter = 0;
+
 % Starting the simulated annealling
-while ((T > T_min) & (j <= max_rej) & E_new>F_min)
+%while ((T > T_min) & (j <= max_rej) & E_new>F_min) XXX
+while (N_iter < 100000)
 i = i+1;
 % Check if max numbers of run/accept are met
 if (i >= max_run) | (accept >= max_accept)
@@ -81,6 +86,7 @@ else
 end
 % Update the estimated optimal solution
 f_opt=E_old;
+N_iter = N_iter + 1;
 end
 % Display the final results
 disp(strcat('Evaluations :', num2str(totaleval)));
@@ -88,5 +94,6 @@ disp(strcat('Best solution:', num2str(best)));
 disp(strcat('Best objective:', num2str(f_opt)));
 
 function z=fobj(u)
+z = benchmark_func(u, 1);
 % Rosenbrock's function with f*=0 at (1,1)
-z=(u(1)-1)^2+100*(u(2)-u(1)^2)^2; 
+%z=(u(1)-1)^2+100*(u(2)-u(1)^2)^2; 

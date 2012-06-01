@@ -10,10 +10,14 @@
 % -------------------------------------------------------- %
 % Usage: bat_algorithm([20 0.25 0.5]);                     %
 
+
 function [best,fmin,N_iter]=bat_algorithm(para)
 % Display help
  help bat_algorithm.m
 
+global initial_flag;
+initial_flag = 0;
+ 
 % Default parameters
 if nargin<1,  para=[10 0.25 0.5];  end
 n=para(1);      % Population size, typically 10 to 25
@@ -26,7 +30,7 @@ Qmax=2;         % Frequency maximum
 tol=10^(-5);    % Stop tolerance
 N_iter=0;       % Total number of function evaluations
 % Dimension of the search variables
-d=3;
+d=30;
 % Initial arrays
 Q=zeros(n,1);   % Frequency
 v=zeros(n,d);   % Velocities
@@ -47,7 +51,7 @@ best=Sol(I,:);
 % ======================================================  %
 
 % Start the iterations -- Bat Algorithm
-while (fmin>tol)
+while (N_iter < 300000) % (fmin>tol)
         % Loop over all bats/solutions
         for i=1:n,
           Q(i)=Qmin+(Qmin-Qmax)*rand;
@@ -79,6 +83,8 @@ disp(['Number of evaluations: ',num2str(N_iter)]);
 disp(['Best =',num2str(best),' fmin=',num2str(fmin)]);
 % Objective function -- Rosenbrock's 3D function
 function z=Fun(u)
-z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+(1-u(3))^2;
+%disp(u)
+z = benchmark_func(u, 5);
+%z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+(1-u(3))^2;
 %%%%% ============ end ====================================
 

@@ -19,6 +19,10 @@
 % it is easy to extend it for constrained optimization.    %     
 
 function [bestsol,fval]=gewa(N_iter)
+
+global initial_flag;
+initial_flag = 0;
+
 % Default number of iterations
 if nargin<1, N_iter=5000; end
 
@@ -26,9 +30,9 @@ if nargin<1, N_iter=5000; end
 help gewa.m
 
 % dimension or number variables
-d=3;
+d=10;
 % Lower and upper bounds
-Lb=-2*ones(1,d);  Ub=2*ones(1,d);
+Lb=-100*ones(1,d);  Ub=100*ones(1,d);
 
 % population size -- the number of walkers
 n=10;
@@ -116,7 +120,8 @@ sbest=ns(1,:); kbest=1;
 
 % Objective function
 function z=fobj(u)
+z = benchmark_func(u, 1);
 % Rosenbrock's 3D function
-z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+(1-u(3))^2;
+%z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+(1-u(3))^2;
 % -------- end of the GEWA implementation -------
 

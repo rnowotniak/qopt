@@ -9,6 +9,10 @@
 % Usage: hs_simple
 % or     hs_simple(`x^2+(y-5)^2',25000);
 function [solution,fbest]=hs_simple(funstr,MaxAttempt)
+
+global initial_flag;
+initial_flag = 0;
+
 help hs_simple.m
 disp('It may take a few minutes ...');
 % MaxAttempt=25000;  % Max number of Attempt

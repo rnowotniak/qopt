@@ -11,6 +11,10 @@
 % Usage: de(para) or de;
 
 function [best,fmin,N_iter]=de(para)
+
+global initial_flag;
+initial_flag = 0;
+
 % Default parameters
 if nargin<1,
    para=[10 0.7 0.9];
@@ -25,12 +29,12 @@ Cr=para(3);     % DE parameter - crossover probability
 tol=10^(-5);    % Stop tolerance
 N_iter=0;       % Total number of function evaluations
 
-% Simple bounds
-Lb=[-1 -1 -1];
-Ub=[2 2  2];
-
 % Dimension of the search variables
-d=length(Lb);
+d=10;
+
+% Simple bounds 
+Lb=-100 * ones(1,d);
+Ub=100 * ones(1,d);
 
 % Initialize the population/solutions
 for i=1:n,
@@ -43,7 +47,7 @@ end
 best=Sol(I,:);
 
 % Start the iterations by differential evolution
-while (fmin>tol)
+while (N_iter < 100000) % XXX
     % Obtain donor vectors by permutation
     k1=randperm(n);     k2=randperm(n);
     k1sol=Sol(k1,:);    k2sol=Sol(k2,:);
@@ -77,7 +81,8 @@ disp(['Best=',num2str(best),' fmin=',num2str(fmin)]);
 
 % Objective function -- Rosenbrock's 3D function
 function z=Fun(u)
-z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+100*(u(3)-u(2)^2)^2;
+z = benchmark_func(u, 5);
+%z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+100*(u(3)-u(2)^2)^2;
 
 
 

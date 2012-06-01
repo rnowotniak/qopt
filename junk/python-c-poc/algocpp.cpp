@@ -53,9 +53,11 @@ extern "C" {
 		return 13;
 	}
 
+    double (*evaluator)(double *, int n);
+
 	void foo(double(*cb)(double *, int)) {
-		double arr[2] = {2,3};
-		double r = cb(arr, 2);
+		double arr[2] = {5,6};
+		double r = evaluator(arr, 2);
 		printf("result: %g\n", r);
 	}
 }

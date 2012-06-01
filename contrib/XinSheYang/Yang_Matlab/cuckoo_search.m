@@ -14,11 +14,14 @@ function [bestsol,fval]=cuckoo_search(Ngen)
 % Here Ngen is the max number of function evaluations
 if nargin<1, Ngen=1500; end
 
+global initial_flag;
+initial_flag = 0;
+
 % Display help info
 help cuckoo_search
 
 % d-dimensions (any dimension)
-d=2;
+d=10;
 % Number of nests (or different solutions)
 n=25;
 
@@ -101,7 +104,8 @@ s=s+0.05*randn(size(s));
 function z=fobj(u)
 % Rosenbrock's function (in 2D)
 % It has an optimal solution at (1.000,1.000)
-z=(1-u(1))^2+100*(u(2)-u(1)^2)^2;
+z = benchmark_func(u, 1);
+%z=(1-u(1))^2+100*(u(2)-u(1)^2)^2;
 
 %%%% ============== end ===================================
 

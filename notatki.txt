@@ -39,6 +39,10 @@ import qopt.cuda.qiga  (?)
 import qopt.cuda.gaqpr  (?)
 import qopt.tools.pyevolve (?)
 
+import qopt.algorithms(.pyevolve).sga   ?
+import qopt.algorithms.contrib.firefly   ?
+import qopt.algorithms.contrib.bat   ? (cockoo, de, gewa, hs, pso)
+
 --------8<--------8<--------8<--------8<--------8<--------8<--------8<
 
 Wyobrazic sobie te eksperymenty, ktore faktycznie bedziemy wykonywac podczas
@@ -324,5 +328,9 @@ The scientific procedure templates applied in the experiment:
 
 data for post-mortem analysis and reproduction of the experiment
 has been stored in the temporary directory: /tmp/report-2010-05-23-13.39.03
+
+
+--------8<--------8<--------8<--------8<--------8<--------8<--------8<
+
 
 
