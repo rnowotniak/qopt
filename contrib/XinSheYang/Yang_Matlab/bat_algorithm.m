@@ -11,15 +11,20 @@
 % Usage: bat_algorithm([20 0.25 0.5]);                     %
 
 
-function [best,fmin,N_iter]=bat_algorithm(para)
+function [best,fmin,N_iter]=bat_algorithm(fnum)
 % Display help
  help bat_algorithm.m
 
+rng shuffle;
+
+global gfnum;
+gfnum = fnum;
+ 
 global initial_flag;
 initial_flag = 0;
  
 % Default parameters
-if nargin<1,  para=[10 0.25 0.5];  end
+para=[10 0.25 0.5];
 n=para(1);      % Population size, typically 10 to 25
 A=para(2);      % Loudness  (constant or decreasing)
 r=para(3);      % Pulse rate (constant or decreasing)
@@ -30,7 +35,7 @@ Qmax=2;         % Frequency maximum
 tol=10^(-5);    % Stop tolerance
 N_iter=0;       % Total number of function evaluations
 % Dimension of the search variables
-d=30;
+d=10;
 % Initial arrays
 Q=zeros(n,1);   % Frequency
 v=zeros(n,d);   % Velocities
@@ -51,7 +56,7 @@ best=Sol(I,:);
 % ======================================================  %
 
 % Start the iterations -- Bat Algorithm
-while (N_iter < 300000) % (fmin>tol)
+while (N_iter < 100000) % (fmin>tol)
         % Loop over all bats/solutions
         for i=1:n,
           Q(i)=Qmin+(Qmin-Qmax)*rand;
@@ -77,14 +82,16 @@ while (N_iter < 300000) % (fmin>tol)
           end
         end
         N_iter=N_iter+n;
+        disp(sprintf('%d %g', N_iter, fmin));
 end
 % Output/display
 disp(['Number of evaluations: ',num2str(N_iter)]);
 disp(['Best =',num2str(best),' fmin=',num2str(fmin)]);
 % Objective function -- Rosenbrock's 3D function
 function z=Fun(u)
+global gfnum;
 %disp(u)
-z = benchmark_func(u, 5);
+z = benchmark_func(u, gfnum);
 %z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+(1-u(3))^2;
 %%%%% ============ end ====================================
 

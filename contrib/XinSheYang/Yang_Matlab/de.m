@@ -10,16 +10,21 @@
 % The basic version of scheme DE/Rand/1 is implemented
 % Usage: de(para) or de;
 
-function [best,fmin,N_iter]=de(para)
+function [best,fmin,N_iter]=de(fnum)
+
+global gfnum;
+gfnum = fnum;
+
+rng shuffle;
 
 global initial_flag;
 initial_flag = 0;
 
 % Default parameters
-if nargin<1,
+%if nargin<1,
    para=[10 0.7 0.9];
-   help de.m
-end
+%  help de.m
+%nd
 
 n=para(1);      % Population >=4, typically 10 to 25
 F=para(2);      % DE parameter - scaling (0.5 to 0.9)
@@ -33,8 +38,8 @@ N_iter=0;       % Total number of function evaluations
 d=10;
 
 % Simple bounds 
-Lb=-100 * ones(1,d);
-Ub=100 * ones(1,d);
+Lb=-5 * ones(1,d); % XXX
+Ub=5 * ones(1,d);
 
 % Initialize the population/solutions
 for i=1:n,
@@ -72,6 +77,7 @@ while (N_iter < 100000) % XXX
           end
         end
         N_iter=N_iter+n;
+        disp(sprintf('%d %g', N_iter, fmin));
 end
 
 % Output/display
@@ -81,7 +87,8 @@ disp(['Best=',num2str(best),' fmin=',num2str(fmin)]);
 
 % Objective function -- Rosenbrock's 3D function
 function z=Fun(u)
-z = benchmark_func(u, 5);
+global gfnum;
+z = benchmark_func(u, gfnum);
 %z=(1-u(1))^2+100*(u(2)-u(1)^2)^2+100*(u(3)-u(2)^2)^2;
 
 

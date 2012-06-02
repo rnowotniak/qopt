@@ -1,3 +1,6 @@
 *.pyc
 SdkMasterLog.csv
 deviceQuery.txt
+*.so
+*.o
+a.out

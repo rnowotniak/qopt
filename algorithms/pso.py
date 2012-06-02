@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import framework
+import qopt.framework as framework
 import random, copy, numpy
 
 class PSO(framework.EA):

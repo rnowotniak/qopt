@@ -6,7 +6,7 @@ import math
 import qopt.benchmarks.CEC2005.cec2005 as cec2005
 
 ###########################
-FNUM = 5 # XXX
+FNUM = sys.argv[1]
 eps = 10**-8
 dim = 10 # XXX -> 30
 Max_FES = 10000 * dim
@@ -15,10 +15,10 @@ popsize = 100
 
 
 
-bounds = cec2005.FUNCTIONS['f1']['bounds']
+bounds = cec2005.FUNCTIONS['f%s'%FNUM]['bounds']
 domain = bounds[1] - bounds[0]
 width = int(math.ceil(math.log(domain/10**-8) / math.log(2)))
-print 'Kazdy parametr kodowany na %d binarnych genach' % width
+#print 'Kazdy parametr kodowany na %d binarnych genach' % width
 
 from pyevolve import G1DList,G1DBinaryString
 from pyevolve import GSimpleGA,Selectors,Consts,Scaling
@@ -36,6 +36,7 @@ def eval_func(chrom):
 
 def step_func(ga):
     print '%d %g' % (ga.getCurrentGeneration(), ga.bestIndividual().getRawScore())
+    sys.stdout.flush()
 
 genome = G1DBinaryString.G1DBinaryString(width * dim)
 genome.evaluator.set(eval_func)
@@ -44,7 +45,7 @@ ga.setPopulationSize(popsize)
 ga.selector.set(Selectors.GRouletteWheel)
 ga.setGenerations(Max_FES / popsize)
 ga.setMutationRate(0.05)
-ga.setElitism(True)
+# ga.setElitism(True)
 ga.setSortType(Consts.sortType["raw"])
 ga.setMinimax(Consts.minimaxType["minimize"])
 
@@ -55,7 +56,7 @@ pop.scaleMethod.set(Scaling.SigmaTruncScaling)
 # print ga
 
 ga.evolve(freq_stats=0)
-#print getGeno(''.join([str(c) for c in ga.bestIndividual()[:]]))
+print '# ' + str(getGeno(''.join([str(c) for c in ga.bestIndividual()[:]])))
 
 
 
