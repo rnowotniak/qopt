@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: Pyevolve
+Version: 0.6rc1
+Summary: A complete, free and open-source evolutionary framework written in Python
+Home-page: http://pyevolve.sourceforge.net/
+Author: Christian S. Perone
+Author-email: christian.perone@gmail.com
+License: PSF
+Description: UNKNOWN
+Keywords: genetic algorithm genetic programming algorithms framework library python ai evolutionary framework
+Platform: UNKNOWN

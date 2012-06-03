@@ -1,0 +1,10 @@
+This is the basic example of Nicessa.
+
+Usage:
+Go to the trunk directory in your command line. Run
+>>> python exeriment.py examples/basic
+
+If all went well, there should now be a "plots" directory with a PDF plotting a result graph.
+There is also a "data" directory with all the generated log files.
+
+More info is in the files main.py and exeriment.conf

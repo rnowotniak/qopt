@@ -53,9 +53,15 @@ class EA:
         self.best = None # the best individual ever found (Individual object or its genotype directly)
         self.t = 0 # generation number
 
+        # callbacks
+        self.stepCallback = None
         self.evaluator = None
         self.evaluation_counter = 0
+
+        # minmaxop -> x IS BETTER THAN y
         self.minmax = min
+        self.minmaxop = lambda x,y: [lambda x,y: x > y, lambda x,y: x < y][self.minmax == min](x,y)
+
         self.__time0 = None # timestamp at the start of algorithm
 
         self.tmax = None
@@ -77,6 +83,7 @@ class EA:
         self.evaluation_counter += len(population)
         return results
 
+
     def termination(self):
         # General termination conditions. This method can be overriden
         if hasattr(self, 'tmax') and self.tmax is not None:
@@ -84,6 +91,7 @@ class EA:
         if hasattr(self, 'maxNoFE') and self.maxNoFE is not None:
             return self.evaluation_counter >= self.maxNoFE
         assert False, 'No termination conditions given'
+
 
     def run(self):
         # konwencja numerowania generacji:
@@ -95,23 +103,23 @@ class EA:
         self.__time0 = time.time()
         while not self.termination():
             self.t += 1
-            #print 't ' + str(self.t)
+            if self.stepCallback != None:
+                self.stepCallback(self)
+            # print 't ' + str(self.t)
             self.generation()
-            self.__save_history()
+            #self.__save_history()
+
 
     def generation(self): # this function is volatile to minmax issue
         """ this function should be overriden in whole by complex EA algorithms """
         # evaluate
         fvalues = self.evaluate(self.population)
+        for i in xrange(len(self.population)):
+            self.population[i].fitness = fvalues[i]
         # store the best solution
         index_of_best = fvalues.index(self.minmax(fvalues))
-        best_in_population = Individual(
-                genotype = copy.deepcopy(self.population[index_of_best]),
-                fitness = fvalues[index_of_best])
-        if self.best == None:
-            self.best = best_in_population
-        elif self.minmax(best_in_population.fitness, self.best.fitness) is best_in_population.fitness:
-            self.best = best_in_population
+        if self.best == None or self.minmaxop(self.population[index_of_best].fitness, self.best.fitness):
+            self.best = copy.deepcopy(self.population[index_of_best])
         # operators
         self.operators()
 

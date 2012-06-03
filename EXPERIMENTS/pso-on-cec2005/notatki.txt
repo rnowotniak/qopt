@@ -1,0 +1,4 @@
+
+mencoder "mf://meta*png" -mf fps=10 -o movie.avi -ovc lavc -lavcopts vcodec=mjpeg
+ffmpeg -sameq -i movie.avi -f avi -vcodec wmv1   zz.avi
+

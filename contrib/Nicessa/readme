@@ -1,0 +1,33 @@
+What is this?
+--------------------
+Nicessa runs stochastic simulations.
+
+You write the actual simulation, but nicessa relieves you of:
+- arranging runs for all combinations of your dependent variables
+- distributing workload on different machines
+- generating nice paper-ready plots and T-Tests from the results
+
+There are example simulations in the "example" folder and you can find extensive documentation at
+http://homepages.cwi.nl/~nicolas/nicessa/
+(If you have sphinx, you can also generate the documentation yourself by going
+ into that directory and typing 'make html').
+
+Dependencies
+--------------------
+You need Python 2.7, or 2.6 if you install the argparse module locally (remote
+hosts that execute your code can also run lower versions, say 2.3+).
+You need the python-paramiko library for remote server support.
+For plotting, you need gnuplot and epstopdf (some tips: for debian-linux, epstopdf 
+is currently in the "texlive-extra-utils" package. On OSX, install gwTex via i-installer).
+For T-Tests, you need Gnu R installed.
+
+
+Running a simulation
+--------------------
+Place an experiment configuration and your simulation code in a folder of your choice (see basic example).
+Call ./experiment.py <path-to-your-experiment-folder>
+The results will be put in the "data" directory, in your folder 
+(but if you like the plotting capabilities of nicessa you might never look there).
+
+
+Enjoy.
