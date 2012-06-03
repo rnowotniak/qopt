@@ -2336,4 +2336,197 @@ user	0m40.104s
 sys	0m0.110s
 
 real	32m49.905s
-user	0m39.
+user	0m39.891s
+sys	0m0.093s
+
+real	32m47.454s
+user	0m40.161s
+sys	0m0.140s
+
+real	32m49.221s
+user	0m39.714s
+sys	0m0.170s
+
+real	32m47.167s
+user	0m40.384s
+sys	0m0.077s
+
+real	32m47.184s
+user	0m40.154s
+sys	0m0.130s
+
+real	32m47.647s
+user	0m40.337s
+sys	0m0.130s
+
+real	32m48.420s
+user	0m39.934s
+sys	0m0.090s
+
+real	32m48.367s
+user	0m39.811s
+sys	0m0.137s
+
+real	32m49.588s
+user	0m39.747s
+sys	0m0.137s
+
+real	32m48.303s
+user	0m40.274s
+sys	0m0.110s
+
+real	32m47.576s
+user	0m40.207s
+sys	0m0.107s
+
+real	32m49.489s
+user	0m39.914s
+sys	0m0.133s
+
+real	32m49.858s
+user	0m39.707s
+sys	0m0.147s
+
+real	32m48.832s
+user	0m39.877s
+sys	0m0.140s
+
+real	32m48.673s
+user	0m40.281s
+sys	0m0.183s
+
+real	32m50.771s
+user	0m39.981s
+sys	0m0.107s
+
+real	32m47.865s
+user	0m40.131s
+sys	0m0.097s
+
+real	32m50.303s
+user	0m40.124s
+sys	0m0.130s
+
+real	32m47.949s
+user	0m40.221s
+sys	0m0.087s
+
+real	32m48.377s
+user	0m40.064s
+sys	0m0.103s
+
+real	32m50.196s
+user	0m39.761s
+sys	0m0.083s
+
+real	32m50.508s
+user	0m40.204s
+sys	0m0.103s
+
+real	32m48.682s
+user	0m40.447s
+sys	0m0.140s
+
+real	32m49.617s
+user	0m40.047s
+sys	0m0.113s
+
+real	32m49.492s
+user	0m40.487s
+sys	0m0.093s
+
+real	32m50.043s
+user	0m40.194s
+sys	0m0.100s
+
+real	32m49.190s
+user	0m40.201s
+sys	0m0.097s
+
+real	32m51.216s
+user	0m40.067s
+sys	0m0.130s
+
+real	32m49.202s
+user	0m40.357s
+sys	0m0.090s
+
+real	32m51.337s
+user	0m40.251s
+sys	0m0.143s
+
+real	32m50.298s
+user	0m40.087s
+sys	0m0.123s
+
+real	32m50.352s
+user	0m40.294s
+sys	0m0.127s
+
+real	32m49.471s
+user	0m40.321s
+sys	0m0.087s
+
+real	32m49.819s
+user	0m40.131s
+sys	0m0.127s
+
+real	32m49.867s
+user	0m40.187s
+sys	0m0.117s
+
+real	32m50.040s
+user	0m39.944s
+sys	0m0.120s
+
+real	32m49.690s
+user	0m40.131s
+sys	0m0.133s
+
+real	32m49.334s
+user	0m40.274s
+sys	0m0.100s
+
+real	32m51.139s
+user	0m40.057s
+sys	0m0.130s
+
+real	32m51.493s
+user	0m39.834s
+sys	0m0.133s
+
+real	32m49.521s
+user	0m40.281s
+sys	0m0.113s
+
+real	32m49.998s
+user	0m40.201s
+sys	0m0.103s
+
+real	32m49.647s
+user	0m40.291s
+sys	0m0.127s
+
+real	32m49.691s
+user	0m40.221s
+sys	0m0.120s
+
+real	32m52.179s
+user	0m39.931s
+sys	0m0.137s
+
+real	32m49.783s
+user	0m40.347s
+sys	0m0.157s
+
+real	32m50.218s
+user	0m40.251s
+sys	0m0.113s
+
+real	32m51.179s
+user	0m40.034s
+sys	0m0.140s
+All done
+[1m[7m%[27m[1m[0m                                                                                                                                                                                                                [0m[27m[24m[J[32mrob@quad [1m[34m/home/rob/qopt/EXPERIMENTS/pso-on-cec2005[0m [00m% [K
+
+Script done on Sun 03 Jun 2012 12:46:55 CEST
