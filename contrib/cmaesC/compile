@@ -1,0 +1,9 @@
+ gcc -o evo1 -O2 -ansi -pedantic  -Wall -Wstrict-prototypes -Wmissing-prototypes -Wshadow -lm example1.c cmaes.c
+ gcc -o evo2 -O2 -ansi -pedantic  -Wall -Wstrict-prototypes -Wmissing-prototypes -Wshadow -lm example2.c cmaes.c
+ gcc -o evo3 -O2 -ansi -pedantic  -Wall -Wstrict-prototypes -Wmissing-prototypes -Wshadow -lm example3.c cmaes.c
+
+# -Wconversion gives unfortunately also a warning if int instead of long is passed to a function
+# -pg : gnu profiler for gprof 
+# -pedantic-errors: like pedantic, except that errors are produced instead of warnings
+# -c : compile only
+

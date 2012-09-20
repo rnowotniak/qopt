@@ -207,6 +207,12 @@ class rQIEA : public EA<DTYPE> {
     }
 }
 
+/*
+ *
+
+%addmethods { ...
+
+ */
 
 
 // vim: set ft=c:

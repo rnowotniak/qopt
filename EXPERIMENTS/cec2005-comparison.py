@@ -9,8 +9,10 @@ import sys
 import re
 import numpy as np
 import glob
+import qopt.problems.CEC2005.cec2005 as cec2005
 
 p = re.compile(r"""^\d+ [^ ]+$""")
+
 
 def readFile(filename):
     f = open(filename, 'r')
@@ -19,6 +21,48 @@ def readFile(filename):
     lines = filter(lambda line: p.match(line), lines)
     arr = np.matrix( ';'.join(lines) )
     return arr
+
+def success_performance(method, fnum):
+    files = glob.glob('/var/tmp/%s-f%s/run*.txt' % (method, fnum))
+    if len(files) == 0:
+        return -1
+    ok = 0
+    fevalssum = 0
+    for f in files:
+        m = readFile(f)
+        fun = cec2005.FUNCTIONS['f%s' % fnum]
+        isok = m[-1,1] <= fun['opt'] + fun['accuracy']
+        if isok:
+            ok += 1
+            fevals = filter(lambda row: row[0][0,1] <= fun['opt'] + fun['accuracy'], m)[0][0,0]
+            # print f, fevals
+            fevalssum += fevals
+    if ok == 0:
+        return -1
+    fevalssum /= ok
+    fevalssum *= len(files) / ok
+    return fevalssum
+
+def success_rate(method, fnum):
+    files = glob.glob('/var/tmp/%s-f%s/run*.txt' % (method, fnum))
+    if len(files) == 0:
+        return -1
+    ok = 0
+    for f in files:
+        m = readFile(f)
+        fun = cec2005.FUNCTIONS['f%s' % fnum]
+        ok += m[-1,1] <= fun['opt'] + fun['accuracy']
+    return 1. * ok / len(files)
+
+for fnum in xrange(1,26):
+    print '%d %.f%% %d' % (fnum, success_rate('de', fnum) * 100, success_performance('de', fnum))
+
+
+#
+# Ponizej mamy generowanie wykresow porownujacych poszczegolne metody dla funkcji 1-25
+#
+sys.exit(0)
+
 
 import matplotlib.pyplot as plt
 

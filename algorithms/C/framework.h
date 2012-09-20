@@ -48,9 +48,9 @@ template <class DTYPE>
 class EA {
 	private:
 
-		std::vector<EA<DTYPE>* > history;
+		std::vector<EA<DTYPE>* > history; // XXX usunac? bo zbyt skomplikowane chyba
 
-		void saveGeneration();
+		void saveGeneration(); // XXX usunac?
 
 	protected:
 
@@ -99,7 +99,7 @@ class EA {
 
 		virtual bool termination();
 
-		EA<DTYPE> *getGeneration(int n) {
+		EA<DTYPE> *getGeneration(int n) { // XXX usunac?
 			return history[n];
 		}
 };
