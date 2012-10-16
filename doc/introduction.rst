@@ -101,7 +101,7 @@ CMA-ES
 
 [rys.] Krajobraz metaprzystosowania
 
-Implementacje masowo rółnoległe (CUDA, PL-GRID)
+Implementacje masowo równoległe (CUDA, PL-GRID)
 -----------------------------------------------
 Przeprowadzenie analiz doświadczalnych nad rozważaną nową klasą algorytmów
 ewolucyjnych wymagało wykonania czasochłonnych oraz bardzo wymagających pod
