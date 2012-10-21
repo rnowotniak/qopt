@@ -1,3 +1,40 @@
+Oprogramowanie **RN Optimization Framework** służy do optymalizacji za pomocą najnowocześniejszych
+algorytmów ewolucyjnych m.in. QIGA, rQIEA. Założeniem jest elegancja, elastyczność, mały rozmiar.
+
+Elementarne wymagania co do frameworka
+======================================
+
+#. **Zmiana evaluatora** (knapsack, TSP, CEC2005, ...)
+#. Łatwe wymiana: operatorów, metod inicjalizacji, metod oceny, kryteriów stopy (wszystko na zasadzie slotow, tak jak w PyEvolve)
+#. Benchmarki: CEC2005, (CEC2011), knapsack, TSP, ...
+#. algorytmy QIGA, rQIEA
+
+Dalej ewentualnie:
+
+* Metody analizy teoretycznej (Banach, bloki budujące)
+* Wizualizacja wyników
+
+Chcemy móc korzystać z tego w ten sposób:
+
+::
+
+        import qopt.framework
+        import qopt.algorithms.QIGA as QIGA
+        import qopt.problems.knapsack # ...
+
+        q1 = QIGA()
+        q1.evaluator = knapsack
+        q1.run()
+        print q1.best
+
+::
+
+        q2 = QIGA()
+        q2.evaluator = tsp
+        q2.operators.append(someop)
+        q2.run()
+
+
 Struktura framework'a RN Optimization Framework
 ===============================================
 

@@ -45,12 +45,15 @@ class Individual:
 #
 #
 class EA:
-    """ the base class for evolutionary algorithms (population-based heuritics) """
+    """ The base class for evolutionary algorithms (population-based heuritics) """
 
     def __init__(self):
         self.popsize = 10
         self.population = []
-        self.best = None # the best individual ever found (Individual object or its genotype directly)
+
+        self.best = None
+        """ the best individual ever found (Individual object or its genotype directly) """
+
         self.t = 0 # generation number
 
         # callbacks

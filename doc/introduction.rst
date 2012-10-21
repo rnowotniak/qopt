@@ -33,7 +33,6 @@ Oryginalne elementy w rozprawie:
 #. Nowoczesne techniki metaoptymalizacji
 #. Efektywna eksploracja wielowymiarowej przestrzeni parametrów przez implementację w środowisku obliczeń masowo równoległych (CUDA, PL-GRID), kilkusetkrotne przyśpieszenia obliczeń w niektórych przypadkach
 #. adaptacja wybranych metod analizy teoretycznej (Banach, bloki budujące)
-#. Nowoczesne techniki metaoptymalizacji
 #. Metody ekstrakcji wiedzy (uczenie maszynowe)
 #. Może także należy spróbować poprawić jakiś najnowszy, najlepszy QEA, stosując techniki, które sprawdzały się dla EAs? Np. wykorzystanie informacji o gradziencie w operatorze genetycznym (np. kąt obrotu, tak jak w DCQGA + dodatkowo np. aproksymacja gradientu czymś tam?) itp.
 

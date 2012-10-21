@@ -11,6 +11,10 @@ cdef extern from "qiga.h":
     void evaluate()
     void update()
     void storebest()
+    cdef cppclass QIGA:
+        int popsize
+        float Q[10][250]
+        float getQ0()
 
 def run():
     print 'qiga'
@@ -28,7 +32,17 @@ def run():
     print '%g seconds\n' % (stop_tm - start_tm)
 
 
-class QIGA(qopt.EA):
+cdef class QIGAcpp:
+    cdef QIGA *thisptr
+    def __cinit__(self):
+        self.thisptr = new QIGA()
+    def getQ0(self):
+        return self.thisptr.Q[0][0]
+    property Q0:
+        def __get__(self): return self.thisptr.Q[0][0]
+
+
+class QIGAa(qopt.EA):
 
     def initialize(self):
         global bestval
@@ -45,10 +59,14 @@ class QIGA(qopt.EA):
         evaluate()
         update()
         storebest()
-        self.bestval = bestval
+        #self.bestval = bestval
+
+    @property
+    def best(self):
+        return bestval
 
 def start():
-    q = QIGA()
+    q = QIGAa()
     q.tmax = 500
 
     start_tm = time.time()
