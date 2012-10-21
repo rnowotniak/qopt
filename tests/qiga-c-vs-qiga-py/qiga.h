@@ -105,6 +105,16 @@ class QIGA {
 		memcpy(this->signs_table, st, sizeof(st));
 	}
 
+	~QIGA() {
+		for (int i = 0; i < popsize; i++) {
+			delete [] Q[i];
+			delete [] P[i];
+		}
+		delete Q;
+		delete P;
+		delete fvals;
+		delete best;
+	}
 
 	void evaluate();
 	void initialize();

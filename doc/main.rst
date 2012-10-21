@@ -18,6 +18,69 @@ Chcemy móc korzystać z tego w ten sposób:
 
 ::
 
+        from qopt.algorithms import QIGA     # generic QIGA algo
+        from qopt.algorithms import bQIGAo   # exact Han's algo
+        from qopt.algorithms import bQIGAhe  # H_e gate
+        from qopt.algorithms import bQIGAcm  # cross and mut..
+
+        from qopt.problems import knapsack
+        from qopt.problems import tsp
+        from qopt.problems import sat
+
+
+        def my_init(alg):
+                alg.bestval = -1
+                alg._initialize()
+                alg._observe()
+                alg._repair()
+                alg._evaluate()
+                alg._storebest()               
+
+        def my_ops(alg):
+                ...
+                alg._update()
+                alg._newXScross(5)
+                ...
+
+
+        newalg = QIGA()
+        newalg.initialization += my_init
+        newalg.operators += my_ops
+        newalg.evaluator = knapsack
+        newalg.run()
+        print newalg.best
+
+        q2 = bQIGAo()
+        q2.evaluator = knapsack
+        q2.run()
+
+        q3 = bQIGAcm()
+        q3.evaluator = tsp
+        q3.run()
+
+
+
+::
+        
+        from qopt.algorithms import QIEA      # generic QIEA algo
+        from qopt.algorithms import rQIEA     # Gexiang's rQIEA algo
+        from qopt.problems import cec2005
+        from qopt.problems import cec2011
+
+        qiea = QIEA()
+        qiea.initialization += ...
+        qiea.run()
+
+        r = rQIEA()
+        r.evaluator = cec2005.f1
+        r.run()
+        r.evaluator = cec2005.f2
+        r.run()
+
+
+
+::
+
         import qopt.framework
         import qopt.algorithms.QIGA as QIGA
         import qopt.problems.knapsack # ...
