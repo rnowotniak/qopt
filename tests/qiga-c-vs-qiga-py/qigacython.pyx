@@ -1,23 +1,18 @@
 import time
-
 import qopt.framework as qopt
-
 import numpy as np
+cimport numpy as cnp
+#from cpython cimport Py_INCREF, PyObject
+
+cnp.import_array()
+
 
 cdef extern from "qiga.h":
-    # void qiga()
-    # float bestval
-    # void initialize()
-    # void observe()
-    # void repair()
-    # void evaluate()
-    # void update()
-    # void storebest()
     cdef cppclass QIGAcpp "QIGA":
         int popsize
         int chromlen
         float bestval
-        float **Q
+        float *Q
         char **P
         float *fvals
         char *best
@@ -28,6 +23,8 @@ cdef extern from "qiga.h":
         void evaluate()
         void update()
         void storebest()
+
+
 
 class EA:
     # cdef public int t
@@ -107,11 +104,13 @@ cdef class __QIGAcpp:
         def __set__(self, val): self.thisptr.bestval = val
     property Q:
         def __get__(self):
-            q = np.zeros([self.thisptr.popsize, self.thisptr.chromlen])
-            for i in xrange(self.thisptr.popsize):
-                for j in xrange(self.thisptr.chromlen):
-                    q[i][j] = self.thisptr.Q[i][j]
-            return q
+            cdef cnp.npy_intp shape[2]
+            shape[0] = <cnp.npy_intp> self.thisptr.popsize
+            shape[1] = <cnp.npy_intp> self.thisptr.chromlen
+            ndarray = cnp.PyArray_SimpleNewFromData(2, shape, cnp.NPY_FLOAT, self.thisptr.Q)
+            # ndarray.base = ... ???
+            # Py_INCREF(self) ... ???
+            return ndarray
     property P:
         def __get__(self):
             res = []

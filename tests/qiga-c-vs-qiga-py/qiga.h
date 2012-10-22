@@ -16,43 +16,24 @@
 #define M_PI_2	1.57079632679489661923f	/* pi/2 float */
 #define M_PI_4	0.78539816339744830962f	/* pi/4 float */
 
-//#define chromlen 250
-//#define popsize 10
 
-#define Qij (Q[i][j])
+
+#define Qij (Q[i * chromlen + j])
 
 #ifndef REPEAT
 #define REPEAT 100
 #endif
-
-/*
-void qiga(void);
-extern float bestval;
-void initialize(void);
-void observe(void);
-void repair(void);
-void evaluate(void);
-void update(void);
-void storebest(void);
-*/
 
 
 class QIGA {
 
     public:
 
-	int popsize;
-	int chromlen;
-	int maxgen;
+	const int maxgen;
+	const int popsize;
+	const int chromlen;
 
-	/*
-	float Q[popsize][chromlen];
-	char P[popsize][chromlen];
-	float fvals[popsize];
-	char best[chromlen];
-	*/
-
-	float **Q;
+	float *Q;
 	char **P;
 	float *fvals;
 	char *best;
@@ -64,15 +45,13 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
-	QIGA() {
-		maxgen = 500;
-		popsize = 10;
-		chromlen = 250;
+	QIGA() : maxgen(500), popsize(10), chromlen(250) {
+		printf("QIGA::QIGA constructor\n");
 
-		Q = new float*[popsize];
+		Q = new float[popsize * chromlen];
 		P = new char*[popsize];
 		for (int i = 0; i < popsize; i++) {
-			Q[i] = new float[chromlen];
+			//Q[i] = new float[chromlen];
 			P[i] = new char[chromlen];
 		}
 
@@ -107,7 +86,6 @@ class QIGA {
 
 	~QIGA() {
 		for (int i = 0; i < popsize; i++) {
-			delete [] Q[i];
 			delete [] P[i];
 		}
 		delete Q;
