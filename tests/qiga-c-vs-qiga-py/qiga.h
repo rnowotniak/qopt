@@ -24,8 +24,10 @@
 #define REPEAT 100
 #endif
 
+typedef float (*evaluator_t) (char*);
 
 extern float fknapsack(char *);
+
 
 class QIGA {
 
@@ -47,7 +49,7 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
-	float (*evaluator) (char*);
+	void *evaluator;
 
 	QIGA() : maxgen(500), popsize(10), chromlen(250) {
 		printf("QIGA::QIGA constructor\n");

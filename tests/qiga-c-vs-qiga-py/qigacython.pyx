@@ -7,9 +7,11 @@ cimport numpy as cnp
 cnp.import_array()
 
 cdef extern from "knapsack.h":
-    float fknapsack(char *)
+    float c_fknapsack "fknapsack" (char *)
+
 
 cdef extern from "qiga.h":
+    ctypedef float (*evaluator_t) (char*)
     cdef cppclass QIGAcpp "QIGA":
         int popsize
         int chromlen
@@ -21,7 +23,8 @@ cdef extern from "qiga.h":
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
 
-        float (*evaluator) (char*)
+        #float (*evaluator) (char*)
+        void *evaluator
 
         void qiga()
         void initialize()
@@ -31,6 +34,8 @@ cdef extern from "qiga.h":
         void update()
         void storebest()
 
+def fknapsack(k):
+    return c_fknapsack(k)
 
 class EA:
     # cdef public int t
@@ -54,6 +59,7 @@ class EA:
         while self.t < self.tmax:
             self.t += 1
             self.generation()
+
         return
 
         for cb in self.initialization:
@@ -75,7 +81,7 @@ cdef class __QIGAcpp:
 
     def __cinit__(self):
         self.thisptr = new QIGAcpp()
-        self.thisptr.evaluator = fknapsack # XXX
+        #self.thisptr.evaluator = c_fknapsack # XXX
     def __dealloc__(self):
         del self.thisptr
 
@@ -87,13 +93,15 @@ cdef class __QIGAcpp:
         self.thisptr.observe()
     def _repair(self):
         self.thisptr.repair()
-    def _evaluate(self):
-        self.thisptr.evaluate()
     def _update(self):
         self.thisptr.update()
     def _storebest(self):
         self.thisptr.storebest()
 
+    cpdef _evaluate(self): # XXX
+        #self.thisptr.evaluate()
+        for i in xrange(self.thisptr.popsize):
+            self.thisptr.fvals[i] = (<object>self.thisptr.evaluator)(self.thisptr.P[i])
 
     property popsize:
         def __get__(self): return self.thisptr.popsize
@@ -106,6 +114,8 @@ cdef class __QIGAcpp:
             shape[0] = <cnp.npy_intp> self.thisptr.popsize
             ndarray = cnp.PyArray_SimpleNewFromData(1, shape, cnp.NPY_FLOAT, self.thisptr.fvals)
             return ndarray
+    property evaluator:
+        def __set__(self, val): self.thisptr.evaluator = <void*>val
     property lookup_table:
         def __get__(self):
             cdef cnp.npy_intp shape[3]
@@ -184,6 +194,7 @@ def runcpp():
 def start():
     q = QIGA()
     q.tmax = 500
+    q.evaluator = fknapsack
 
     start_tm = time.time()
     REPEAT = 100

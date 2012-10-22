@@ -26,7 +26,7 @@
 void QIGA::evaluate() {
 	int i,j;
 	for (i = 0; i < popsize; i++) {
-		fvals[i] = evaluator(P[i]);
+		fvals[i] = ((evaluator_t)evaluator)(P[i]);
 	}
 }
 
