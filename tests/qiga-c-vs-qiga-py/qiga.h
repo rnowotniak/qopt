@@ -49,7 +49,7 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
-	void *evaluator;
+	evaluator_t evaluator;
 
 	QIGA() : maxgen(500), popsize(10), chromlen(250) {
 		printf("QIGA::QIGA constructor\n");
