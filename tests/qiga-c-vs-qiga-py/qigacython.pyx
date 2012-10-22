@@ -16,6 +16,9 @@ cdef extern from "qiga.h":
         char **P
         float *fvals
         char *best
+        float lookup_table[2][2][2]
+        float signs_table[2][2][2][4]
+
         void qiga()
         void initialize()
         void observe()
@@ -90,18 +93,23 @@ cdef class __QIGAcpp:
 
     property popsize:
         def __get__(self): return self.thisptr.popsize
-    property fvals:
-        def __get__(self):
-            res = []
-            for i in xrange(self.thisptr.popsize):
-                res.append(float(self.thisptr.fvals[i]))
-            return res
-        def __set__(self, val):
-            for i in xrange(self.thisptr.popsize):
-                self.thisptr.fvals[i] = val[i]
     property bestval:
         def __get__(self): return self.thisptr.bestval
         def __set__(self, val): self.thisptr.bestval = val
+    property fvals:
+        def __get__(self):
+            cdef cnp.npy_intp shape[1]
+            shape[0] = <cnp.npy_intp> self.thisptr.popsize
+            ndarray = cnp.PyArray_SimpleNewFromData(1, shape, cnp.NPY_FLOAT, self.thisptr.fvals)
+            return ndarray
+    property lookup_table:
+        def __get__(self):
+            cdef cnp.npy_intp shape[3]
+            shape[0] = <cnp.npy_intp> 2
+            shape[1] = <cnp.npy_intp> 2
+            shape[2] = <cnp.npy_intp> 2
+            ndarray = cnp.PyArray_SimpleNewFromData(3, shape, cnp.NPY_FLOAT, self.thisptr.lookup_table)
+            return ndarray
     property Q:
         def __get__(self):
             cdef cnp.npy_intp shape[2]

@@ -45,6 +45,9 @@ Chcemy móc korzystać z tego w ten sposób:
 
         newalg = QIGA()
         newalg.initialization += my_init
+        # newalg.initialization += newalg._initialize  # ???
+        # newalg.initialization += newalg._observe     # ???
+        # ...
         newalg.operators += my_ops
         newalg.evaluator = knapsack
         newalg.run()
