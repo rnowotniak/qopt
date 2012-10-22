@@ -25,6 +25,8 @@
 #endif
 
 
+extern float fknapsack(char *);
+
 class QIGA {
 
     public:
@@ -45,18 +47,21 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
+	float (*evaluator) (char*);
+
 	QIGA() : maxgen(500), popsize(10), chromlen(250) {
 		printf("QIGA::QIGA constructor\n");
 
-		Q = new float[popsize * chromlen];
-		P = new char*[popsize];
-		for (int i = 0; i < popsize; i++) {
-			//Q[i] = new float[chromlen];
-			P[i] = new char[chromlen];
-		}
+		evaluator = NULL;
 
+		Q = new float[popsize * chromlen];
 		fvals = new float[popsize];
 		best = new char[chromlen];
+
+		P = new char*[popsize];
+		for (int i = 0; i < popsize; i++) {
+			P[i] = new char[chromlen];
+		}
 
 		float lt[2][2][2] = 
 		{

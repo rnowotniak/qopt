@@ -6,6 +6,8 @@ cimport numpy as cnp
 
 cnp.import_array()
 
+cdef extern from "knapsack.h":
+    float fknapsack(char *)
 
 cdef extern from "qiga.h":
     cdef cppclass QIGAcpp "QIGA":
@@ -19,6 +21,8 @@ cdef extern from "qiga.h":
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
 
+        float (*evaluator) (char*)
+
         void qiga()
         void initialize()
         void observe()
@@ -26,7 +30,6 @@ cdef extern from "qiga.h":
         void evaluate()
         void update()
         void storebest()
-
 
 
 class EA:
@@ -43,7 +46,7 @@ class EA:
         # self.generation = []
 
     def evaluation(self):
-        self.fvals = [ 999 ] * self.popsize
+        self.fvals = [ 999 ] * self.popsize # XXX
 
     def run(self):
         self.initialize()
@@ -72,6 +75,7 @@ cdef class __QIGAcpp:
 
     def __cinit__(self):
         self.thisptr = new QIGAcpp()
+        self.thisptr.evaluator = fknapsack # XXX
     def __dealloc__(self):
         del self.thisptr
 
