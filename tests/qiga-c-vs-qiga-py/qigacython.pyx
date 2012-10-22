@@ -4,6 +4,10 @@ import numpy as np
 cimport numpy as cnp
 #from cpython cimport Py_INCREF, PyObject
 
+cimport libc.stdlib
+
+libc.stdlib.srand(time.time())
+
 cnp.import_array()
 
 cdef extern from "knapsack.h":
@@ -75,6 +79,9 @@ class EA:
             for cb in self.generation:
                 cb(self)
 
+#cdef api class Function[type FunctionType, object Function]:
+#    cpdef double evaluate(self, double x) except *:
+#        return 0
 
 cdef class __QIGAcpp:
     cdef QIGAcpp *thisptr
@@ -98,7 +105,7 @@ cdef class __QIGAcpp:
     def _storebest(self):
         self.thisptr.storebest()
 
-    cpdef _evaluate(self): # XXX
+    def _evaluate(self): # XXX wrong
         #self.thisptr.evaluate()
         for i in xrange(self.thisptr.popsize):
             self.thisptr.fvals[i] = (<object>self.thisptr.evaluator)(self.thisptr.P[i])
