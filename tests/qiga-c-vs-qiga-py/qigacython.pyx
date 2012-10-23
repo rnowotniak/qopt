@@ -32,10 +32,8 @@ cdef extern from "qiga.h":
         char *best
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
-
         evaluator_t evaluator
         repairer_t repairer
-
         void qiga()
         void initialize()
         void observe()
@@ -46,11 +44,11 @@ cdef extern from "qiga.h":
 
 
 
-cdef class Evaluator:
+cdef class Problem:
     cdef evaluator_t evaluator
     cdef repairer_t repairer
 
-cdef class KnapsackEvaluator(Evaluator):
+cdef class KnapsackProblem(Problem):
     def __cinit__(self):
         self.evaluator = c_fknapsack
         self.repairer = c_repairKnapsack
@@ -130,8 +128,8 @@ cdef class __QIGAcpp:
             shape[0] = <cnp.npy_intp> self.thisptr.popsize
             ndarray = cnp.PyArray_SimpleNewFromData(1, shape, cnp.NPY_FLOAT, self.thisptr.fvals)
             return ndarray
-    property evaluator:
-        def __set__(self, Evaluator e):
+    property problem:
+        def __set__(self, Problem e):
             self.thisptr.evaluator = e.evaluator
             self.thisptr.repairer = e.repairer
     property lookup_table:
@@ -179,9 +177,9 @@ class QIGA(EA, __QIGAcpp):
         self._update()
         self._storebest()
 
-    @property
-    def best(self):
-        return self.bestval
+    #@property
+    #def best(self):
+        #return self.bestval
 
 
 
@@ -199,7 +197,7 @@ def runcpp():
     REPEAT = 100
 
     q = __QIGAcpp()
-    q.evaluator = KnapsackEvaluator()
+    q.problem = KnapsackProblem()
 
     for rep in xrange(REPEAT):
         q._qiga()
@@ -215,7 +213,7 @@ def runcpp():
 def start():
     q = QIGA()
     q.tmax = 500
-    q.evaluator = KnapsackEvaluator()
+    q.problem = KnapsackProblem()
 
     start_tm = time.time()
     REPEAT = 100

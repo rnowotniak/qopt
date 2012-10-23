@@ -46,11 +46,11 @@ void QIGA::observe() {
 }
 
 void QIGA::repair() {
-    if (repairer == NULL) {
-        return;
-    }
+	if (repairer == NULL) {
+		return;
+	}
 	for (int i = 0; i < popsize; i++) {
-        repairer(P[i], chromlen);
+		repairer(P[i], chromlen);
 	}
 }
 
@@ -117,29 +117,29 @@ void QIGA::storebest() {
 
 
 /*
-void show() {
-	int i,j;
-	for (i = 0; i < popsize; i++) {
-		for (j = 0; j < chromlen; j++) {
-			printf("%c", P[i][j]);
-		}
-		printf("   %f\n", fvals[i]);
-	}
-}
-*/
+   void show() {
+   int i,j;
+   for (i = 0; i < popsize; i++) {
+   for (j = 0; j < chromlen; j++) {
+   printf("%c", P[i][j]);
+   }
+   printf("   %f\n", fvals[i]);
+   }
+   }
+   */
 
 void QIGA::qiga() {
 	int t = 0;
 	bestval = -1;
 	initialize();
 	observe();
-	//repair();
+	repair();
 	evaluate();
 	storebest();
 	while (t < maxgen) {
 		//printf("generation %d\n", t);
 		observe();
-		//repair();
+		repair();
 		evaluate();
 		update();
 		storebest();
@@ -151,30 +151,5 @@ void QIGA::qiga() {
 	fwrite(best, 1, chromlen, stdout);
 	printf("\nfitness: %f\n", bestval);
 	fflush(stdout);
-}
-
-
-int main() {
-	printf("QiGA on CPU\n");
-
-	struct timeval start_tm;
-	gettimeofday(&start_tm, 0);
-	srand(time(0)+start_tm.tv_usec);
-	//srand(1298823875);
-
-	QIGA *qiga = new QIGA();
-
-	int rep;
-	for (rep = 0; rep < REPEAT; rep++) {
-		fprintf(stderr, ".");
-		qiga->qiga();
-	}
-	fprintf(stderr, "\n");
-
-	struct timeval stop_tm;
-	gettimeofday(&stop_tm, 0);
-	printf("%g seconds\n", (1e6 * (stop_tm.tv_sec - start_tm.tv_sec) + (stop_tm.tv_usec - start_tm.tv_usec))/1e6);
-
-	return 0;
 }
 

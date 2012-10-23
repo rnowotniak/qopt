@@ -6,7 +6,7 @@ import qigacython
 
 q = qigacython.QIGA()
 q.tmax = 500
-q.evaluator = qigacython.KnapsackEvaluator()
+q.problem = qigacython.KnapsackProblem()
 
 q.initialize()
 
@@ -14,11 +14,11 @@ print q.Q
 
 q.run()
 
-print q.best
+print q.bestval
 
 print q.Q
 
-# qigacython.runcpp()
+qigacython.runcpp()
 
 qigacython.start()
 
