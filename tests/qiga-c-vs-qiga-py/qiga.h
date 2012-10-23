@@ -90,8 +90,8 @@ class QIGA {
 		for (int i = 0; i < popsize; i++) {
 			delete [] P[i];
 		}
-		delete Q;
 		delete P;
+		delete Q;
 		delete fvals;
 		delete best;
 	}
