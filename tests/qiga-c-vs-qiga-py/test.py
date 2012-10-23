@@ -8,17 +8,23 @@ q = qigacython.QIGA()
 q.tmax = 500
 q.problem = qigacython.KnapsackProblem()
 
-q.initialize()
+#q.initialization += 
 
-print q.Q
+#q.initialize()
+
+#print q.Q
 
 q.run()
 
 print q.bestval
 
-print q.Q
+#print q.Q
 
-qigacython.runcpp()
 
-qigacython.start()
+
+
+
+#qigacython.runcpp()
+
+#qigacython.start()
 

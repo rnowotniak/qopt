@@ -53,10 +53,18 @@ cdef class KnapsackProblem(Problem):
         self.evaluator = c_fknapsack
         self.repairer = c_repairKnapsack
 
+cdef float onemax(char *s, int l):
+    cdef float res
+    res = s[:l].count('1')
+    return res
+
+cdef class OneMaxProblem(Problem):
+    def __cinit__(self):
+        self.evaluator = onemax
+
 
 
 class EA:
-    # cdef public int t
     # cdef public initialization
     # cdef public termination
     # cdef public generation
