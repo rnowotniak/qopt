@@ -51,7 +51,7 @@ class QIGA {
 	evaluator_t evaluator;
 	repairer_t repairer;
 
-	QIGA() : maxgen(500), popsize(10), chromlen(250) {
+	QIGA(int popsize = 10, int chromlen = 250) : maxgen(500), popsize(popsize), chromlen(chromlen) {
 		printf("QIGA::QIGA constructor\n");
 
 		evaluator = NULL;
