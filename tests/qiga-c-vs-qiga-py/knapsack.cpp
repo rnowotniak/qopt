@@ -252,32 +252,35 @@ float items[items_count][2] = { // (weight, profit) pairs
 	{2.923170f, 7.923170f},
 	{9.280242f, 14.280242f},
 };
+
+
 // repair procedure exactly from Han's paper
-void repairKnapsack(char *x) {
+void repairKnapsack(char *x, int length) {
 	float weight;
 	int overfilled;
 	int i,j;
 	weight = 0;
-	for (i = 0; i < items_count; i++) {
+	for (i = 0; i < length; i++) {
 		weight += items[i][0] * (x[i] == '1' ? 1 : 0);
 	}
 	overfilled = weight > CAPACITY;
-	for (i = 0; i < items_count && overfilled; i++) {
+	for (i = 0; i < length && overfilled; i++) {
 		weight -= x[i] == '1' ? items[i][0] : 0;
 		x[i] = '0';
 		overfilled = weight > CAPACITY;
 	}
-	for (j = 0; j < items_count && overfilled == 0; j++) {
+	for (j = 0; j < length && overfilled == 0; j++) {
 		weight += x[j] == '0' ? items[j][0] : 0;
 		x[j] = '1';
 		overfilled = weight > CAPACITY;
 	}
 	x[j-1] = '0';
 }
-float fknapsack(char *k) {
+
+float fknapsack(char *k, int length) {
 	int i;
 	float price = 0; // total price of k knapsack
-	for (i = 0; i < items_count; i++) {
+	for (i = 0; i < length; i++) {
 		price += items[i][1] * (k[i] == '1' ? 1 : 0);
 	}
 	return price;

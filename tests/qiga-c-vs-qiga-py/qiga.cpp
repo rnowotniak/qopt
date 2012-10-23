@@ -16,19 +16,6 @@
 /*
  * The algorithm data
  */
-// Lookup table: rotation angles in Qubit state spaces
-
-
-
-/*
- * Individuals evaluation stage
- */
-void QIGA::evaluate() {
-	int i,j;
-	for (i = 0; i < popsize; i++) {
-		fvals[i] = ((evaluator_t)evaluator)(P[i]);
-	}
-}
 
 /*
  * Quantum genes initialization stage
@@ -41,6 +28,7 @@ void QIGA::initialize() {
 		}
 	}
 }
+
 
 /*
  * Observation of classical population stage;
@@ -57,21 +45,26 @@ void QIGA::observe() {
 	}
 }
 
-void QIGA::storebest() {
-	int i;
-	float val = -1;
-	char *b;
-	for (i = 0; i < popsize; i++) {
-		if (fvals[i] > val) {
-			val = fvals[i];
-			b = P[i];
-		}
-	}
-	if (val > bestval) {
-		bestval = val;
-		memcpy(best, b, chromlen);
+void QIGA::repair() {
+    if (repairer == NULL) {
+        return;
+    }
+	for (int i = 0; i < popsize; i++) {
+        repairer(P[i], chromlen);
 	}
 }
+
+
+/*
+ * Individuals evaluation stage
+ */
+void QIGA::evaluate() {
+	int i,j;
+	for (i = 0; i < popsize; i++) {
+		fvals[i] = evaluator(P[i], chromlen);
+	}
+}
+
 
 /*
  * Update stage -- quantum genetic operators; rotations in qubit state spaces
@@ -104,12 +97,24 @@ void QIGA::update() {
 	}
 }
 
-void QIGA::repair() {
+
+void QIGA::storebest() {
 	int i;
+	float val = -1;
+	char *b;
 	for (i = 0; i < popsize; i++) {
-		repairKnapsack(P[i]);
+		if (fvals[i] > val) {
+			val = fvals[i];
+			b = P[i];
+		}
+	}
+	if (val > bestval) {
+		bestval = val;
+		memcpy(best, b, chromlen);
 	}
 }
+
+
 
 /*
 void show() {
@@ -128,13 +133,13 @@ void QIGA::qiga() {
 	bestval = -1;
 	initialize();
 	observe();
-	repair();
+	//repair();
 	evaluate();
 	storebest();
 	while (t < maxgen) {
 		//printf("generation %d\n", t);
 		observe();
-		repair();
+		//repair();
 		evaluate();
 		update();
 		storebest();

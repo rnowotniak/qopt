@@ -24,10 +24,8 @@
 #define REPEAT 100
 #endif
 
-typedef float (*evaluator_t) (char*);
-
-extern float fknapsack(char *);
-
+typedef float (*evaluator_t) (char*, int);
+typedef void (*repairer_t) (char*, int);
 
 class QIGA {
 
@@ -44,17 +42,20 @@ class QIGA {
 
 	float bestval;
 
+	// Lookup table: rotation angles in Qubit state spaces
 	float lookup_table[2][2][2]; // [x][b][f(x)>=f(b)]
 
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
 	evaluator_t evaluator;
+	repairer_t repairer;
 
 	QIGA() : maxgen(500), popsize(10), chromlen(250) {
 		printf("QIGA::QIGA constructor\n");
 
 		evaluator = NULL;
+		repairer = NULL;
 
 		Q = new float[popsize * chromlen];
 		fvals = new float[popsize];
@@ -95,13 +96,16 @@ class QIGA {
 		delete best;
 	}
 
+	// complete algorithm in C++
+	void qiga();
+
+	// elementary operations
 	void evaluate();
 	void initialize();
 	void observe();
 	void storebest();
 	void update();
 	void repair();
-	void qiga();
 
 };
 

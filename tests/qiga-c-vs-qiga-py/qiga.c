@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <sys/time.h>
 #include <string.h>
 
 #define EPSILON 10e-9f

@@ -1,3 +1,8 @@
+#
+# Copyright (C) 2012   Robert Nowotniak
+#
+
+
 import time
 import qopt.framework as qopt
 import numpy as np
@@ -11,10 +16,12 @@ libc.stdlib.srand(time.time())
 cnp.import_array()
 
 cdef extern from "knapsack.h":
-    float c_fknapsack "fknapsack" (char *)
+    void c_repairKnapsack "repairKnapsack" (char *x, int)
+    float c_fknapsack "fknapsack" (char *, int)
 
 cdef extern from "qiga.h":
-    ctypedef float (*evaluator_t) (char*)
+    ctypedef float (*evaluator_t) (char*,int)
+    ctypedef void (*repairer_t) (char*,int)
     cdef cppclass QIGAcpp "QIGA":
         int popsize
         int chromlen
@@ -26,7 +33,8 @@ cdef extern from "qiga.h":
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
 
-        float (*evaluator) (char*)
+        evaluator_t evaluator
+        repairer_t repairer
 
         void qiga()
         void initialize()
@@ -36,12 +44,17 @@ cdef extern from "qiga.h":
         void update()
         void storebest()
 
+
+
 cdef class Evaluator:
     cdef evaluator_t evaluator
+    cdef repairer_t repairer
 
 cdef class KnapsackEvaluator(Evaluator):
     def __cinit__(self):
         self.evaluator = c_fknapsack
+        self.repairer = c_repairKnapsack
+
 
 
 class EA:
@@ -118,7 +131,9 @@ cdef class __QIGAcpp:
             ndarray = cnp.PyArray_SimpleNewFromData(1, shape, cnp.NPY_FLOAT, self.thisptr.fvals)
             return ndarray
     property evaluator:
-        def __set__(self, Evaluator e): self.thisptr.evaluator = e.evaluator
+        def __set__(self, Evaluator e):
+            self.thisptr.evaluator = e.evaluator
+            self.thisptr.repairer = e.repairer
     property lookup_table:
         def __get__(self):
             cdef cnp.npy_intp shape[3]
@@ -168,6 +183,8 @@ class QIGA(EA, __QIGAcpp):
     def best(self):
         return self.bestval
 
+
+
 class bQIGAo(__QIGAcpp, qopt.EA):
     pass
 
@@ -182,6 +199,7 @@ def runcpp():
     REPEAT = 100
 
     q = __QIGAcpp()
+    q.evaluator = KnapsackEvaluator()
 
     for rep in xrange(REPEAT):
         q._qiga()
@@ -208,3 +226,6 @@ def start():
     stop_tm = time.time()
 
     print '%g seconds\n' % (stop_tm - start_tm)
+
+
+

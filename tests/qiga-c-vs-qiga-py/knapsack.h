@@ -6,7 +6,7 @@
 
 extern float items[items_count][2];
 
-extern void repairKnapsack(char *x);
-extern float fknapsack(char *k);
+extern void repairKnapsack(char *x, int length);
+extern float fknapsack(char *k, int length);
 
 #endif
