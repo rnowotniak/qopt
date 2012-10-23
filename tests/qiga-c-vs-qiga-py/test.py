@@ -1,30 +1,30 @@
 #!/usr/bin/python
 
 import sys
-
+import types
 import qigacython
 
-q = qigacython.QIGA()
+class QIGA(qigacython.QIGA):
+    def initialize(self):
+        super(QIGA, self).initialize()
+        print 'initialization'
+
+    def generation(self):
+        super(QIGA, self).generation()
+        if self.t == 5:
+            print 'generation %d, bestval: %g' % (self.t, self.bestval)
+
+q = QIGA()
 q.tmax = 500
 q.problem = qigacython.KnapsackProblem()
 
-#q.initialization += 
-
-#q.initialize()
-
-#print q.Q
-
 q.run()
-
 print q.bestval
 
-#print q.Q
+qigacython.testtime(q)
 
+sys.exit(0)
 
-
-
-
-#qigacython.runcpp()
-
-#qigacython.start()
+q._initialize()
+print q.Q
 

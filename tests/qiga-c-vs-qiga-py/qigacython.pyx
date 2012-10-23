@@ -65,41 +65,16 @@ cdef class OneMaxProblem(Problem):
 
 
 class EA:
-    # cdef public initialization
-    # cdef public termination
-    # cdef public generation
-
     def __init__(self):
         print 'EA __init__'
         self.t = 0
-        # self.initialization = []
-        # self.termination = []
-        # self.generation = []
-
-    def evaluation(self):
-        pass
 
     def run(self):
-        self.initialize()
         self.t = 0
+        self.initialize()
         while self.t < self.tmax:
             self.t += 1
             self.generation()
-
-        return
-
-        for cb in self.initialization:
-            cb(self)
-        while True:
-            terminate = False
-            for cb in self.termination:
-                if cb(self):
-                    terminate = True
-                    break
-            if terminate:
-                break
-            for cb in self.generation:
-                cb(self)
 
 
 cdef class __QIGAcpp:
@@ -165,7 +140,7 @@ cdef class __QIGAcpp:
             return res
 
 
-class QIGA(EA, __QIGAcpp):
+class QIGA(__QIGAcpp, EA):
 
     def __init__(self):
         EA.__init__(self)
@@ -185,16 +160,9 @@ class QIGA(EA, __QIGAcpp):
         self._update()
         self._storebest()
 
-    #@property
-    #def best(self):
-        #return self.bestval
-
-
 
 class bQIGAo(__QIGAcpp, qopt.EA):
     pass
-
-
 
 
 def runcpp():
@@ -216,22 +184,12 @@ def runcpp():
     print '%g seconds\n' % (stop_tm - start_tm)
 
 
-
-
-def start():
-    q = QIGA()
-    q.tmax = 500
-    q.problem = KnapsackProblem()
-
+def testtime(alg):
     start_tm = time.time()
     REPEAT = 100
     for rep in xrange(REPEAT):
-        q.run()
-        print q.bestval
-
+        alg.run()
+        print alg.bestval
     stop_tm = time.time()
-
     print '%g seconds\n' % (stop_tm - start_tm)
-
-
 
