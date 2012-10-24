@@ -7,7 +7,8 @@ import qigacython
 class QIGA(qigacython.QIGA):
     def initialize(self):
         super(QIGA, self).initialize()
-        print 'initialization'
+        print 'my initialization'
+        print self.Q
 
     def generation(self):
         super(QIGA, self).generation()
@@ -21,7 +22,7 @@ q.problem = qigacython.KnapsackProblem()
 q.run()
 print q.bestval
 
-qigacython.testtime(q)
+# qigacython.testtime(q)
 
 sys.exit(0)
 
