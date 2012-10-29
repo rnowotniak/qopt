@@ -323,13 +323,6 @@ VISUALIZATORY:
 		możliwość publikowania wyników na stronie WWW
 
 
-The scientific procedure templates applied in the experiment:
-	comparison of algorithms for a given evaluator
-
-data for post-mortem analysis and reproduction of the experiment
-has been stored in the temporary directory: /tmp/report-2010-05-23-13.39.03
-
-
 --------8<--------8<--------8<--------8<--------8<--------8<--------8<
 
 
