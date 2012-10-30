@@ -19,6 +19,46 @@ cdef extern from "knapsack.h":
     void c_repairKnapsack "repairKnapsack" (char *x, int)
     float c_fknapsack "fknapsack" (char *, int)
 
+cdef extern from "mCEC_Function.h":
+    ctypedef double FIELD_TYPE
+    int Initial_CEC2011_Cost_Function()
+    void Terminate_CEC2011_Cost_Function()
+    void cost_function1(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function2(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function3(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function4(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function5(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function6(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function7(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function8(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function9(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function10(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function11_5(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function11_10(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function12_6(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function12_13(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function12_15(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function12_40(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function12_140(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function13_1(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function13_2(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function13_3(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function14(FIELD_TYPE *x, FIELD_TYPE *f)
+    void cost_function15(FIELD_TYPE *x, FIELD_TYPE *f)
+
+def cec2011_1(arg):
+    Initial_CEC2011_Cost_Function()
+    cdef FIELD_TYPE x[1000]
+    cdef int i
+    for i in xrange(len(arg)):
+        x[i] = arg[i]
+    cdef FIELD_TYPE res[1]
+    for i in xrange(1000):
+        cost_function15(x, res)
+    return res[0]
+
+
+
 cdef extern from "qiga.h":
     ctypedef float (*evaluator_t) (char*,int)
     ctypedef void (*repairer_t) (char*,int)

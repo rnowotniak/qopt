@@ -12,3 +12,5 @@ mv CEC2011.so libCEC2011.so
 g++ -c mCEC_Function.cpp -I $MATLAB_PATH/extern/include/
 g++ mCEC_Function.o test_function.cpp -o test_function -lCEC2011 -L. -L$MATLAB_PATH/runtime/glnx86 -L$MATLAB_PATH/bin/glnx86/ -lmwmclmcrrt
 
+g++ -c mCEC_Function.o test_function.cpp -o test_function.o -lCEC2011 -L. -L$MATLAB_PATH/runtime/glnx86 -L$MATLAB_PATH/bin/glnx86/ -lmwmclmcrrt
+
