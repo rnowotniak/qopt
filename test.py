@@ -1,10 +1,17 @@
 #!/usr/bin/python
 
 import sys
-import types
-import qigacython
 
-class QIGA(qigacython.QIGA):
+import qopt.problems.knapsack as knapsack
+# import qopt.problems.tsp
+# import qopt.problems.sat
+# import qopt.problems.func1d
+# import qopt.problems.cec2005
+# import qopt.problems.cec2011
+
+import qopt.algorithms
+
+class QIGA(qopt.algorithms.BLAA):
     def initialize(self):
         super(QIGA, self).initialize()
         print 'my initialization'
@@ -17,7 +24,7 @@ class QIGA(qigacython.QIGA):
 
 q = QIGA()
 q.tmax = 500
-q.problem = qigacython.KnapsackProblem()
+q.problem = knapsack.KnapsackProblem()
 
 q.run()
 print q.bestval

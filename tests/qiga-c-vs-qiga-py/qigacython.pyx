@@ -62,6 +62,7 @@ def cec2011_1(arg):
 cdef extern from "qiga.h":
     ctypedef float (*evaluator_t) (char*,int)
     ctypedef void (*repairer_t) (char*,int)
+    ctypedef FIELD_TYPE (*r_evaluator_t) (FIELD_TYPE *x, int n)
     cdef cppclass QIGAcpp "QIGA":
         int popsize
         int chromlen
@@ -81,6 +82,9 @@ cdef extern from "qiga.h":
         void evaluate()
         void update()
         void storebest()
+    cdef cppclass QIEAcpp "QIEA":
+        # double bounds[]
+        r_evaluator_t evaluator
 
 
 
@@ -102,6 +106,13 @@ cdef class OneMaxProblem(Problem):
     def __cinit__(self):
         self.evaluator = onemax
 
+# cdef FIELD_TYPE cec2011(FIELD_TYPE *x, int n):
+#     return n
+# cdef class CEC2011:
+#     # cdef r_evaluator_t evaluator
+#     cdef r_evaluator_t evaluator
+#     def __cinit__(self, fnum = 1):
+#         self.evaluator = cec2011
 
 
 class EA:
