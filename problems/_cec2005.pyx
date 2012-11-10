@@ -5,8 +5,6 @@ import ctypes
 
 from qopt.algorithms._algorithms cimport Problem, evaluator_t #, repairer_t
 
-ctypedef long double (*ptr_t)(long double *x, int n)
-
 cdef class CEC2005(Problem):
     cdef long double (*r_evaluator) (long double *x,int n)
     def __cinit__(self, int fnum):
