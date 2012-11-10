@@ -2,10 +2,9 @@
 
 import sys
 
-import qopt.problems.knapsack as knapsack
-
 import qopt.algorithms
 import qopt.problems
+
 
 class QIGA(qopt.algorithms.QIGA):
     def initialize(self):
@@ -18,7 +17,7 @@ class QIGA(qopt.algorithms.QIGA):
         if self.t == 5:
             print 'generation %d, bestval: %g' % (self.t, self.bestval)
 
-q = qopt.algorithms.QIGA()
+q = QIGA()
 q.tmax = 500
 q.problem = qopt.problems.knapsack
 q.run()

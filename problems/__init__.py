@@ -1,8 +1,8 @@
 
 # COMBINATORIAL #
-import knapsack as K
+import _knapsack
 
-knapsack = K.KnapsackProblem()
+knapsack = _knapsack.KnapsackProblem()
 # knapsack2 = K.KnapsackProblem('data2') ?
 # knapsack3 = K.KnapsackProblem('data3') ?
 

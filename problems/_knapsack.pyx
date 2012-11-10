@@ -1,10 +1,9 @@
 
-from Problem cimport *
+from qopt.algorithms._algorithms cimport Problem, evaluator_t, repairer_t
+# from Problem cimport *
 
 # ctypedef float (*evaluator_t) (char*,int)
 # ctypedef void (*repairer_t) (char*,int)
-
-
 # cdef class Problem:
 #     cdef evaluator_t evaluator
 #     cdef repairer_t repairer
@@ -17,4 +16,7 @@ cdef class KnapsackProblem(Problem):
     def __cinit__(self):
         self.evaluator = c_fknapsack
         self.repairer = c_repairKnapsack
+
+    def evaluate(self, k):
+        return self.evaluator(k, len(k))
 

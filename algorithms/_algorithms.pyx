@@ -14,7 +14,12 @@ libc.stdlib.srand(time.time())
 
 cnp.import_array()
 
-from qopt.problems.Problem cimport Problem
+# ctypedef float (*evaluator_t) (char*,int)
+# ctypedef void (*repairer_t) (char*,int)
+
+# cdef class Problem:
+#     cdef evaluator_t evaluator
+#     cdef repairer_t repairer
 
 cdef extern from "C/qiga.h":
     ctypedef float (*evaluator_t) (char*,int)
