@@ -16,7 +16,7 @@ cnp.import_array()
 
 from qopt.problems.Problem cimport Problem
 
-cdef extern from "qiga.h":
+cdef extern from "C/qiga.h":
     ctypedef float (*evaluator_t) (char*,int)
     ctypedef void (*repairer_t) (char*,int)
     cdef cppclass QIGAcpp "QIGA":

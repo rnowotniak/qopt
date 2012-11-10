@@ -12,7 +12,7 @@ function check() {
 cd algorithms
 cython --cplus _algorithms.pyx
 check
-g++ -shared -o _algorithms.so _algorithms.cpp qiga.cpp `python-config --cflags`
+g++ -shared -o _algorithms.so _algorithms.cpp C/qiga.cpp `python-config --cflags`
 check
 cd ..
 
