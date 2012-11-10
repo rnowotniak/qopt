@@ -1,5 +1,9 @@
 
-import _algorithms
+from _algorithms import QIGA
 
-QIGA = _algorithms.QIGA
+#from _algorithms import RQIEA
+#...
+
+
+
 

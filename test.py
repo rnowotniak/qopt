@@ -3,11 +3,6 @@
 import sys
 
 import qopt.problems.knapsack as knapsack
-# import qopt.problems.tsp
-# import qopt.problems.sat
-# import qopt.problems.func1d
-# import qopt.problems.cec2005
-# import qopt.problems.cec2011
 
 import qopt.algorithms
 import qopt.problems
@@ -31,7 +26,8 @@ print q.bestval
 print q.P[0]
 print q.Q[3,5]
 
-# qigacython.testtime(q)
+#r = qopt.algorithms.rQIEA()
+
 
 sys.exit(0)
 
