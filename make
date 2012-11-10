@@ -22,8 +22,8 @@ check
 g++ -shared -o _knapsack.so knapsack_.cpp _knapsack.cpp `python-config --cflags`
 check
 cd CEC2005
-bash genlibs.sh
-check
+#bash genlibs.sh
+#check
 cd ..
 cython --cplus _cec2005.pyx
 check

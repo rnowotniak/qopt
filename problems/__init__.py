@@ -18,6 +18,7 @@ import _cec2005
 cec2005 = _cec2005.CEC2005
 
 # cec2011
+# if os.environ('LD_LIBRARY_PATH').contains('.../CEC2011') and ...('Matlab2011..  # <- TODO
 import _cec2011
 cec2011 = _cec2011.CEC2011
 

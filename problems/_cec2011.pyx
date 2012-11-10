@@ -27,8 +27,7 @@ cdef class CEC2011(Problem):
         for i in xrange(len(x)):
             tab[i] = x[i]
         cdef FIELD_TYPE res[1]
-        for i in xrange(1000):
-            cost_function15(tab, res)
+        cost_function15(tab, res)
         os.chdir('../..')
         return res[0]
 
