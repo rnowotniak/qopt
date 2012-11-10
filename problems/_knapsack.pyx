@@ -8,7 +8,7 @@ from qopt.algorithms._algorithms cimport Problem, evaluator_t, repairer_t
 #     cdef evaluator_t evaluator
 #     cdef repairer_t repairer
 
-cdef extern from "knapsack.h":
+cdef extern from "C/knapsack.h":
     void c_repairKnapsack "repairKnapsack" (char *x, int)
     float c_fknapsack "fknapsack" (char *, int)
 

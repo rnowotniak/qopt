@@ -13,6 +13,10 @@ import qopt.problems
 # Problems #
 ############
 
+# func 1d
+f1d = qopt.problems.func1d
+print f1d.evaluate(60.488)
+
 # cec2005
 f1 = qopt.problems.cec2005(1)
 print f1.evaluate((0,0))

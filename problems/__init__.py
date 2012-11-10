@@ -1,12 +1,14 @@
 
 # COMBINATORIAL #
 import _knapsack
+import _func1d
 
 knapsack = _knapsack.KnapsackProblem()
 # knapsack2 = K.KnapsackProblem('data2') ?
 # knapsack3 = K.KnapsackProblem('data3') ?
 
 # func1d
+func1d = _func1d.Func1D()
 
 # sat
 # tsp
