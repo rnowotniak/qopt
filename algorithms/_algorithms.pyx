@@ -9,6 +9,7 @@ import numpy as np
 cimport numpy as cnp
 
 cimport libc.stdlib
+cimport libc.string
 
 libc.stdlib.srand(time.time())
 
@@ -83,6 +84,9 @@ cdef class __QIGAcpp:
 
     property popsize:
         def __get__(self): return self.thisptr.popsize
+    property best:
+        def __get__(self): return self.thisptr.best
+        def __set__(self, char *val): libc.string.memcpy(self.thisptr.best, val, len(val))
     property bestval:
         def __get__(self): return self.thisptr.bestval
         def __set__(self, val): self.thisptr.bestval = val

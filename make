@@ -17,14 +17,13 @@ check
 cd ..
 
 cd problems
-# cython --cplus Problem.pyx
-# check
-# g++ -shared -o Problem.so Problem.cpp `python-config --cflags`
-# check
 cython --cplus _knapsack.pyx
 check
 g++ -shared -o _knapsack.so knapsack_.cpp _knapsack.cpp `python-config --cflags`
 check
+cd CEC2005
+bash genlibs.sh
+cd ..
 cd ..
 
 
