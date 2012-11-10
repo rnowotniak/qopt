@@ -10,8 +10,9 @@ import qopt.problems.knapsack as knapsack
 # import qopt.problems.cec2011
 
 import qopt.algorithms
+import qopt.problems
 
-class QIGA(qopt.algorithms.BLAA):
+class QIGA(qopt.algorithms.QIGA):
     def initialize(self):
         super(QIGA, self).initialize()
         print 'my initialization'
@@ -22,12 +23,13 @@ class QIGA(qopt.algorithms.BLAA):
         if self.t == 5:
             print 'generation %d, bestval: %g' % (self.t, self.bestval)
 
-q = QIGA()
+q = qopt.algorithms.QIGA()
 q.tmax = 500
-q.problem = knapsack.KnapsackProblem()
-
+q.problem = qopt.problems.knapsack
 q.run()
 print q.bestval
+print q.P[0]
+print q.Q[3,5]
 
 # qigacython.testtime(q)
 

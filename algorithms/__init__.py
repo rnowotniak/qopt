@@ -1,5 +1,5 @@
 
 import _algorithms
 
-BLAA = _algorithms.QIGA
+QIGA = _algorithms.QIGA
 
