@@ -15,10 +15,10 @@ knapsack = _knapsack.KnapsackProblem()
 
 # cec2005
 import _cec2005
-#cec2005_1 = _cec2005.CEC2005(1)
-#cec2005_2 = _cec2005.CEC2005(2)
+cec2005 = _cec2005.CEC2005
 
 # cec2011
-# ...
+import _cec2011
+cec2011 = _cec2011.CEC2011
 
 

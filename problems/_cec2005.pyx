@@ -10,11 +10,6 @@ cdef class CEC2005(Problem):
     def __cinit__(self, int fnum):
         lib = ctypes.CDLL('libf%d.so' % fnum)
         self.r_evaluator = (<long double (**)(long double *, int)><size_t>ctypes.addressof(lib.evaluate))[0]
-
-        cdef long double tab[2]
-        tab[0] = 0
-        tab[1] = 0
-        self.r_evaluator(tab, 2)
     def evaluate(self, x):
         cdef long double tab[50]
         for i in xrange(len(x)):

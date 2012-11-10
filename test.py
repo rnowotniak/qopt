@@ -3,10 +3,29 @@
 # General test script of the whole QOpt framework
 #
 
-import sys
+import sys, os
 
 import qopt.algorithms
 import qopt.problems
+
+
+############
+# Problems #
+############
+
+# cec2005
+f1 = qopt.problems.cec2005(1)
+print f1.evaluate((0,0))
+
+cassini = qopt.problems.cec2011(15) # XXX
+print cassini.evaluate([-779.629801566988, 3.265804135361, 0.528440291493, 0.382390419772,\
+        167.937610148996, 424.032204472497, 53.304869390732, 589.767895836123, 2199.961911685212,\
+        0.772877728290, 0.531757418755, 0.010789195916, 0.167388829033, 0.010425709182,\
+        1.358596310427, 1.050001151443, 1.306852313623, 69.813404643644, -1.593310577644,\
+        -1.959572311812, -1.554796022348, -1.513432303179])
+# should be 8.383...
+
+# cec2011
 
 ##############################
 # Combinatorial optimization #
