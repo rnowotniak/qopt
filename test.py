@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8
 #
 # General test script of the whole QOpt framework
 #
@@ -8,13 +9,15 @@ import sys, os
 import qopt.algorithms
 import qopt.problems
 
+import pylab
+
 
 ############
 # Problems #
 ############
 
 # func 1d
-f1d = qopt.problems.func1d
+f1d = qopt.problems.func1d.f1
 print f1d.evaluate(60.488)
 
 # cec2005
@@ -46,7 +49,7 @@ class QIGA(qopt.algorithms.QIGA):
         if self.t == 5:
             print 'generation %d, bestval: %g' % (self.t, self.bestval)
 
-q = QIGA()
+q = QIGA(chromlen = 250)
 q.tmax = 500
 q.problem = qopt.problems.knapsack
 q.run()

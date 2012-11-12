@@ -25,7 +25,7 @@ check
 g++ -shared -o _knapsack.so C/knapsack.cpp _knapsack.cpp `python-config --cflags`
 check
 cd CEC2005
-bash genlibs.sh
+#bash genlibs.sh
 check
 cd ..
 

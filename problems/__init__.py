@@ -8,7 +8,11 @@ knapsack = _knapsack.KnapsackProblem()
 # knapsack3 = K.KnapsackProblem('data3') ?
 
 # func1d
-func1d = _func1d.Func1D()
+class Funcs: pass
+func1d = Funcs()
+func1d.f1 = _func1d.Func1D(1)
+func1d.f2 = _func1d.Func1D(2)
+func1d.f3 = _func1d.Func1D(3)
 
 # sat
 # tsp

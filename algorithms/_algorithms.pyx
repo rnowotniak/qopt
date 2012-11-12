@@ -26,6 +26,7 @@ cdef extern from "C/qiga.h":
     ctypedef float (*evaluator_t) (char*,int)
     ctypedef void (*repairer_t) (char*,int)
     cdef cppclass QIGAcpp "QIGA":
+        QIGAcpp(int chromlen, int popsize)
         int popsize
         int chromlen
         float bestval
@@ -62,8 +63,8 @@ class EA:
 cdef class __QIGAcpp:
     cdef QIGAcpp *thisptr
 
-    def __cinit__(self):
-        self.thisptr = new QIGAcpp()
+    def __cinit__(self, int chromlen, int popsize = 10):
+        self.thisptr = new QIGAcpp(chromlen, popsize)
     def __dealloc__(self):
         del self.thisptr
 
@@ -127,7 +128,7 @@ cdef class __QIGAcpp:
 
 class QIGA(__QIGAcpp, EA):
 
-    def __init__(self):
+    def __init__(self, int chromlen):
         EA.__init__(self)
 
     def initialize(self):
