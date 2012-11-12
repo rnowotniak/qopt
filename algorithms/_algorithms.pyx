@@ -128,7 +128,7 @@ cdef class __QIGAcpp:
 
 class QIGA(__QIGAcpp, EA):
 
-    def __init__(self, int chromlen):
+    def __init__(self, int chromlen, int popsize = 10):
         EA.__init__(self)
 
     def initialize(self):
