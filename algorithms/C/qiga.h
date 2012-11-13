@@ -20,9 +20,11 @@
 
 #define Qij (Q[i * chromlen + j])
 
+/*
 #ifndef REPEAT
 #define REPEAT 100
 #endif
+*/
 
 typedef float (*evaluator_t) (char*, int);
 typedef void (*repairer_t) (char*, int);
