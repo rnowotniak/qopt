@@ -86,7 +86,7 @@ cdef class __QIGAcpp:
     property popsize:
         def __get__(self): return self.thisptr.popsize
     property best:
-        def __get__(self): return self.thisptr.best
+        def __get__(self): return self.thisptr.best[:self.thisptr.chromlen]
         def __set__(self, char *val): libc.string.memcpy(self.thisptr.best, val, len(val))
     property bestval:
         def __get__(self): return self.thisptr.bestval
