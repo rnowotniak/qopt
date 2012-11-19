@@ -1,0 +1,84 @@
+Walksat specifications
+
+Walksat attempts to find a satisfying model of a generalized cnf formula.
+
+It only accepts the cnf format; e.g.:
+
+c Optional comments
+c at start of file.
+c The "p" line specifies cnf format, number vars, number clauses
+p cnf 3 2
+1 -3 0
+2 3 -1 0
+
+To get instructions without looking at this file, simply execute
+walksat from the command line with an illegal parameter (e.g. -help).
+
+Compile walksat by simply typing "make".  
+The constant MAXATOM limits the number of atoms; you can increase this
+necessary to accommodate larger problems.
+The constant MAXCLAUSE limits the number of clauses; you can increase
+this as necessary, or optionally, compile with the command
+	make huge
+The "huge" option causes the array of clause pointers to be
+dynamically allocated.  This uses memory more efficiency (both for
+very large and very small problems), but causes about a 15% slow down
+in execution speed.
+
+Walksat reads from standard in and writes to standard out (and
+standard error).  To get a list of command line options, type
+	walksat -help
+(or any other illegal option).
+
+The parameters passed to walksat are (where N and M are integers):
+
+General parameters:
+  -seed N 		= use specified random seed
+  -cutoff N 		= max number of flips in one try
+  -tries N		= max number of tries
+  -target N             = stop when no more than N clauses are
+                             unsatisfied (default = 0)
+  -numsol N 		= stop after finding N solutions
+  -init FILE 		= initial assignment is contained in FILE;
+			  set vars not included in FILE to false
+  -partial FILE 	= initial assignment is contained in FILE;
+			  set vars not included in FILE randomly
+Heuristics (for picking a variable within a clause, after the 
+	unsatisfied clause is randomly chosen); note that only
+	a single one of these heuristics should be specified
+  -random		= pick randomly
+  -best 		= pick var that "breaks" fewest number of
+			  other clauses when flipped
+  -tabu N		= pick best, except with a tabu list of length N
+  -novelty		= new heuristics created by D. McAllester, for
+  -rnovelty                   details see (McAllester, Selman, &
+			      Kautz, AAAI-97).
+
+The following modify the previous heuristics:
+  -noise N M 		= every N/M flips, pick randomly, rather than
+			  by the heuristic in effect
+  -noise N              = same as -noise N 100
+  -super 		= increase number of flips each try using
+			  the superlinear progression
+Printing:
+  -hamming TARGET_FILE DATA_FILE SAMPLE_FREQUENCY
+  -trace N = print statistics every N flips
+  -assign N = print assignments at flip N, 2N, ...
+  -sol = print satisfying assignments
+  -low = print lowest assignment each try
+  -bad = print unsat clauses each try
+  -tail N = assume tail begins at nvars*N
+  -solcnf = print sat assign in cnf format, and exit
+  -sample N = sample noise level every N flips
+
+************
+
+Also included in the distribution is a random formula generator,
+makewff.
+
+Use: makecnf [-seed N] [-cnf] [-f] [-kf] clen nvars nclauses
+
+The -seed argument can be used to initialize the random number
+generator.  The -cnf, -f, and -kf options specify the format of the
+wff file; for walksat use -cnf.  Clen is the length of each clause,
+nvars the number of variables, and nclauses the number of clauses.
