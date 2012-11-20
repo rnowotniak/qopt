@@ -1,12 +1,14 @@
 #ifndef _SAT_H
 #define _SAT_H 1
 
+#include "framework.h"
+
 #define MAXATOM 100000		/* maximum possible number of atoms */
 #define MAXCLAUSE 500000	/* maximum possible number of clauses */
 #define MAXLENGTH 500           /* maximum number of literals which can be in any clause */
 #define STOREBLOCK 2000000	/* size of block to malloc each time */
 
-class SAT {
+class SAT : public Problem {
 
 	void initprob(FILE *F);
 
@@ -22,7 +24,14 @@ class SAT {
 	public:
 
 		SAT(const char *fname);
-		float evaluate(const char *cand, int length);
+
+		virtual float evaluator (char *x, int length);
+
+		virtual void repairer (char *x, int length) { }
+
+		virtual long double r_evaluator(long double *x, int length) {
+			return -1;
+		}
 
 };
 

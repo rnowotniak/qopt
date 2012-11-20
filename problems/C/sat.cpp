@@ -5,13 +5,17 @@
 
 SAT::SAT(const char *fname) {
 	FILE *f = fopen(fname, "r");
+	if (!f) {
+		perror("Error");
+		return;
+	}
 	initprob(f);
 	fclose(f);
 	printf("%d %d\n", numatom, numclause);
 	printf("%d\n", clause[3][2]);
 }
 
-float SAT::evaluate(const char *cand, int length) {
+float SAT::evaluator(char *cand, int length) {
 	int result = 0;
 	for (int ci = 0; ci < numclause; ci++) {
 		int foo = 0;
@@ -141,8 +145,8 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 }
 int main() {
 	SAT s1 = SAT("../sat/flat30-100.cnf");
-	//int res = s1.evaluate("111101101101101101101101101101101101101101101101101101101101101101101101101101101101101101");
-	//int res = s1.evaluate("100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001");
+	//int res = s1.evaluator("111101101101101101101101101101101101101101101101101101101101101101101101101101101101101101");
+	//int res = s1.evaluator("100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001");
 	//printf("res: %d\n", res);
 }
 

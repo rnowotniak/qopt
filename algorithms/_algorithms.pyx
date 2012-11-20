@@ -15,16 +15,9 @@ libc.stdlib.srand(time.time())
 
 cnp.import_array()
 
-# ctypedef float (*evaluator_t) (char*,int)
-# ctypedef void (*repairer_t) (char*,int)
-
-# cdef class Problem:
-#     cdef evaluator_t evaluator
-#     cdef repairer_t repairer
+from qopt.problems._problem cimport Problem, ProblemCpp
 
 cdef extern from "C/qiga.h":
-    ctypedef float (*evaluator_t) (char*,int)
-    ctypedef void (*repairer_t) (char*,int)
     cdef cppclass QIGAcpp "QIGA":
         QIGAcpp(int chromlen, int popsize)
         int popsize
@@ -36,8 +29,7 @@ cdef extern from "C/qiga.h":
         char *best
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
-        evaluator_t evaluator
-        repairer_t repairer
+        ProblemCpp *problem
         void qiga()
         void initialize()
         void observe()
@@ -98,9 +90,8 @@ cdef class __QIGAcpp:
             ndarray = cnp.PyArray_SimpleNewFromData(1, shape, cnp.NPY_FLOAT, self.thisptr.fvals)
             return ndarray
     property problem:
-        def __set__(self, Problem e):
-            self.thisptr.evaluator = e.evaluator
-            self.thisptr.repairer = e.repairer
+        def __set__(self, Problem p):
+            self.thisptr.problem = p.thisptr
     property lookup_table:
         def __get__(self):
             cdef cnp.npy_intp shape[3]

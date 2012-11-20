@@ -46,11 +46,8 @@ void QIGA::observe() {
 }
 
 void QIGA::repair() {
-	if (repairer == NULL) {
-		return;
-	}
 	for (int i = 0; i < popsize; i++) {
-		repairer(P[i], chromlen);
+		problem->repairer(P[i], chromlen);
 	}
 }
 
@@ -61,7 +58,7 @@ void QIGA::repair() {
 void QIGA::evaluate() {
 	int i,j;
 	for (i = 0; i < popsize; i++) {
-		fvals[i] = evaluator(P[i], chromlen);
+		fvals[i] = problem->evaluator(P[i], chromlen);
 	}
 }
 

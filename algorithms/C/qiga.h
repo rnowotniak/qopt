@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cstring>
 #include <sys/time.h>
+#include "framework.h"
 
 #define EPSILON 10e-9f
 #undef M_PI
@@ -16,18 +17,8 @@
 #define M_PI_2	1.57079632679489661923f	/* pi/2 float */
 #define M_PI_4	0.78539816339744830962f	/* pi/4 float */
 
-
-
 #define Qij (Q[i * chromlen + j])
 
-/*
-#ifndef REPEAT
-#define REPEAT 100
-#endif
-*/
-
-typedef float (*evaluator_t) (char*, int);
-typedef void (*repairer_t) (char*, int);
 
 class QIGA {
 
@@ -50,14 +41,12 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
-	evaluator_t evaluator;
-	repairer_t repairer;
+	Problem *problem;
 
 	QIGA(int chromlen, int popsize) : maxgen(500), popsize(popsize), chromlen(chromlen) {
 		printf("QIGA::QIGA constructor\n");
 
-		evaluator = NULL;
-		repairer = NULL;
+		problem = NULL;
 
 		Q = new float[popsize * chromlen];
 		fvals = new float[popsize];

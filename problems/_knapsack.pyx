@@ -1,22 +1,14 @@
 
-from qopt.algorithms._algorithms cimport Problem, evaluator_t, repairer_t
-# from Problem cimport *
-
-# ctypedef float (*evaluator_t) (char*,int)
-# ctypedef void (*repairer_t) (char*,int)
-# cdef class Problem:
-#     cdef evaluator_t evaluator
-#     cdef repairer_t repairer
+from qopt.problems._problem cimport Problem, ProblemCpp
 
 cdef extern from "C/knapsack.h":
-    void c_repairKnapsack "repairKnapsack" (char *x, int)
-    float c_fknapsack "fknapsack" (char *, int)
+    cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp):
+        pass
 
 cdef class KnapsackProblem(Problem):
     def __cinit__(self):
-        self.evaluator = c_fknapsack
-        self.repairer = c_repairKnapsack
+        self.thisptr = new KnapsackProblemCpp()
 
     def evaluate(self, k):
-        return self.evaluator(k, len(k))
+        return self.thisptr.evaluator(k, len(k))
 

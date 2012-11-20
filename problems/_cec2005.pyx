@@ -4,7 +4,7 @@
 import ctypes
 import os
 
-from qopt.algorithms._algorithms cimport Problem, evaluator_t #, repairer_t
+from qopt.problems._problem cimport Problem, ProblemCpp
 
 cdef class CEC2005(Problem):
     cdef long double (*r_evaluator) (long double *x,int n)

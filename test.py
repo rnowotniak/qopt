@@ -16,11 +16,21 @@ import pylab
 # Problems #
 ############
 
-sys.exit(0)
+
+# knapsack
+knapsack = qopt.problems.knapsack
+print knapsack.evaluate('1' * 250)
+
+#sys.exit(0)
 
 # func 1d
 f1d = qopt.problems.func1d.f1
 print f1d.evaluate(60.488)
+
+# sat
+import qopt.problems._sat
+s1 = qopt.problems._sat.SatProblem('problems/sat/flat30-100.cnf')
+print s1.evaluate('100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001')
 
 # cec2005
 f1 = qopt.problems.cec2005(1)
