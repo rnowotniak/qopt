@@ -10,18 +10,19 @@
 
 class SAT : public Problem {
 
-	void initprob(FILE *F);
-
-	int numatom;
-	int numclause;
-	int numliterals;
-
-	int size[MAXCLAUSE];		/* length of each clause */
-	int numoccurence[2*MAXATOM+1];	/* number of times each literal occurs */
-	int * clause[MAXCLAUSE];	/* clauses to be satisfied */
-	int *occurence[2*MAXATOM+1];	/* where each literal occurs */
-
 	public:
+
+		void initprob(FILE *F);
+
+		int numatom;
+		int numclause;
+		int numliterals;
+
+		int size[MAXCLAUSE];		/* length of each clause */
+		int numoccurence[2*MAXATOM+1];	/* number of times each literal occurs */
+		int * clause[MAXCLAUSE];	/* clauses to be satisfied */
+		int *occurence[2*MAXATOM+1];	/* where each literal occurs */
+
 
 		SAT(const char *fname);
 

@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
 #include "sat.h"
 
 
@@ -16,25 +17,42 @@ SAT::SAT(const char *fname) {
 }
 
 float SAT::evaluator(char *cand, int length) {
-	int result = 0;
+	int true_clauses = 0;
 	for (int ci = 0; ci < numclause; ci++) {
-		int foo = 0;
+		int clause_is_true = 0;
 		for (int li = 0; li < size[ci]; li++) {
 			int idx = abs(clause[ci][li]) - 1;
 			int state = cand[idx] != '0' ? 1 : 0;
 			if (clause[ci][li] < 0) {
 				state = !state;
 			}
-			foo |= state;
+			clause_is_true |= state;
+			// if (clause_is_true) { // optimization
+			// 	break;
+			// }
 		}
-		if (foo) {
-			result++;
+		if (clause_is_true) {
+			true_clauses++;
 		}
-		// printf("%d ",foo);
+		// printf("%d ",clause_is_true);
 		// printf("\n");
 	}
-	return result;
+	return true_clauses;
 }
+
+class SomeException : public std::exception {
+
+	const char *str;
+
+	public:
+
+	SomeException(const char *str) : str(str) { }
+
+	virtual const char *what() const throw()
+	{
+		return str;
+	}
+};
 
 void SAT::initprob(FILE *F) // drawn from WalkSAT
 {
@@ -53,6 +71,7 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 	ungetc(lastc,F);
 	if (fscanf(F,"p cnf %i %i",&numatom,&numclause) != 2)
 	{
+		throw SomeException("Bad input file");
 		fprintf(stderr,"Bad input file\n");
 		exit(-1);
 	}
