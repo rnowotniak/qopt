@@ -2,7 +2,7 @@
 from qopt.problems._problem cimport Problem, ProblemCpp
 
 cdef extern from "C/knapsack.h":
-    cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp):
+    cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp[char,float]):
         pass
 
 cdef class KnapsackProblem(Problem):

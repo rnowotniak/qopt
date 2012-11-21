@@ -41,7 +41,7 @@ class QIGA {
 	// Rotation directions
 	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
-	Problem *problem;
+	Problem<char,float> *problem;
 
 	QIGA(int chromlen, int popsize) : maxgen(500), popsize(popsize), chromlen(chromlen) {
 		printf("QIGA::QIGA constructor\n");

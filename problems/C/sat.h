@@ -8,7 +8,7 @@
 #define MAXLENGTH 500           /* maximum number of literals which can be in any clause */
 #define STOREBLOCK 2000000	/* size of block to malloc each time */
 
-class SAT : public Problem {
+class SAT : public Problem<char,float> {
 
 	public:
 
@@ -27,12 +27,6 @@ class SAT : public Problem {
 		SAT(const char *fname);
 
 		virtual float evaluator (char *x, int length);
-
-		virtual void repairer (char *x, int length) { }
-
-		virtual long double r_evaluator(long double *x, int length) {
-			return -1;
-		}
 
 };
 

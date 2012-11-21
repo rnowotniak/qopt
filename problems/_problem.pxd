@@ -1,10 +1,9 @@
 
 cdef extern from "../framework.h":
-    cdef cppclass ProblemCpp "Problem":
-        float evaluator (char*, int)
-        void repairer (char*, int)
-        long double r_evaluator(long double *, int)
+    cdef cppclass ProblemCpp "Problem" [ARGTYPE,RESTYPE]:
+        RESTYPE evaluator (ARGTYPE*, int)
+        void repairer (ARGTYPE*, int)
 
 cdef class Problem:
-    cdef ProblemCpp *thisptr
+    cdef ProblemCpp[char,float] *thisptr
 

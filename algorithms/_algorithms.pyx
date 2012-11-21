@@ -29,7 +29,7 @@ cdef extern from "C/qiga.h":
         char *best
         float lookup_table[2][2][2]
         float signs_table[2][2][2][4]
-        ProblemCpp *problem
+        ProblemCpp[char,float] *problem
         void qiga()
         void initialize()
         void observe()

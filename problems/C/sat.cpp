@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <exception>
+#include "framework.h"
 #include "sat.h"
-
 
 SAT::SAT(const char *fname) {
 	FILE *f = fopen(fname, "r");
@@ -40,20 +40,6 @@ float SAT::evaluator(char *cand, int length) {
 	return true_clauses;
 }
 
-class SomeException : public std::exception {
-
-	const char *str;
-
-	public:
-
-	SomeException(const char *str) : str(str) { }
-
-	virtual const char *what() const throw()
-	{
-		return str;
-	}
-};
-
 void SAT::initprob(FILE *F) // drawn from WalkSAT
 {
 	int i;			/* loop counter */
@@ -71,7 +57,7 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 	ungetc(lastc,F);
 	if (fscanf(F,"p cnf %i %i",&numatom,&numclause) != 2)
 	{
-		throw SomeException("Bad input file");
+		throw QOptException("Bad input file");
 		fprintf(stderr,"Bad input file\n");
 		exit(-1);
 	}

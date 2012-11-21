@@ -13,7 +13,7 @@ extern float func3_b(char *,int);
 
 extern float getx(char *s, int len, float min, float max);
 
-class Functions1DProblem : public Problem {
+class Functions1DProblem : public Problem<char,float> {
 	public:
 	int fnum;
 	float (*f)(char *,int);

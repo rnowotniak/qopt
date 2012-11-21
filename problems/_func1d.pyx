@@ -9,7 +9,7 @@ cdef extern from "C/functions1d.h":
     float func2_b(char *,int)
     float func3_b(char *,int)
     float getx(char *s, int len, float mi, float ma)
-    cdef cppclass Functions1DProblemCpp "Functions1DProblem" (ProblemCpp):
+    cdef cppclass Functions1DProblemCpp "Functions1DProblem" (ProblemCpp[char,float]):
         Functions1DProblemCpp(int fnum)
 
 
