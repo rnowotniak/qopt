@@ -31,10 +31,6 @@ class Functions1DProblem : public Problem<char,float> {
 	virtual float evaluator (char *x, int length) {
 		return f(x, length);
 	}
-	virtual void repairer (char *x, int length) { }
-	virtual long double r_evaluator(long double *x, int length) {
-		return -1;
-	}
 };
 
 #endif

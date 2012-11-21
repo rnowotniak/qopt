@@ -23,9 +23,8 @@ class Problem {
 	public:
 
 		virtual RESTYPE evaluator (ARGTYPE *, int) = 0;
-		virtual void (repairer) (ARGTYPE*, int) {
-			// throw QOptException("Repairer has not been implemented");
-		}
+		virtual void (repairer) (ARGTYPE*, int) { }
+
 };
 
 #endif
