@@ -25,6 +25,10 @@ g++ -shared -o _problem.so _problem.cpp `python-config --cflags`
 check
 
 # combinatorial
+cython --cplus _knapsack.pyx
+check
+g++ -I.. -shared -o _knapsack.so C/knapsack.cpp _knapsack.cpp `python-config --cflags`
+check
 cython --cplus _sat.pyx
 check
 g++ -I.. -shared -o _sat.so C/sat.cpp _sat.cpp `python-config --cflags`
@@ -32,10 +36,6 @@ check
 cython --cplus _func1d.pyx
 check
 g++ -I.. -shared -o _func1d.so _func1d.cpp C/functions1d.cpp -I../contrib/alglib/src  `python-config --cflags` ../contrib/alglib/src/*.o
-check
-cython --cplus _knapsack.pyx
-check
-g++ -I.. -shared -o _knapsack.so C/knapsack.cpp _knapsack.cpp `python-config --cflags`
 check
 
 # numerical

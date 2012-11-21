@@ -1,4 +1,91 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <vector>
 #include "knapsack.h"
+#include <regex.h>
+#include <errno.h>
+
+KnapsackProblem::KnapsackProblem(const char *fname) {
+    // parse the input file
+    FILE *f = fopen(fname, "r");
+    if (!f) {
+        throw QOptException(strerror(errno));
+    }
+
+    char line[256];
+    int skip_line;
+    std::vector<float> weights, prices;
+    weights.reserve(500);
+    prices.reserve(500);
+    bool capacity_has_been_read = false;
+    regex_t re;
+    regcomp(&re, "^([[:space:]]*|[[:space:]]*#.*)$", REG_EXTENDED|REG_NOSUB);
+    while (1) {
+        if (!fgets(line, sizeof(line) - 1, f)) {
+            break;
+        }
+        skip_line = (regexec(&re, line, 0, NULL, 0) == 0);
+        if (skip_line) {
+            continue;
+        }
+        // printf("-> %s", line);
+        if (!capacity_has_been_read) {
+            capacity = atof(line);
+            capacity_has_been_read = true;
+            continue;
+        }
+        float weight, price;
+        sscanf(line, "%f %f", &weight, &price);
+        // printf("%g %g\n", weight, price);
+        weights.push_back(weight);
+        prices.push_back(price);
+    }
+    regfree(&re);
+    fclose(f);
+
+    // allocate memory, store weights and prices into 2d array
+    items_count = weights.size();
+    items = new float[items_count][2];
+    for (int i = 0; i < weights.size(); i++) {
+        items[i][0] = weights[i];
+        items[i][1] = prices[i];
+    }
+}
+
+float KnapsackProblem::evaluator(char *x, int length) {
+    int i;
+    float price = 0; // total price of x knapsack
+    for (i = 0; i < length; i++) {
+        price += items[i][1] * (x[i] == '1' ? 1 : 0);
+    }
+    return price;
+}
+
+// repair procedure exactly from Han's paper
+void KnapsackProblem::repairer(char *x, int length) {
+	float weight;
+	int overfilled;
+	int i,j;
+	weight = 0;
+	for (i = 0; i < length; i++) {
+		weight += items[i][0] * (x[i] == '1' ? 1 : 0);
+	}
+	overfilled = weight > capacity;
+	for (i = 0; i < length && overfilled; i++) {
+		weight -= x[i] == '1' ? items[i][0] : 0;
+		x[i] = '0';
+		overfilled = weight > capacity;
+	}
+	for (j = 0; j < length && overfilled == 0; j++) {
+		weight += x[j] == '0' ? items[j][0] : 0;
+		x[j] = '1';
+		overfilled = weight > capacity;
+	}
+	x[j-1] = '0';
+}
+
+/*
 
 float items[items_count][2] = { // (weight, profit) pairs
 	{9.209064f, 14.209064f},
@@ -253,36 +340,5 @@ float items[items_count][2] = { // (weight, profit) pairs
 	{9.280242f, 14.280242f},
 };
 
-
-// repair procedure exactly from Han's paper
-void repairKnapsack(char *x, int length) {
-	float weight;
-	int overfilled;
-	int i,j;
-	weight = 0;
-	for (i = 0; i < length; i++) {
-		weight += items[i][0] * (x[i] == '1' ? 1 : 0);
-	}
-	overfilled = weight > CAPACITY;
-	for (i = 0; i < length && overfilled; i++) {
-		weight -= x[i] == '1' ? items[i][0] : 0;
-		x[i] = '0';
-		overfilled = weight > CAPACITY;
-	}
-	for (j = 0; j < length && overfilled == 0; j++) {
-		weight += x[j] == '0' ? items[j][0] : 0;
-		x[j] = '1';
-		overfilled = weight > CAPACITY;
-	}
-	x[j-1] = '0';
-}
-
-float fknapsack(char *k, int length) {
-	int i;
-	float price = 0; // total price of k knapsack
-	for (i = 0; i < length; i++) {
-		price += items[i][1] * (k[i] == '1' ? 1 : 0);
-	}
-	return price;
-}
+*/
 

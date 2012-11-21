@@ -57,7 +57,7 @@ class Knapsack:
             if self.capacity == None:
                 self.capacity = float(line)
                 continue
-            (w,p) = [float(x) for x in line.split(';')[1:]]
+            (w,p) = [float(x) for x in line.split()]
             self.items.append((w,p))
         f.close()
 
@@ -67,9 +67,9 @@ class Knapsack:
         f.write('%f\n' % self.capacity)
         f.write('\n')
 
-        f.write('# item;weight;price\n')
+        f.write('# weight price\n')
         for i in xrange(len(self.items)):
-            f.write('%d;%f;%f\n' % (i,self.items[i][0],self.items[i][1]))
+            f.write('%f %f\n' % (self.items[i][0],self.items[i][1]))
         f.close()
 
     def eval(self, k):

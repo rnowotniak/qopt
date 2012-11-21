@@ -21,8 +21,6 @@ import pylab
 knapsack = qopt.problems.knapsack
 print knapsack.evaluate('1' * 250)
 
-#sys.exit(0)
-
 # func 1d
 f1d = qopt.problems.func1d.f1
 print f1d.evaluate(60.488)

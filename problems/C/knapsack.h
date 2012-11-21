@@ -3,23 +3,27 @@
 
 #include "framework.h"
 
-#define items_count 250
-#define CAPACITY 673.8677805
+// #define items_count 250
+// #define CAPACITY 673.8677805
+// extern void repairKnapsack(char *x, int length);
+// extern float fknapsack(char *k, int length);
 
-extern float items[items_count][2];
-
-extern void repairKnapsack(char *x, int length);
-extern float fknapsack(char *k, int length);
 
 class KnapsackProblem : public Problem<char,float> {
 
-	virtual float evaluator (char *x, int length) {
-		return fknapsack(x, length);
-	}
+    public:
 
-	virtual void repairer (char *x, int length) {
-		repairKnapsack(x, length);
-	}
+        int items_count;
+
+        float capacity;
+
+        float (*items)[2];
+
+        KnapsackProblem(const char *fname);
+
+        virtual float evaluator(char *x, int length);
+
+        virtual void repairer(char *x, int length);
 
 };
 
