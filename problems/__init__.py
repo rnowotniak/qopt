@@ -4,9 +4,9 @@ import qopt
 import _knapsack
 import _func1d
 
-knapsack = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-250.txt'))
 knapsack10 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-10.txt'))
 knapsack100 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-100.txt'))
+knapsack250 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-250.txt'))
 knapsack500 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-500.txt'))
 
 # func1d

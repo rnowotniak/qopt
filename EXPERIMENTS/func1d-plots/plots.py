@@ -4,16 +4,47 @@
 # http://www.scipy.org/Cookbook/Matplotlib/AdjustingImageSize
 
 import sys
-import qopt.problems
+import qopt, qopt.problems
 import pylab
 
 #pylab.rc('text', usetex=True)
 #pylab.rc('text.latex', unicode=True)
 
+import qopt.problems._sat
+s1 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/flat30-100.cnf'))
+s2 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/qg4-08.cnf'))
+s3 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/hanoi4.cnf'))
+
+k10 = qopt.problems.knapsack10
+k100 = qopt.problems.knapsack100
+k250 = qopt.problems.knapsack250
+k500 = qopt.problems.knapsack500
+
+def plot(prob, length, fname):
+    Y = []
+    for i in xrange(2**14):
+        kstr = qopt.int2bin(i, 14) + '0' * (length - 14)
+        Y.append(prob.evaluate(kstr))
+    pylab.figure()
+    pylab.plot(Y)
+    pylab.xlim([0,2**14])
+    pylab.grid(True)
+    pylab.savefig(fname, bbox_inches = 'tight')
+
+plot(s1, 90, '/tmp/sat1.pdf')
+plot(s2, 512, '/tmp/sat2.pdf')
+plot(s3, 718, '/tmp/sat3.pdf')
+
+plot(k100, 100, '/tmp/knapsack100.pdf')
+plot(k250, 250, '/tmp/knapsack250.pdf')
+plot(k500, 500, '/tmp/knapsack500.pdf')
+
 
 f1 = qopt.problems.func1d.f1
 f2 = qopt.problems.func1d.f2
 f3 = qopt.problems.func1d.f3
+
+pylab.figure()
 
 X = pylab.linspace(0, 200, 200)
 pylab.plot(

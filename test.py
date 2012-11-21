@@ -18,7 +18,7 @@ import pylab
 
 
 # knapsack
-knapsack = qopt.problems.knapsack
+knapsack = qopt.problems.knapsack250
 print knapsack.evaluate('1' * 250)
 
 # func 1d
@@ -61,7 +61,7 @@ class QIGA(qopt.algorithms.QIGA):
 
 q = QIGA(chromlen = 250)
 q.tmax = 500
-q.problem = qopt.problems.knapsack
+q.problem = qopt.problems.knapsack250
 q.run()
 print q.best
 print q.bestval
