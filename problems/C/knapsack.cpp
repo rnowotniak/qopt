@@ -14,19 +14,20 @@ KnapsackProblem::KnapsackProblem(const char *fname) {
     }
 
     char line[256];
-    int skip_line;
+    bool skip_this_line;
+    bool capacity_has_been_read = false;
     std::vector<float> weights, prices;
     weights.reserve(500);
     prices.reserve(500);
-    bool capacity_has_been_read = false;
     regex_t re;
     regcomp(&re, "^([[:space:]]*|[[:space:]]*#.*)$", REG_EXTENDED|REG_NOSUB);
+
     while (1) {
         if (!fgets(line, sizeof(line) - 1, f)) {
             break;
         }
-        skip_line = (regexec(&re, line, 0, NULL, 0) == 0);
-        if (skip_line) {
+        skip_this_line = (regexec(&re, line, 0, NULL, 0) == 0);
+        if (skip_this_line) {
             continue;
         }
         // printf("-> %s", line);
@@ -36,7 +37,9 @@ KnapsackProblem::KnapsackProblem(const char *fname) {
             continue;
         }
         float weight, price;
-        sscanf(line, "%f %f", &weight, &price);
+        if (sscanf(line, "%f %f", &weight, &price) != 2) {
+            throw QOptException("Could not parse the data file");
+        }
         // printf("%g %g\n", weight, price);
         weights.push_back(weight);
         prices.push_back(price);

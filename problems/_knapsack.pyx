@@ -12,8 +12,19 @@ cdef class KnapsackProblem(Problem):
     def __cinit__(self, fname):
         self.thisptr = new KnapsackProblemCpp(fname)
 
-    def evaluate(self, k):
+    def evaluate(self, char *k):
         return self.thisptr.evaluator(k, len(k))
+
+    def repair(self, char *k):
+        self.thisptr.repairer(k, len(k))
+
+    def evaluate2(self, char *k):
+        cdef float weight = 0
+        cdef float price = self.thisptr.evaluator(k, len(k))
+        for i in xrange(len(k)):
+            if k[i] == '1':
+                weight += (<KnapsackProblemCpp*> self.thisptr).items[i][0]
+        return (weight, price)
 
     property items_count:
         def __get__(self): return (<KnapsackProblemCpp*> self.thisptr).items_count

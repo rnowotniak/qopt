@@ -1,0 +1,29 @@
+Beta phase:
+
+March 2004 (db, mk)
+        - some bugfixes done (version SP-Y 1.2)
+        - added README file
+February 2004 (db, mk, rz)
+        - first public release (version SP-Y 1.1)
+
+
+Alpha phase:
+
+June 2003 (ab, db, mk, rz)
+	- added experimental -y to sp
+July 2003 (db, mk)
+	- fixed bugs in -y mode and optimized iterative procedures
+	- added annealing function -A and experimental -Y
+August 2003 (db, mk)
+	- fixed bugs in -Y and -A mode
+	- added support for formulas containing one-clauses
+	  Eliminated one-clause propagation in -y and -Y modes
+November 2003 (db, mk) 
+	- modified the simplification related code
+	- added backtracking modes B and P
+
+
+ab: Alfredo Braunstein <abraunst@ictp.trieste.it>
+db: Demian Battaglia <battagli@sissa.it>
+mk: Michal Kolar <kolarmi@sissa.it>
+rz: Riccardo Zecchina <zecchina@ictp.trieste.it>

@@ -1,0 +1,127 @@
+
+ SPY COMMAND LINE OPTIONS
+ ------------------------
+
+
+ ./spy [options]
+
+   FORMULA
+        -n <numvars>
+        -m <numclauses>
+        -a <alpha>
+        -l <filename>    reads formula from file
+   SOLVING
+        -B <rate>        backtrack with rate <rate>
+        -f <fixes>       per step
+        -% <fixes>       per step (%)
+        -e <error>       criterion for convergence
+        -i <iter>        maximum number of iterations until convergence
+        -y <y>           set the inverse pseudo-temperature to y
+        -Y               run with runtime optimized pseudo-temperature
+        -u <u>           the update rate for Y is set to <u>
+        -H               rank the variables according to the average 
+			 local field value
+   STATS
+        -R               replay file
+        -F               print fields
+        -E               print u-surveys
+        -v               increase verbosity (0 to 4)
+   MISC
+        -s <seed>        (0 = use time, default = 1)
+        -/               stop after first convergence
+        -h               this help
+
+
+
+ FORMULA OPTIONS
+
+ The program either reads an existing formula in conjunctive normal
+ form, 
+
+ -l <formula>	loads formula	
+
+ or it generates a new random formula with parameters specified by: 
+	
+ -n <integer>	number of variables
+ -m <integer>	number of clauses
+ -a <float>	clause / variable ratio
+ -s <integer>	random seed (default 1; 0 use clock)
+
+
+ SOLVING OPTIONS
+
+ By default we use a pseudo-temperature y = 2 but a different value 
+ can be set by
+
+ -y <float>       set the inverse pseudo-temperature
+ -Y               run with runtime optimized pseudo-temperature
+ -u <integer>     the update rate for Y
+
+ To specify backtracking ratio (default no backtracking) use
+
+ -B <float>        backtrack with a given rate within [0, 0.5]
+
+ Other options are 
+
+ -f <integer>     number of variables fixed per step
+ -% <float>       percentage of variables fixed per step (%)
+ -e <float>       criterion for convergence
+ -i <integer>     maximum number of iterations until convergence
+ -H               rank the variables according to the average
+                  local field value (experimental)
+
+
+ OUTPUT
+
+ Five levels of verbosity are available:
+
+ 0 (default)	almost no output, just simplification result
+ 		in output.tmp.out file
+ 1 (-v)		number of free variables written as progress indicator
+                in output.tmp.out file
+ 2 (-vv)	details about convergence (smileys and dots) 
+		in output.tmp.out file and replay.tmp.out file with 
+		information about fixing
+ 3 (-vvv)	list of ALL local fields appended to output.tmp.out file
+ 4 (-vvvv)	list of ALL local fields and cavity surveys 
+		in the output.tmp.out file (use with care, huge output)
+
+ The parameters for verbosity control are: 
+
+ -R 		replay file
+ -F             print fields
+ -E             print u-surveys
+ -v             increase verbosity (0 to 4)
+ 
+ 
+ MISCELLANEOUS
+
+ -/		stop after first convergence
+ -h		print help
+ -s <integer>   random seed (default 1; 0 use clock)
+
+ For information about the code see the companion paper downloadable
+ from 'www.ictp.trieste.it/~zecchina/SP' or 'cond-mat/0402529'.
+
+
+ 
+/*
+    Copyright 2004 Demian Battaglia, Alfredo Braunstein, Michal Kolar,
+    Michele Leone, Marc Mezard, Martin Weigt and Riccardo Zecchina
+
+    This file is part of SPY (Survey Propagation with finite Y).
+
+    SPY is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    SPY is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
