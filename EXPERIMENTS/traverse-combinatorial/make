@@ -1,0 +1,5 @@
+
+g++ -O2 -I../../contrib/alglib/src -I../.. traverse.cpp\
+	../../problems/C/functions1d.cpp ../../contrib/alglib/src/*.o \
+	../../problems/C/sat.cpp
+

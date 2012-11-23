@@ -27,9 +27,9 @@ float SAT::evaluator(char *cand, int length) {
 				state = !state;
 			}
 			clause_is_true |= state;
-			// if (clause_is_true) { // optimization
-			// 	break;
-			// }
+			if (clause_is_true) { // optimization
+				break;
+			}
 		}
 		if (clause_is_true) {
 			true_clauses++;
@@ -148,10 +148,12 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 		}
 	}
 }
+/*
 int main() {
 	SAT s1 = SAT("../sat/flat30-100.cnf");
 	//int res = s1.evaluator("111101101101101101101101101101101101101101101101101101101101101101101101101101101101101101");
 	//int res = s1.evaluator("100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001");
 	//printf("res: %d\n", res);
 }
+*/
 

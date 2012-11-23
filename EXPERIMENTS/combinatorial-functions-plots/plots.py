@@ -104,7 +104,7 @@ def satplot(prob, length, fname):
 rs1 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-15.cnf'))
 rs2 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-20.cnf'))
 rs3 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-25.cnf'))
-rs3 = qopt.problems._sat.SatProblem(qopt.path('contrib/SPY-1.2/formula.tmp.cnf'))
+rs3 = qopt.problems._sat.SatProblem(qopt.path('contrib/SPY-1.2/25.cnf'))
 #satplot(rs1, 15, '/tmp/sat1.pdf')
 print 'a'
 #satplot(rs2, 20, '/tmp/sat2.pdf')
