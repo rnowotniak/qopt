@@ -7,8 +7,6 @@ import glob
 import os.path
 
 
-chromlen = 15
-
 def dec2binary(dec, length = None):
     res = ''
     while dec > 0:
@@ -26,6 +24,35 @@ def dec2ternary(dec, length = None):
     if length != None:
         res = res.rjust(length, '0')
     return res
+
+
+def generate_schemata(chromlen, maxlength, maxorder = None):
+    if maxorder is None:
+        maxorder = maxlength
+    assert maxlength >= maxorder
+    sublen = maxlength + 1
+    for i in xrange(chromlen - sublen + 1):
+        buf = ['*'] * chromlen
+        buf[i:i+sublen] = '_' * (sublen)
+        for j in xrange(3**sublen):
+            subbuf = dec2ternary(j, sublen).replace('2', '*')
+            if sublen - subbuf.count('*') > maxorder:
+                continue
+            buf[i:i+sublen] = subbuf
+            print ''.join(buf)
+
+#generate_schemata(15, 5, 5)
+#generate_schemata(20, 5, 5)
+generate_schemata(25, 5, 5)
+
+#generate_schemata(20, 5, 4)
+#generate_schemata(40, 10)
+
+sys.exit(0)
+
+chromlen = 15
+
+
 
 def order(schema):
     return len(schema) - schema.count('*')
