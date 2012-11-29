@@ -27,5 +27,14 @@ class Problem {
 
 };
 
+inline bool matches(const char *chromo, const char *schema, int length) {
+	for (int i = 0; i < length; i++) {
+		if (schema[i] != '*' && schema[i] != chromo[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
 #endif
 

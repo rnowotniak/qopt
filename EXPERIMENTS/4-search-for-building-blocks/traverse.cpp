@@ -5,10 +5,10 @@
 #include <strings.h>
 #include <time.h>
 
-#include "../../framework.h"
-#include "../../problems/C/functions1d.h"
-#include "../../problems/C/sat.h"
-#include "../../problems/C/knapsack.h"
+#include "framework.h"
+#include "functions1d.h"
+#include "sat.h"
+#include "knapsack.h"
 
 inline void dec2bin(char *buf, long int dec, int length) {
 	memset(buf, '0', length);
@@ -63,6 +63,7 @@ inline int deflenth(char *s, int len) {
 	return stop - start;
 }
 
+/*
 inline bool matches(const char *chromo, const char *schema, int len) {
 	for (int i = 0; i < len; i++) {
 		if (schema[i] != '*' && schema[i] != chromo[i]) {
@@ -71,6 +72,7 @@ inline bool matches(const char *chromo, const char *schema, int len) {
 	}
 	return true;
 }
+*/
 
 #include <vector>
 

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$1" = clean ]; then
+	rm -f framework.so framework.cpp
+	rm -fr *.pyc
+	exit 0
+fi
+
 function check() {
 	if [ "$?" -eq 0 ]; then
 		echo OK
@@ -10,6 +16,12 @@ function check() {
 }
 
 INCLUDE=-I../C
+
+# framework
+cython --cplus framework.pyx
+check
+g++ -I C/ -shared framework.cpp -o framework.so `python-config --cflags`
+check
 
 # algorithms
 cd algorithms

@@ -13,6 +13,14 @@ import os
 import re
 import subprocess
 
+cimport libc.string
+
+cdef extern from "framework.h":
+    int c_matches "matches" (char *chromo, char *schema, int length)
+
+def matches(char *chromo, char *schema):
+    length = libc.string.strlen(chromo)
+    return bool(c_matches(chromo, schema, length))
 
 PRNGseed = None
 

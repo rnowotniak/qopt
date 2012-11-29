@@ -8,6 +8,8 @@ import qopt, qopt.problems
 import pylab
 import matplotlib.cm
 
+from qopt.framework import matches
+
 #pylab.rc('text', usetex=True)
 #pylab.rc('text.latex', unicode=True)
 
@@ -140,13 +142,8 @@ schema = '01*010*********'
 #   # sat 15
 #   schema = '****001*11*****'
 #   
-def matches(chromo, schema):
-    for i in xrange(len(chromo)):
-        if schema[i] == '*':
-            continue
-        if schema[i] != chromo[i]:
-            return False
-    return True
+
+
 #   
 #   coverage = []
 #   

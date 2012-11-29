@@ -27,6 +27,8 @@ schema = '01*01**********'
 #schema = '*10011*********'
 #schema = '*0********1****'
 
+schema = '01*01'
+
 for i in xrange(2**len(schema)):
     chromo = qopt.int2bin(i, len(schema))
     print i,

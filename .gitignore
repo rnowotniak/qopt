@@ -4,3 +4,4 @@ deviceQuery.txt
 *.so
 *.o
 a.out
+framework.cpp
