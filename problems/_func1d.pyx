@@ -1,7 +1,7 @@
 
 from qopt.problems._problem cimport Problem, ProblemCpp
 
-cdef extern from "C/functions1d.h":
+cdef extern from "functions1d.h":
     double func1(double x)
     double func2(double x)
     double func3(double x)

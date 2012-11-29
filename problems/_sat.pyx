@@ -2,7 +2,7 @@
 from qopt.problems._problem cimport Problem, ProblemCpp
 
 
-cdef extern from "C/sat.h":
+cdef extern from "sat.h":
     cdef cppclass SATcpp "SAT" (ProblemCpp[char,float]):
         int numatom
         SATcpp(char *) except +SyntaxError

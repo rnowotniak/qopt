@@ -1,7 +1,7 @@
 
 from qopt.problems._problem cimport Problem, ProblemCpp
 
-cdef extern from "C/knapsack.h":
+cdef extern from "knapsack.h":
     cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp[char,float]):
         int items_count
         float capacity

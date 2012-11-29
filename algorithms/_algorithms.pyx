@@ -17,7 +17,7 @@ cnp.import_array()
 
 from qopt.problems._problem cimport Problem, ProblemCpp
 
-cdef extern from "C/qiga.h":
+cdef extern from "qiga.h":
     cdef cppclass QIGAcpp "QIGA":
         QIGAcpp(int chromlen, int popsize)
         int popsize

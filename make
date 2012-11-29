@@ -9,11 +9,13 @@ function check() {
 	fi
 }
 
+INCLUDE=-I../C
+
 # algorithms
 cd algorithms
 cython --cplus _algorithms.pyx
 check
-g++ -I.. -shared -o _algorithms.so _algorithms.cpp C/qiga.cpp `python-config --cflags`
+g++ $INCLUDE -shared -o _algorithms.so _algorithms.cpp ../C/qiga.cpp `python-config --cflags`
 check
 cd ..
 
@@ -27,15 +29,15 @@ check
 # combinatorial
 cython --cplus _knapsack.pyx
 check
-g++ -I.. -shared -o _knapsack.so C/knapsack.cpp _knapsack.cpp `python-config --cflags`
+g++ $INCLUDE -shared -o _knapsack.so ../C/knapsack.cpp _knapsack.cpp `python-config --cflags`
 check
 cython --cplus _sat.pyx
 check
-g++ -I.. -shared -o _sat.so C/sat.cpp _sat.cpp `python-config --cflags`
+g++ $INCLUDE -shared -o _sat.so ../C/sat.cpp _sat.cpp `python-config --cflags`
 check
 cython --cplus _func1d.pyx
 check
-g++ -I.. -shared -o _func1d.so _func1d.cpp C/functions1d.cpp -I../contrib/alglib/src  `python-config --cflags` ../contrib/alglib/src/*.o
+g++ $INCLUDE -shared -o _func1d.so _func1d.cpp ../C/functions1d.cpp -I../contrib/alglib/src  `python-config --cflags` ../contrib/alglib/src/*.o
 check
 
 # numerical
