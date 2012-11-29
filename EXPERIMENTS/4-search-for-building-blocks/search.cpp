@@ -10,83 +10,8 @@
 #include "sat.h"
 #include "knapsack.h"
 
-inline void dec2bin(char *buf, long int dec, int length) {
-	memset(buf, '0', length);
-	int i = length - 1;
-	while (dec > 0) {
-		buf[i] = '0' + dec % 2;
-		dec = dec >> 1;
-		i--;
-	}
-}
-
-inline void dec2ternary(char *buf, long int dec, int length) {
-	memset(buf, '0', length);
-	int i = length - 1;
-	while (dec > 0) {
-		buf[i] = '0' + dec % 3;
-		if (buf[i] == '2') {
-			buf[i] = '*';
-		}
-		dec = dec / 3;
-		i--;
-	}
-}
-
-inline int order(char *s, int len) {
-	int result = 0;
-	for (int i = 0; i < len; i++) {
-		if (s[i] != '*') {
-			result++;
-		}
-	}
-	return result;
-}
-
-inline int deflenth(char *s, int len) {
-	int start = -1, stop;
-	for (int i = 0; i < len; i++) {
-		if (s[i] != '*') {
-			start = i;
-			break;
-		}
-	}
-	if (start == -1) {
-		return -1;
-	}
-	for (int i = len - 1; i >= 0; i--) {
-		if (s[i] != '*') {
-			stop = i;
-			break;
-		}
-	}
-	return stop - start;
-}
-
-/*
-inline bool matches(const char *chromo, const char *schema, int len) {
-	for (int i = 0; i < len; i++) {
-		if (schema[i] != '*' && schema[i] != chromo[i]) {
-			return false;
-		}
-	}
-	return true;
-}
-*/
 
 #include <vector>
-
-inline unsigned sample(const char *schema, int length) {
-	char s[length];
-	for (int i = 0; i < length; i++) {
-		if (schema[i] != '*') {
-			s[i] = schema[i];
-			continue;
-		}
-		s[i] = ((1.f * rand() / RAND_MAX) > .5) ? '1' : '0';
-	}
-	return strtoul(s, NULL, 2);
-}
 
 void find_best_schemata() {
 	const int chromlen = 25;
@@ -122,7 +47,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/k25-best", "r");
+		F = fopen("../../data/func1d-25-best", "r");
 		i = 0;
 		while (i < number_of_chromosomes) {
 			if (fgets(line, sizeof(line), F) == NULL) {
@@ -135,7 +60,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/k25-space", "r");
+		F = fopen("../../data/func1d-25-space", "r");
 		fread((void*)chromosomes_fitness, sizeof(float), pow(2, chromlen), F);
 		fclose(F);
 	}

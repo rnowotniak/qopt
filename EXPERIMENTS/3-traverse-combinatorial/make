@@ -1,7 +1,7 @@
 
-g++ -O2 -I../../contrib/alglib/src -I../.. traverse.cpp\
-	../../problems/C/functions1d.cpp \
-	../../problems/C/sat.cpp \
-	../../problems/C/knapsack.cpp \
+g++ -O2 -I../../contrib/alglib/src -I../../C traverse.cpp\
+	../../C/functions1d.cpp \
+	../../C/sat.cpp \
+	../../C/knapsack.cpp \
 	../../contrib/alglib/src/*.o \
 

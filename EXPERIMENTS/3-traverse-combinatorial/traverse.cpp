@@ -4,63 +4,11 @@
 #include <cstring>
 #include <strings.h>
 
-#include "../../framework.h"
-#include "../../problems/C/functions1d.h"
-#include "../../problems/C/sat.h"
-#include "../../problems/C/knapsack.h"
+#include "framework.h"
+#include "functions1d.h"
+#include "sat.h"
+#include "knapsack.h"
 
-inline void dec2bin(char *buf, long int dec, int length) {
-	memset(buf, '0', length);
-	int i = length - 1;
-	while (dec > 0) {
-		buf[i] = '0' + dec % 2;
-		dec = dec >> 1;
-		i--;
-	}
-}
-
-inline void dec2ternary(char *buf, long int dec, int length) {
-	memset(buf, '0', length);
-	int i = length - 1;
-	while (dec > 0) {
-		buf[i] = '0' + dec % 3;
-		if (buf[i] == '2') {
-			buf[i] = '*';
-		}
-		dec = dec / 3;
-		i--;
-	}
-}
-
-inline int order(char *s, int len) {
-	int result = 0;
-	for (int i = 0; i < len; i++) {
-		if (s[i] != '*') {
-			result++;
-		}
-	}
-	return result;
-}
-
-inline int deflenth(char *s, int len) {
-	int start = -1, stop;
-	for (int i = 0; i < len; i++) {
-		if (s[i] != '*') {
-			start = i;
-			break;
-		}
-	}
-	if (start == -1) {
-		return -1;
-	}
-	for (int i = len - 1; i >= 0; i--) {
-		if (s[i] != '*') {
-			stop = i;
-			break;
-		}
-	}
-	return stop - start;
-}
 
 int main() {
 #if 0
