@@ -87,12 +87,12 @@ inline unsigned sample(const char *schema, int length) {
 }
 
 void find_best_schemata() {
-	const int chromlen = 15;
+	const int chromlen = 25;
 	//const char *schemata_filename = "../../data/schem15-uniq";
 	//std::vector<char[chromlen+1]> schem;
 
-	int number_of_schemata = 4463;
-	int number_of_chromosomes = 1000;
+	int number_of_schemata = 8683;
+	int number_of_chromosomes = 100;
 
 	char (*schemata)[chromlen + 1];
 	char (*chromosomes)[chromlen + 1];
@@ -109,7 +109,7 @@ void find_best_schemata() {
 	{
 		char line[256];
 		FILE *F;
-		F = fopen("../../data/schem15-uniq", "r");
+		F = fopen("../../data/schem25-uniq", "r");
 		int i = 0;
 		while (true) {
 			if (fgets(line, sizeof(line), F) == NULL) {
@@ -120,9 +120,9 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/func1d-15-best", "r");
+		F = fopen("../../data/k25-best", "r");
 		i = 0;
-		while (true) {
+		while (i < number_of_chromosomes) {
 			if (fgets(line, sizeof(line), F) == NULL) {
 				break;
 			}
@@ -133,7 +133,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/func1d-15-space", "r");
+		F = fopen("../../data/k25-space", "r");
 		fread((void*)chromosomes_fitness, sizeof(float), pow(2, chromlen), F);
 		fclose(F);
 	}
@@ -152,12 +152,12 @@ void find_best_schemata() {
 		if (number_of_matching_chromosomes == 0) {
 			continue;
 		}
-		while (number_of_matching_chromosomes < 10000) {
+		while (number_of_matching_chromosomes < 1000) {
 			unsigned idx = sample(schemata[i], chromlen);
 			schemata_fitness[i] += chromosomes_fitness[idx];
 			number_of_matching_chromosomes++;
 		}
-		schemata_fitness[i] /= 10000.;
+		schemata_fitness[i] /= 1000.;
 	}
 
 	// print schemata and their fitness

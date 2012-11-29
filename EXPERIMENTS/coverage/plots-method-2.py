@@ -6,6 +6,7 @@
 import sys, numpy
 import qopt, qopt.problems
 import pylab
+import matplotlib.cm
 
 #pylab.rc('text', usetex=True)
 #pylab.rc('text.latex', unicode=True)
@@ -161,23 +162,65 @@ def matches(chromo, schema):
 
 
 
-schema = '10100***************'
+import matplotlib
+
+#matplotlib.rc('text.latex', preamble='\\usepackage{graphicx}')
+
+#schema = '10100***************'
+schema = '01*011*********'
+schema = '10100**********'
+schema = '1*1001*********'
+schema = '1010***********'
+
+schema = '10010**********'
+#schema = '1000*1*********'
+#schema = '1000***********'
 
 coverage=[]
-X = pylab.linspace(-5, 5, 200)
-pylab.plot(X, [f2.evaluate(x) for x in X], label='Funkcja $f_2(x)$')
+X = pylab.linspace(0, 17, 200)
+
 for i in xrange(2**len(schema)):
     chromo = qopt.int2bin(i, len(schema))
-    coverage.append(((200*int(matches(chromo, schema)) - 50)))
-pylab.fill_between(pylab.linspace(0,len(X),len(coverage)), -50, coverage, alpha = .2)
-pylab.ylim([-3,4])
-pylab.xlim((-5,5))
+    coverage.append(-int(matches(chromo, schema)))
+
+angles=[0, 90, 30, 0, 90, 90,45,45,45,45,45,45,45,45,45]
+angles=[0, 90, 30, 30, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45]
+angles=[45, 45, 25, 10, 45, 45, 30, 45, 45, 45, 45, 45, 45, 45, 45]
+angles=[25, 60, 35, 35, 75, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45]
+#angles=[0, 45,45,45,45,45,45,45,45,45,45,45,45,45,45]
+#angles=[0,45, 45]
+#coverage=[]
+
+# angles = [1.*a*numpy.pi / 180 for a in angles]
+# for i in xrange(2**len(angles)):
+#     bstr = qopt.int2bin(i,len(angles))
+#     #print bstr
+#     p = 1.
+#     for j in xrange(len(bstr)):
+#         if bstr[j] == '0':
+#             p *= numpy.cos(angles[j])# ** 2
+#         else:
+#             p *= numpy.sin(angles[j])# ** 2
+#     coverage.append(-p)
+#     #print i, p
+
+pylab.plot(X, [f3.evaluate(x) for x in X], label='Funkcja $f_2(x)$')
+#qgen = []
+#def gauss2d(x, shift, sigma):
+#        return 1./sigma/numpy.sqrt(2*numpy.pi) * numpy.exp(-((x-shift)**2)/2/sigma**2)
+#for q in X:
+#    qgen.append(-gauss2d(q, 60, 4) - gauss2d(q, 80, 5) - gauss2d(q, 150, 7) - gauss2d(q, 18, 6))
+#pylab.imshow(numpy.matrix(qgen), interpolation='none',extent=(0,200,-10, 100), cmap = matplotlib.cm.gray, alpha=.35)
+pylab.imshow(numpy.matrix(coverage), interpolation='none',extent=(0,17,-2,6), cmap = matplotlib.cm.gray, alpha=.3)
+pylab.ylim([-2,6])
+pylab.xlim((0,17))
 pylab.grid(True)
-pylab.legend(loc='upper left')
+#pylab.legend(loc='upper left')
+pylab.title(schema + '*'*10)
 pylab.xlabel('$x$')
 pylab.ylabel('$f_2(x)$')
 #pylab.gca().set_aspect(1, 'box')
-pylab.savefig('/tmp/f2.pdf', bbox_inches = 'tight')
+pylab.savefig('/tmp/f3.pdf', bbox_inches = 'tight')
 pylab.cla()
 sys.exit(0)
 

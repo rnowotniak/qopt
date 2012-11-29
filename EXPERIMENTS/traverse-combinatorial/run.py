@@ -10,16 +10,16 @@ k15=qopt.problems._knapsack.KnapsackProblem('../../problems/knapsack/knapsack-15
 k20=qopt.problems._knapsack.KnapsackProblem('../../problems/knapsack/knapsack-20.txt')
 k25=qopt.problems._knapsack.KnapsackProblem('../../problems/knapsack/knapsack-25.txt')
 sat = qopt.problems._sat.SatProblem('../../problems/sat/random-25.cnf')
-fun = qopt.problems.func1d.f3
+fun = qopt.problems.func1d.f2
 
-f=open(qopt.path('data/sat25-best'))
+f=open(qopt.path('data/func1d-20-best'))
 
 if True:
     lines = f.readlines()
     numbers=[int(line) for line in lines]
-    cs=[qopt.int2bin(n, 25) for n in numbers]
+    cs=[qopt.int2bin(n, 20) for n in numbers]
     #bla=[(c,fun.evaluate(fun.getx(c))) for c in cs]
-    bla=[(c,sat.evaluate(c)) for c in cs]
+    bla=[(c,fun.evaluate(fun.getx(c))) for c in cs]
     bla2=sorted(bla, lambda x,y:cmp(x[1],y[1]))
     for lin in bla2:
         print lin
