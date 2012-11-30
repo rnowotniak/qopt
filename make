@@ -33,10 +33,11 @@ cd ..
 
 # problems
 cd problems
-cython --cplus _problem.pyx
-check
-g++ -shared -o _problem.so _problem.cpp `python-config --cflags`
-check
+
+#cython --cplus _problem.pyx
+#check
+#g++ -shared -o _problem.so _problem.cpp `python-config --cflags`
+#check
 
 # combinatorial
 cython --cplus _knapsack.pyx
