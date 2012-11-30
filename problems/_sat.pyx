@@ -1,6 +1,5 @@
 
-from qopt.problems._problem cimport Problem, ProblemCpp
-
+from qopt.framework cimport Problem, ProblemCpp
 
 cdef extern from "sat.h":
     cdef cppclass SATcpp "SAT" (ProblemCpp[char,float]):

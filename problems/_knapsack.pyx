@@ -1,5 +1,5 @@
 
-from qopt.problems._problem cimport Problem, ProblemCpp
+from qopt.framework cimport Problem, ProblemCpp
 
 cdef extern from "knapsack.h":
     cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp[char,float]):

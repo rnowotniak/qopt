@@ -4,7 +4,7 @@
 import ctypes
 import os
 
-from qopt.problems._problem cimport Problem, ProblemCpp
+from qopt.framework cimport Problem, ProblemCpp
 
 cdef extern from "mCEC_Function.h":
     ctypedef double FIELD_TYPE

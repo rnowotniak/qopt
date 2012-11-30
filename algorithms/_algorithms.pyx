@@ -4,7 +4,7 @@
 
 
 import time
-import qopt.framework as qopt
+import qopt
 import numpy as np
 cimport numpy as cnp
 
@@ -15,7 +15,7 @@ libc.stdlib.srand(time.time())
 
 cnp.import_array()
 
-from qopt.problems._problem cimport Problem, ProblemCpp
+from qopt.framework cimport Problem, ProblemCpp
 
 cdef extern from "qiga.h":
     cdef cppclass QIGAcpp "QIGA":
@@ -38,18 +38,6 @@ cdef extern from "qiga.h":
         void update()
         void storebest()
 
-
-class EA:
-    def __init__(self):
-        print 'EA __init__'
-        self.t = 0
-
-    def run(self):
-        self.t = 0
-        self.initialize()
-        while self.t < self.tmax:
-            self.t += 1
-            self.generation()
 
 
 cdef class __QIGAcpp:
@@ -117,10 +105,10 @@ cdef class __QIGAcpp:
             return res
 
 
-class QIGA(__QIGAcpp, EA):
+class QIGA(__QIGAcpp, qopt.EA):
 
     def __init__(self, int chromlen, int popsize = 10):
-        EA.__init__(self)
+        qopt.EA.__init__(self)
 
     def initialize(self):
         self.bestval = -1

@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from math import log, ceil
 
-Xsize = 2**100
+Xsize = 2**5
 
 print 'natural   r_size    r_dim     registers    mem (B)'
 print '-' * 70

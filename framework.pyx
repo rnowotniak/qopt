@@ -41,143 +41,157 @@ class Individual:
     def __str__(self):
         return '(%s, %g)' % (str(self.genotype), float(self.fitness))
 
-#
-# Moze dorobic taka ciekawa rzecz: XXX
-#   .history (?)
-#   ta magiczna tablica zawieralaby stan zmiennych z kolejnych generacji algorytmu,
-#   tzn. moze byloby sie po wykonaniu algorytmu odwolywac np:
-#   alg1.history[nrgen].best  albo  alg1.history[nrgen].Q   (ile RAM-u by to bralo?)
-#   nalezaloby to uwzglednic w .step
-#   Mozna byloby tez po calym eksperymencie latwo zapisywac stan i go potem latwo debugowac,
-#   tzn. np. robic pickle(self, '/tmp/blaa.id')
-#
-#
+
 class EA:
-    """ The base class for evolutionary algorithms (population-based heuritics) """
-
     def __init__(self):
-        self.popsize = 10
-        self.population = []
-
-        self.best = None
-        """ the best individual ever found (Individual object or its genotype directly) """
-
-        self.t = 0 # generation number
-
-        # callbacks
-        self.stepCallback = None
-        self.evaluator = None
-        self.evaluation_counter = 0
-
-        # minmaxop -> x IS BETTER THAN y
-        self.minmax = min
-        self.minmaxop = lambda x,y: [lambda x,y: x > y, lambda x,y: x < y][self.minmax == min](x,y)
-
-        self.__time0 = None # timestamp at the start of algorithm
-
-        self.tmax = None
-        self.maxNoFE = None
-        self.history = []
-
-    def initialize(self):
-        pass # abstract
-
-    def operators(self):
-        pass # abstract
-
-    def evaluate(self, population):
-        # print 'EA evaluating'
-        results = []
-        for ind in population:
-            res = self.evaluator(ind)
-            results.append(res)
-        self.evaluation_counter += len(population)
-        return results
-
-
-    def termination(self):
-        # General termination conditions. This method can be overriden
-        if hasattr(self, 'tmax') and self.tmax is not None:
-            return self.t >= self.tmax
-        if hasattr(self, 'maxNoFE') and self.maxNoFE is not None:
-            return self.evaluation_counter >= self.maxNoFE
-        assert False, 'No termination conditions given'
-
+        print 'EA __init__'
+        self.t = 0
 
     def run(self):
-        # konwencja numerowania generacji:
-        # na etapie inicjalizacji: generacja zerowa,
-        # przy rozpoczeciu pierwszej generacji: generacja pierwsza
-        # (inkrementacja na poczatku tej glownej petli)
         self.t = 0
         self.initialize()
-        self.__time0 = time.time()
-        while not self.termination():
+        while self.t < self.tmax:
             self.t += 1
-            if self.stepCallback != None:
-                self.stepCallback(self)
-            # print 't ' + str(self.t)
             self.generation()
-            #self.__save_history()
 
 
-    def generation(self): # this function is volatile to minmax issue
-        """ this function should be overriden in whole by complex EA algorithms """
-        # evaluate
-        fvalues = self.evaluate(self.population)
-        for i in xrange(len(self.population)):
-            self.population[i].fitness = fvalues[i]
-        # store the best solution
-        index_of_best = fvalues.index(self.minmax(fvalues))
-        if self.best == None or self.minmaxop(self.population[index_of_best].fitness, self.best.fitness):
-            self.best = copy.deepcopy(self.population[index_of_best])
-        # operators
-        self.operators()
-
-
-    def __save_history(self):
-        copy1 = copy.deepcopy(self)
-        del copy1.history
-        self.history.append(copy1)
-
-    # -- to byc moze bedzie potrzebne --
-    # allows to pickle objects of this class
-    # def __getstate__(self):
-    #     result = self.__dict__.copy()
-    #     if result['evaluator']:
-    #         result['evaluator'].__call__ = None
-    #     return result  
-
-    def __str__(self):
-        if not self.population:
-            return '(empty population)'
-        return '\n'.join([str(ind) for ind in self.population])
-
-
-class GA(EA):
-    def __init__(self):
-        EA.__init__(self)
-        print 'GA constructor'
-        self.chromlen = 10
-
-
-class ExecutableAlgorithm(EA):
-    """The algorithm implemented in external executable file"""
-    def __init__(self, *args):
-        EA.__init__(self)
-        self.best = Individual()
-        self.tmax = 130
-        self.proc=subprocess.Popen(
-                 args,
-                shell=False,stdout=subprocess.PIPE, close_fds=True)
-    def run(self):
-        while True:
-            line = self.proc.stdout.readline()
-            if not line:
-                break
-            print line,
-
-
+#   #
+#   # Moze dorobic taka ciekawa rzecz: XXX
+#   #   .history (?)
+#   #   ta magiczna tablica zawieralaby stan zmiennych z kolejnych generacji algorytmu,
+#   #   tzn. moze byloby sie po wykonaniu algorytmu odwolywac np:
+#   #   alg1.history[nrgen].best  albo  alg1.history[nrgen].Q   (ile RAM-u by to bralo?)
+#   #   nalezaloby to uwzglednic w .step
+#   #   Mozna byloby tez po calym eksperymencie latwo zapisywac stan i go potem latwo debugowac,
+#   #   tzn. np. robic pickle(self, '/tmp/blaa.id')
+#   #
+#   #
+#   class EA:
+#       """ The base class for evolutionary algorithms (population-based heuritics) """
+#   
+#       def __init__(self):
+#           self.popsize = 10
+#           self.population = []
+#   
+#           self.best = None
+#           """ the best individual ever found (Individual object or its genotype directly) """
+#   
+#           self.t = 0 # generation number
+#   
+#           # callbacks
+#           self.stepCallback = None
+#           self.evaluator = None
+#           self.evaluation_counter = 0
+#   
+#           # minmaxop -> x IS BETTER THAN y
+#           self.minmax = min
+#           self.minmaxop = lambda x,y: [lambda x,y: x > y, lambda x,y: x < y][self.minmax == min](x,y)
+#   
+#           self.__time0 = None # timestamp at the start of algorithm
+#   
+#           self.tmax = None
+#           self.maxNoFE = None
+#           self.history = []
+#   
+#       def initialize(self):
+#           pass # abstract
+#   
+#       def operators(self):
+#           pass # abstract
+#   
+#       def evaluate(self, population):
+#           # print 'EA evaluating'
+#           results = []
+#           for ind in population:
+#               res = self.evaluator(ind)
+#               results.append(res)
+#           self.evaluation_counter += len(population)
+#           return results
+#   
+#   
+#       def termination(self):
+#           # General termination conditions. This method can be overriden
+#           if hasattr(self, 'tmax') and self.tmax is not None:
+#               return self.t >= self.tmax
+#           if hasattr(self, 'maxNoFE') and self.maxNoFE is not None:
+#               return self.evaluation_counter >= self.maxNoFE
+#           assert False, 'No termination conditions given'
+#   
+#   
+#       def run(self):
+#           # konwencja numerowania generacji:
+#           # na etapie inicjalizacji: generacja zerowa,
+#           # przy rozpoczeciu pierwszej generacji: generacja pierwsza
+#           # (inkrementacja na poczatku tej glownej petli)
+#           self.t = 0
+#           self.initialize()
+#           self.__time0 = time.time()
+#           while not self.termination():
+#               self.t += 1
+#               if self.stepCallback != None:
+#                   self.stepCallback(self)
+#               # print 't ' + str(self.t)
+#               self.generation()
+#               #self.__save_history()
+#   
+#   
+#       def generation(self): # this function is volatile to minmax issue
+#           """ this function should be overriden in whole by complex EA algorithms """
+#           # evaluate
+#           fvalues = self.evaluate(self.population)
+#           for i in xrange(len(self.population)):
+#               self.population[i].fitness = fvalues[i]
+#           # store the best solution
+#           index_of_best = fvalues.index(self.minmax(fvalues))
+#           if self.best == None or self.minmaxop(self.population[index_of_best].fitness, self.best.fitness):
+#               self.best = copy.deepcopy(self.population[index_of_best])
+#           # operators
+#           self.operators()
+#   
+#   
+#       def __save_history(self):
+#           copy1 = copy.deepcopy(self)
+#           del copy1.history
+#           self.history.append(copy1)
+#   
+#       # -- to byc moze bedzie potrzebne --
+#       # allows to pickle objects of this class
+#       # def __getstate__(self):
+#       #     result = self.__dict__.copy()
+#       #     if result['evaluator']:
+#       #         result['evaluator'].__call__ = None
+#       #     return result  
+#   
+#       def __str__(self):
+#           if not self.population:
+#               return '(empty population)'
+#           return '\n'.join([str(ind) for ind in self.population])
+#   
+#   
+#   class GA(EA):
+#       def __init__(self):
+#           EA.__init__(self)
+#           print 'GA constructor'
+#           self.chromlen = 10
+#   
+#   
+#   class ExecutableAlgorithm(EA):
+#       """The algorithm implemented in external executable file"""
+#       def __init__(self, *args):
+#           EA.__init__(self)
+#           self.best = Individual()
+#           self.tmax = 130
+#           self.proc=subprocess.Popen(
+#                    args,
+#                   shell=False,stdout=subprocess.PIPE, close_fds=True)
+#       def run(self):
+#           while True:
+#               line = self.proc.stdout.readline()
+#               if not line:
+#                   break
+#               print line,
+#   
+#   
 
 
 

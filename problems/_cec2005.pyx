@@ -4,7 +4,7 @@
 import ctypes
 import os
 
-from qopt.problems._problem cimport Problem, ProblemCpp
+from qopt.framework cimport Problem, ProblemCpp
 
 cdef class CEC2005(Problem):
     cdef long double (*r_evaluator) (long double *x,int n)
