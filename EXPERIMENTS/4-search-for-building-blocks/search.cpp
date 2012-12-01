@@ -47,7 +47,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/func1d-25-best", "r");
+		F = fopen("../../data/sat25-best", "r");
 		i = 0;
 		while (i < number_of_chromosomes) {
 			if (fgets(line, sizeof(line), F) == NULL) {
@@ -60,7 +60,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/func1d-25-space", "r");
+		F = fopen("../../data/sat25-space", "r");
 		fread((void*)chromosomes_fitness, sizeof(float), pow(2, chromlen), F);
 		fclose(F);
 	}
