@@ -15,8 +15,6 @@ def path(d = None):
         res += '/' + d
     return res
 
-def int2bin(n, count=24):
-    return "".join([str((n >> y) & 1) for y in range(count-1, -1, -1)])
 
 from framework import *
 

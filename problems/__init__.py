@@ -6,7 +6,9 @@ import _func1d
 import _sat
 
 knapsack10 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-10.txt'))
+knapsack15 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-15.txt'))
 knapsack20 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-20.txt'))
+knapsack25 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-25.txt'))
 knapsack100 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-100.txt'))
 knapsack250 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-250.txt'))
 knapsack500 = _knapsack.KnapsackProblem(qopt.path('problems/knapsack/knapsack-500.txt'))

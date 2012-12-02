@@ -12,6 +12,7 @@ import sys
 import os
 import re
 import subprocess
+import numpy as np
 
 cimport libc.string
 
@@ -23,6 +24,61 @@ def matches(char *chromo, char *schema):
     return bool(c_matches(chromo, schema, length))
 
 PRNGseed = None
+
+def int2bin(n, count=24):
+    return "".join([str((n >> y) & 1) for y in range(count-1, -1, -1)])
+
+# XXX Move it somewhere else!!
+def M(qchromo,char *schema):
+    cdef float result = 1.
+    for i in xrange(len(schema)):
+        if schema[i] == '0':
+            result *= np.square(np.cos(qchromo[i]))
+        elif schema[i] == '1':
+            result *= np.square(np.sin(qchromo[i]))
+    return result
+
+def E(Q,schema):
+    sum1 = 0.
+    cdef float elem
+    for w in xrange(len(Q)+1):
+        sum2 = 0.
+        for c in xrange(2**len(Q)):
+            bstr = int2bin(c, len(Q))
+            if bstr.count('1') == w:
+                #print bstr
+                elem = 1.
+                for j in xrange(len(bstr)):
+                    if bstr[j] == '0':
+                        elem *= 1 - M(Q[j], schema)
+                    else:
+                        elem *= M(Q[j], schema)
+                sum2 += elem
+        sum1 += 1. * w * sum2
+        #print '-'
+    return sum1
+
+def V(Q,schema):
+    sum1 = 0.
+    for w in xrange(len(Q)+1):
+        sum2 = 0.
+        for c in xrange(2**len(Q)):
+            bstr = int2bin(c, len(Q))
+            if bstr.count('1') == w:
+                #print bstr
+                elem = 1.
+                for j in xrange(len(bstr)):
+                    if bstr[j] == '0':
+                        elem *= 1 - M(Q[j], schema)
+                    else:
+                        elem *= M(Q[j], schema)
+                sum2 += elem
+        sum1 += 1. * w*w * sum2
+        #print '-'
+    return sum1 - E(Q,schema)**2
+
+
+
 
 #
 # Klasa pomocnicza, w ktorej mozna agregowac informacje o osobniku,
