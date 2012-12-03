@@ -47,7 +47,7 @@ void QIGA::observe() {
 
 void QIGA::repair() {
 	for (int i = 0; i < popsize; i++) {
-		problem->repairer(P[i], chromlen);
+		problem->repairer(P[i], chromlen); // XXX P is modified!
 	}
 }
 

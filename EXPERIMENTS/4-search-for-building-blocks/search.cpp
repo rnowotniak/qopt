@@ -13,12 +13,17 @@
 
 #include <vector>
 
+/*
+ * To bedzie do zmiany!
+ * Nalezy szukac schematow wylacznie takich, ktore pasuja do (znanego) x^* !
+ *
+ */
 void find_best_schemata() {
-	const int chromlen = 25;
+	const int chromlen = 15;
 	//const char *schemata_filename = "../../data/schem15-uniq";
 	//std::vector<char[chromlen+1]> schem;
 
-	int number_of_schemata = 8683;
+	int number_of_schemata = 4463;
 	int number_of_chromosomes = 100;
 
 	char (*schemata)[chromlen + 1];
@@ -36,7 +41,7 @@ void find_best_schemata() {
 	{
 		char line[256];
 		FILE *F;
-		F = fopen("../../data/schem25-uniq", "r");
+		F = fopen("../../data/schem15-uniq", "r");
 		int i = 0;
 		while (true) {
 			if (fgets(line, sizeof(line), F) == NULL) {
@@ -47,7 +52,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/sat25-best", "r");
+		F = fopen("/tmp/sat15-100best", "r");
 		i = 0;
 		while (i < number_of_chromosomes) {
 			if (fgets(line, sizeof(line), F) == NULL) {
@@ -60,7 +65,7 @@ void find_best_schemata() {
 		}
 		fclose(F);
 
-		F = fopen("../../data/sat25-space", "r");
+		F = fopen("../../data/sat15-space", "r");
 		fread((void*)chromosomes_fitness, sizeof(float), pow(2, chromlen), F);
 		fclose(F);
 	}

@@ -10,9 +10,9 @@ def lambda_(x, r):
     return 1. * 2**r * np.log(2**x) / np.log(2**r) / 2**x
 
 def lambdaO(x, r):
-    return 1. * 2**(2*r) * np.log(2**x) / np.log(2**r) / 2**(2*x)
+    return 1. * 2**(2*r) * np.log(2**(x)) / np.log(2**r) / 2**(2*x)
 
-X = np.linspace(5,12,200)
+X = np.arange(5,12,1)
 R1 = []
 R2 = []
 R3 = []
@@ -26,10 +26,10 @@ for x in X:
     R5.append(lambda_(x, 5))
 
 pylab.plot(X,R1)
-pylab.plot(X,R2, label='$r=1,r=2$')
-pylab.plot(X,R3, label='$r=3$')
-pylab.plot(X,R4, label='$r=4$')
-pylab.plot(X,R5, label='$r=5$')
+pylab.plot(X,R2, 'bo-', label='$r=1,r=2$')
+pylab.plot(X,R3, 'rx-', label='$r=3$')
+pylab.plot(X,R4, 'c*-', label='$r=4$')
+pylab.plot(X,R5, 'mD-', label='$r=5$')
 pylab.legend(loc = 'upper right')
 pylab.xlabel('rozmiar zadania $N$')
 pylab.ylabel('Współczynnik kwantowości $\lambda$')
@@ -50,11 +50,11 @@ for x in X:
     R4.append(lambdaO(x, 4))
     R5.append(lambdaO(x, 5))
 
-pylab.plot(X,R1, label='$r=1$')
-pylab.plot(X,R2, label='$r=2$')
-pylab.plot(X,R3, label='$r=3$')
-pylab.plot(X,R4, label='$r=4$')
-pylab.plot(X,R5, label='$r=5$')
+pylab.plot(X,R1, 'bo-', label='$r=1$')
+pylab.plot(X,R2, 'gs-.', label='$r=2$')
+pylab.plot(X,R3, 'rx-', label='$r=3$')
+pylab.plot(X,R4, 'c*-', label='$r=4$')
+pylab.plot(X,R5, 'mD-', label='$r=5$')
 pylab.legend(loc = 'upper right')
 pylab.xlabel('rozmiar zadania $N$')
 pylab.ylabel('Współczynnik kwantowości $\lambda_O$')

@@ -61,6 +61,19 @@ inline void dec2ternary(char *buf, long int dec, int length) {
 	}
 }
 
+inline void dec2four(char *buf, long int dec, int length) {
+	memset(buf, '0', length);
+	int i = length - 1;
+	while (dec > 0) {
+		buf[i] = '0' + dec % 4;
+		//if (buf[i] == '2') {
+			//buf[i] = '*';
+		//}
+		dec = dec / 4;
+		i--;
+	}
+}
+
 inline int order(char *s, int len) {
 	int result = 0;
 	for (int i = 0; i < len; i++) {

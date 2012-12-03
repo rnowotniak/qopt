@@ -18,6 +18,12 @@ cimport libc.string
 
 cdef extern from "framework.h":
     int c_matches "matches" (char *chromo, char *schema, int length)
+    void c_dec2four "dec2four"(char *buf, long int dec, int length)
+
+def dec2four(long int dec, int length):
+    buf = '_' * length
+    c_dec2four(buf, dec, length)
+    return buf
 
 def matches(char *chromo, char *schema):
     length = libc.string.strlen(chromo)

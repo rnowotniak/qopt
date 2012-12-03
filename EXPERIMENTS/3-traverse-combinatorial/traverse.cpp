@@ -66,49 +66,49 @@ int main() {
 	if (true) {
 		// sorting (ranking)
 
-		int chromlen = 25;
-		long int best1000[1000]; // tablica, ktora ma zawierac ID tysiaca najlepszych rozwiazan
+		int chromlen = 15;
+		long int best100[100]; // tablica, ktora ma zawierac ID tysiaca najlepszych rozwiazan
 		float *mem = new float[int(pow(2,chromlen))];
 
-		FILE *F = fopen("/var/tmp/func1d-25-space", "r");
+		FILE *F = fopen("/var/tmp/sat15-space", "r");
 		fread(mem, sizeof(float), int(pow(2, chromlen)), F);
 		// printf("-> %f\n", mem[31743]);
 		fclose(F);
 
-		// poczatkowo do tablicy wrzucamy 1000 pierwszych wartosci (ich ID)
-		for (long int j = 0; j < 1000; j++) {
-			best1000[j] = j;
+		// poczatkowo do tablicy wrzucamy 100 pierwszych wartosci (ich ID)
+		for (long int j = 0; j < 100; j++) {
+			best100[j] = j;
 		}
 
-		for (long int i = 1000; i < int(pow(2, chromlen)); i++) {
-			// 1) znajdz w ktory element tablicy best1000 wskazuje na najgorsza wartosc
+		for (long int i = 100; i < int(pow(2, chromlen)); i++) {
+			// 1) znajdz w ktory element tablicy best100 wskazuje na najgorsza wartosc
 			int worst_idx = 0;
-			for (long int k = 1; k < 1000; k++) {
-				if (mem[best1000[k]] < mem[best1000[worst_idx]]) {
+			for (long int k = 1; k < 100; k++) {
+				if (mem[best100[k]] < mem[best100[worst_idx]]) {
 					worst_idx = k;
 				}
 			}
-			// 2) sprawdz, czy wartosc i jest wieksza niz najgorsza ze wszystkich w best1000
-			if (mem[i] > mem[best1000[worst_idx]]) {
-				best1000[worst_idx] = i;
+			// 2) sprawdz, czy wartosc i jest wieksza niz najgorsza ze wszystkich w best100
+			if (mem[i] > mem[best100[worst_idx]]) {
+				best100[worst_idx] = i;
 			}
 			continue;
 
-			for (long int j = 0; j < 1000; j++) {
-				if (mem[i] > mem[best1000[j]]) {
+			for (long int j = 0; j < 100; j++) {
+				if (mem[i] > mem[best100[j]]) {
 					worst_idx = 0;
-					for (long int k = 1; k < 1000; k++) {
-						if (mem[best1000[k]] < mem[best1000[worst_idx]]) {
+					for (long int k = 1; k < 100; k++) {
+						if (mem[best100[k]] < mem[best100[worst_idx]]) {
 							worst_idx = k;
 						}
 					}
-					best1000[worst_idx] = i;
+					best100[worst_idx] = i;
 					break;
 				}
 			}
 		}
-		for (long int j = 0; j < 1000; j++) {
-			printf("%ld\n", best1000[j]);
+		for (long int j = 0; j < 100; j++) {
+			printf("%ld\n", best100[j]);
 		}
 		return 0;
 	}
