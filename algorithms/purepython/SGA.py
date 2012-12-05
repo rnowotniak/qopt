@@ -4,13 +4,13 @@ import qopt.framework as framework
 import sys
 import random
 
-class SGA(framework.GA):
+class SGA(framework.EA):
     """ The Simple Genetic Algorithm
     Roulette Wheel Selection, 1-point crossover, 1-point mutation
     """
 
     def __init__(self):
-        framework.GA.__init__(self)
+        framework.EA.__init__(self)
         print 'SGA constructor'
         self.Pc = 0.9
         self.Pm = 0.05

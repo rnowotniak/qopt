@@ -9,8 +9,10 @@ import qopt.problems
 
 prob = sys.argv[1]
 
+MaxFE = 1600
 repeat = 50
 popsize = 10
+sgapopsize = 80
 #chromlen = 15
 
 #f = qopt.problems.func1d.f3
@@ -45,41 +47,35 @@ elif prob in ('f3', 'sat25', 'knapsack25'):
 
 def evaluator(chrom):
     s = ''.join([str(g) for g in chrom])
-    s = '%s' % s
-    f.repair(s)
-    #x = f.getx(s)
-    x = s
-    return f.evaluate(x)
+    return f.evaluate(s) + 3
 
 def step(ga):
     fvals.append(ga.bestIndividual().getRawScore())
 
-Ysga = np.zeros((0,160))
+Ysga = np.zeros((0,MaxFE / sgapopsize))
 for r in xrange(repeat):
     fvals = []
-    sga = qopt.algorithms.SGA(evaluator, chromlen)
-    sga.setElitism(True)
+    sga = qopt.algorithms.SGA(evaluator, chromlen = chromlen, popsize = sgapopsize)
     sga.stepCallback.set(step)
-    sga.setPopulationSize(popsize)
+    sga.setGenerations(MaxFE / sgapopsize)
     sga.evolve()
     Ysga = np.vstack((Ysga, fvals))
+#ff = open('/tmp/bla','w')
+#ff.write(str(Ysga))
+#ff.close()
 Ysga = np.average(Ysga, 0)
 print 'sga done'
 
 class QIGA(qopt.algorithms.QIGA):
     def generation(self):
         super(QIGA, self).generation()
-        #bbs = qopt.analysis.bblocks(self.P, '***101*1******')
-        bbs = 5
         fvals.append(np.max(self.fvals))
-        #print '%d %f %d' % (self.t, np.max(self.fvals), bbs)
-
 
 qiga = QIGA(chromlen = chromlen, popsize = popsize)
-qiga.tmax = 160
+qiga.tmax = MaxFE / popsize
 qiga.problem = f
 
-Y = np.zeros((0,160))
+Y = np.zeros((0,MaxFE / popsize))
 for r in xrange(repeat):
     fvals = []
     qiga.run()
@@ -90,13 +86,13 @@ Y = np.average(Y, 0)
 print 'qiga done'
 
 import pylab
-X = range(160)
-pylab.plot(X, Y, 'ro-', label='QIGA')
-pylab.plot(X, Ysga, 's-', label='SGA')
+X = np.linspace(0,MaxFE,len(Y))
+pylab.plot(X, Y, 'ro-', label='bQIGAo')
+pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 's-', label='SGA')
 pylab.legend(loc = 'lower right')
 pylab.title(u'Porównanie efektywności algorytmów,\nfunkcja: $\\texttt{%s}$, $chromlen=%d$' % (prob, chromlen))
-pylab.ylabel(u'Średnia wartość dopasowania')
-pylab.xlabel(u'Numer generacji $t$')
+pylab.ylabel(u'Średnia wartość maksymalnego dopasowania')
+pylab.xlabel(u'Liczba wywołań funkcji oceny ($FE$)')
 pylab.grid(True)
 pylab.savefig('/tmp/cmp-%s.pdf' % (prob), bbox_inches = 'tight')
 

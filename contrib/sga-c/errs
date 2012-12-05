@@ -1,0 +1,11 @@
+	cc -O -c main.c
+	cc -O -c app.c
+	cc -O -c generate.c
+	cc -O -c initial.c
+	cc -O -c memory.c
+	cc -O -c operators.c
+	cc -O -c random.c
+	cc -O -c report.c
+	cc -O -c rselect.c
+	cc -O -c statistic.c
+	cc -O -c utility.c

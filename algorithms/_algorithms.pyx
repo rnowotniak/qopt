@@ -125,3 +125,24 @@ class QIGA(__QIGAcpp, qopt.EA):
         self._update()
         self._storebest()
 
+class QIGA_StorePriorToRepair(__QIGAcpp, qopt.EA):
+
+    def __init__(self, int chromlen, int popsize = 10):
+        qopt.EA.__init__(self)
+
+    def initialize(self):
+        self.bestval = -1
+        self._initialize()
+        self._observe()
+        self._storebest()
+        self._repair()
+        self._evaluate()
+
+    def generation(self):
+        self._observe()
+        self._storebest()
+        self._repair()
+        self._evaluate()
+        self._update()
+
+

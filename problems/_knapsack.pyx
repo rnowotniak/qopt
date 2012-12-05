@@ -1,6 +1,8 @@
 
 from qopt.framework cimport Problem, ProblemCpp
 
+from libc.string cimport strlen, memcpy
+
 cdef extern from "knapsack.h":
     cdef cppclass KnapsackProblemCpp "KnapsackProblem" (ProblemCpp[char,float]):
         int items_count
@@ -13,7 +15,13 @@ cdef class KnapsackProblem(Problem):
         self.thisptr = new KnapsackProblemCpp(fname)
 
     def evaluate(self, char *k):
-        return self.thisptr.evaluator(k, len(k))
+        cdef int length = strlen(k)
+        cdef char buf[1025]
+        assert length < sizeof(buf)
+        buf[sizeof(buf) - 1] = 0
+        memcpy(buf, k, length)
+        self.thisptr.repairer(buf, length)
+        return self.thisptr.evaluator(buf, length)
 
     def repair(self, char *k):
         self.thisptr.repairer(k, len(k))

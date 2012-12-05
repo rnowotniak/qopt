@@ -23,7 +23,7 @@ print knapsack.evaluate('1' * 250)
 
 # func 1d
 f1d = qopt.problems.func1d.f1
-print f1d.evaluate(60.488)
+print f1d.evaluate2(60.488)
 
 # sat
 import qopt.problems._sat

@@ -1,0 +1,337 @@
+\documentstyle[apaua]{article}
+\pagestyle{empty}
+
+\oddsidemargin=0in
+\evensidemargin=0in
+\topmargin=0.5in
+\textheight=9in
+\textwidth=6.5in 
+\footheight=0in
+\columnsep=0.25in
+\headsep=0in
+\headheight=0in
+
+\def\btt#1{\bf{\tt #1}}
+
+\begin{document}
+\bibliographystyle{apaua}
+
+\begin{titlepage}
+\begin{center}
+\vspace*{2.35in}
+SGA-C: A C-language Implementation \\ 
+of a Simple Genetic Algorithm
+\ \\
+by\\
+\ \\
+Robert E. Smith\\
+The University of Alabama\\
+\ \\ 
+David E. Goldberg\\
+The University of Illinois\\
+and\\
+Jeff A. Earickson\\
+Alabama Supercomputer Network\\
+\vspace{0.7in}
+TCGA Report No. 91002\\
+\today \\
+\vspace{2.2in}
+The Clearinghouse for Genetic Algorithms\\
+The University of Alabama\\
+Department of Engineering Mechanics\\
+Tuscaloosa, AL 35487
+\end{center}
+\end{titlepage}
+
+
+\title{SGA-C: A C-language Implementation of a\\ 
+Simple Genetic Algorithm}
+\author{{\bf Robert E. Smith}\\
+The University of Alabama\\
+Department of Engineering Mechanics\\
+Tuscaloosa, Alabama 35405 
+\and {\bf David E. Goldberg}\\
+The University of Illinois\\
+Department of General Engineering\\
+Urbana, Illinois 61801
+\and {\bf Jeff A. Earickson}\\
+Alabama Supercomputer Network\\
+The Boeing Company\\
+Huntsville, Alabama 35806}
+\maketitle
+
+\section{Introduction}
+SGA-C\footnote{{\bf Disclaimer:} SGA-C is distributed under the terms described
+in the file {\btt{NOWARRANTY}}. These terms are taken from the GNU General Public
+License.
+This means that SGA-C has no warranty implied or given, and that the
+authors assume no liability for damage resulting from its use or misuse.} 
+is a C-language translation and extension of the original
+Pascal SGA code presented by Goldberg \citeyear{Goldberg:89e}. 
+It has some additional features, but its
+operation is 
+essentially the same as that of the original, Pascal version. 
+This report is included as a concise introduction to the SGA-C distribution.
+It is presented with the assumptions that the reader has a general understanding
+of Goldberg's original Pascal SGA code, and a good working knowledge of the
+C programming language.
+The report begins with an outline of the files included in the SGA-C
+distribution, and the routines they contain. 
+The outline is followed by a discussion of significant features of SGA-C
+that differ from those of the Pascal version.
+The report concludes with a
+discussion of routines that must be altered to
+implement one's own application in SGA-C.
+
+
+\section{Files Distributed with SGA-C}
+\label{files}
+The following is an outline of the files distributed 
+with SGA-C, the routines contained in those files, and the
+{\btt{include}} structure of the SGA-C distribution.
+\begin{description}
+\item[{\btt{sga.h}}] contains declarations of global variables and structures 
+for SGA-C.  This file is included by {\btt{main()}}.
+Both {\btt{sga.h}} and {\btt{external.h}} have two
+{\btt{defines}} set at the top of the files; {\btt{LINELENGTH}}, which determines the
+column width of printed output, and {\btt{BITS\_PER\_BYTE}}, which specifies the number
+of bits per byte on the machine hardware.  {\btt{LINELENGTH}} can be set to any
+desired positive value, but {\btt{BITS\_PER\_BYTE}} must be set to the correct value for your
+hardware.
+\item[{\btt{external.h}}] contains external declarations for inclusion
+in all source code files except {\btt{main()}}.  The {\bf extern} declarations in {\btt{external.h}}
+should match the declarations 
+in {\btt{sga.h}}.
+\item[{\tt main.c}] contains the main SGA program loop, 
+{\btt{main()}}.
+\item[{\btt{generate.c}}] contains {\btt{generation()}}, a routine which generates and 
+evaluates a new GA population.  
+\item[{\btt{initial.c}}] contains routines that are called at the beginning 
+of a GA run.
+\begin{description}
+\item[{\btt{initialize()}}] is the central initialization routine called by 
+{\btt{main()}}.
+\item[{\btt{initdata()}}] is a routine to prompt the user for SGA parameters.
+\item[{\btt{initpop()}}] is a routine that generates a random population. Currently, 
+SGA-C includes no facility for using seeded populations.
+\item[{\btt{initreport()}}] is a routine that prints a report after initialization 
+and before the first GA cycle.
+\end{description}
+\item[{\btt{memory.c}}] contains routines for dynamic memory management.  
+\begin{description}
+\item[{\btt{initmalloc()}}] is a routine that dynamically allocates space for the GA 
+population and other necessary data structures.
+\item[{\btt{freeall()}}] frees all memory allocated by {\btt{initmalloc()}}.
+\item[{\btt{nomemory()}}] prints out a warning statement
+when a call to {\btt{malloc()}} fails.
+\end{description}
+\item[{\btt{operators.c}}]  contains the routines for genetic operators.
+\begin{description}
+\item[{\btt{crossover()}}] performs single-point crossover on two mates, producing
+two children.
+\item[{\btt{mutation()}}] performs a point mutation.
+\end{description}
+\item[{\btt{random.c}}] contains random number utility programs, including:
+\begin{description}
+\item[{\btt{randomperc()}}] returns a single, uniformly-distributed, real, 
+pseudo-random number between 0 and 1. 
+This routine uses the subtractive method specified by Knuth \citeyear{Knuth:81}.
+\item[{\btt{rnd(low,high)}}] returns an uniformly-distributed integer between 
+{\btt{low}} and {\btt{high}}.
+\item[{\btt{rndreal(low,high)}}] returns an uniformly-distributed floating point number 
+between  {\btt{low}} and {\btt{high}}.
+\item[{\btt{flip(p)}}] flips a biased coin, returning 1 with probability {\btt{p}}, 
+and 0 with probability {\btt{1-p}}.
+\item[{\btt{advance\_random()}}] generates a new batch of 55 random numbers.
+\item[{\btt{randomize()}}] asks the user for a random number seed.
+\item[{\btt{warmup\_random()}}] primes the random number generator.
+\item[{\btt{noise(mu, sigma)}}] generates a normal random variable 
+with mean mu and standard
+deviation sigma.  This routine is not currently used in SGA-C, and is only included as a general utility.
+\item[{\btt{randomnormaldeviate()}}] is a utility routine used by noise.
+It computes a standard normal random variable.
+\item[{\btt{initrandomnormaldeviate()}}] initialization routine for
+{\btt{randomnormaldeviate()}}.
+\end{description}
+\item[{\btt{report.c}}] contains routines used to print a report from each cycle of SGA-C's operation.
+\begin{description}
+\item[{\btt{report()}}] controls overall reporting.
+\item[{\btt{writepop()}}] writes out the population at every generation.
+\item[{\btt{writechrom()}}] writes out the chromosome as a string of ones and zeroes.
+In the current implementation, the most significant bit is the {\it rightmost} bit.
+\end{description}
+\item Three selection routines are included with the SGA-C distribution:
+\begin{description}
+\item[{\btt{rselect.c}}] contains routines for roulette-wheel selection.  
+\item[{\btt{srselect.c}}] contains the routines for stochastic-remainder selection 
+\cite{Booker:82}.
+\item[{\btt{tselect.c}}] contains the routines for tournament selection 
+\cite{Brindle:81a}.  Tournaments of any size up to the population size can be held
+with this implementation\footnote{The tournament selection routine
+included with the distribution was written by Hillol Kargupta, of the University
+of Alabama.}.
+\end{description}
+For modularity, each selection method 
+is made available as a compile time option.
+Edit {\btt{Makefile}} to choose a selection method. Each of the three
+selection files 
+contains the routines
+{\btt{select\_memory}} and {\btt{select\_free}} (called by {\btt{initmalloc}} and {\btt{freeall}}, respectively), which perform
+any necessary auxiliary memory handling,
+and the routines {\btt{preselect()}} and {\btt{select()}}, 
+which implement the particular selection method.
+\item[{\btt{stats.c}}] contains the routine {\btt{statistics()}}, which calculates 
+populations statistics for each generation.
+\item[{\btt{utility.c}}] contains various utility routines. Of particular interest 
+is the routine {\btt{ithruj2int()}}, which returns bits $i$ through $j$ of a 
+chromosome interpreted as an {\btt{int}}. 
+\item[{\btt{app.c}}] contains application dependent routines. 
+Unless you need to change the basic operation of the GA itself, 
+you should only have to alter this file
+Further instructions for altering the SGA application are 
+included in section~\ref{app}.
+\begin{description}
+\item[{\btt{application()}}] should contain any application-specific computations
+needed before each GA cycle.  It is called by {\btt{main()}}.
+\item[{\btt{app\_data()}}] should ask for and read in any application-specific 
+information.  This routine is 
+called by {\btt{init\_data()}}.
+\item[{\btt{app\_malloc()}}] should perform any application-specific calls to 
+{\btt{malloc()}} to dynamically allocate memory.  This routine is 
+called by {\btt{initmalloc()}}.
+\item[{\btt{app\_free()}}]  should perform any application-specific calls to 
+{\btt{free()}}, for release of dynamically allocated memory.  
+This routine is called by {\btt{freeall()}}.
+\item[{\btt{app\_init()}}] should perform any application-specific initialization
+needed.  It is called by {\btt{initialize()}}.
+\item[{\btt{app\_initreport()}}] should print out an application-specific initial
+report before the start of generation cycles.  This routine is 
+called by {\btt{initialize()}}.
+\item[{\btt{app\_report()}}]  should print out any application-specific  
+output 
+after each GA cycle.  It is called by {\btt{report()}}.
+\item[{\btt{app\_stats()}}]  should perform any application-specific statistical
+calculations.  It is called by {\btt{statistics()}}.
+\item[{\btt{objfunc(critter)}}]  The objective function for the specific application.
+The variable {\btt{critter}} is a pointer to an {\btt{individual}} 
+(a GA population member), to which this routine must assign a fitness.
+This routine is called by {\btt{generation()}}.
+\end{description}
+\item[{\btt{Makefile}}] is a UNIX makefile for SGA-C.  
+\end{description}
+
+\section{New Features of SGA-C}
+SGA-C has several features that differ from those of the Pascal version.
+One is the ability to name the input and output files on the command line, i.e.
+{\btt{sga my.input my.output}}.  If either of these files is not named on the command line, 
+SGA-C assumes 
+{\btt{stdin}} and {\btt{stdout}}, respectively.  
+Another new feature of SGA-C is its method of representing
+chromosomes in memory.
+SGA-C stores its chromosomes in bit strings at the machine level. 
+Input-output and chromosome storage in SGA-C are discussed in the following sections.
+
+\subsection{Input-Output}
+SGA-C allows for multiple GA runs.
+When the program is executed, the user is first prompted
+for the number of GA runs to be
+performed.  After this, the quantity of input needed depends on 
+the selection routine chosen at compile-time, and any
+application-specific information required.  
+When compiled
+with roulette wheel selection, 
+the input requested from the user is as follows:
+\begin{itemize}
+\item The number of GA runs to be performed ({\btt{int}}).
+\item The population size ({\btt{int}}).
+\item The chromosome length ({\btt{int}}).
+\item Print the chromosome strings each generation ({\btt{y/n}})?
+\item The maximum number of generations for the run ({\btt{int}}).
+\item The probability of crossover ({\btt{float}}).
+\item The probability of mutation ({\btt{float}}).
+\item Application-specific input, if any.
+\item The seed for the random number generator ({\btt{float}}).
+\end{itemize}
+
+\subsection{Chromosome Representation and Memory Utilization}
+\label{memstuff}
+SGA-C uses a machine level representation of bit strings
+to increase efficiency.
+This allows crossover and mutation to be implemented 
+as binary masking operations (see {\btt{operators.c}}).
+Every chromosome (as well as the population arrays and some
+auxiliary memory space) are allocated dynamically at run
+time. The dynamic memory allocation scheme allocates
+a sufficient number of unsigned integers for each population member
+to store bits for the user-specified chromosome length. Because
+of this feature, it is extremely important that {\btt{BITS\_PER\_BYTE}}
+be properly set (in
+{\btt{sga.h}} and {\btt{external.h}})
+for your machine's hardware and C compiler.
+
+\section{Implementing Application Specific Routines}
+\label{app}
+To implement a specific application, you should only have to change the file
+{\btt{app.c}}.
+Section~\ref{files} describes the routines in {\btt{app.c}} in detail.
+If you use additional variables for your specific problem, the easiest method
+of making them available to other program units is to declare them in 
+{\btt{sga.h}} and {\btt{external.h}}.  However, take care that you do not
+redeclare existing variables.
+
+Two example applications files are included in the SGA-C distribution.  The
+file {\btt{app1.c}} performs the simple example problem 
+included with the Pascal version; 
+finding the maximum of $x^{10}$, where $x$
+is an integer interpretation of a chromosome.  
+A slightly more complex 
+application 
+is include in {\btt{app2.c}}.
+This application illustrates two features that have been added
+to SGA-C. The first of these is the {\bf ithruj2int} function,
+which converts bits $i$ through $j$ in a chromosome to an integer.
+The second new feature is the {\bf utility} pointer that is associated with each population member.
+The example application interprets each chromosome as a set 
+of concatenated integers in binary form. The lengths of these integer fields is 
+determined by the user-specified value of {\bf field\_size}, which is 
+read in by the function
+{\btt{app\_data()}}.  The field size must be less than the smallest of
+the chromosome
+length and the length of an unsigned integer.  
+An integer array for storing the interpreted form of each chromosome
+is dynamically allocated and assigned to the chromosome's {\bf utility} pointer
+in {\btt{app\_malloc()}}.
+The {\btt{ithruj2int}} routine (see {\btt{utility.c}}) is used to translate 
+each chromosome into its associated vector.
+The fitness for each chromosome is simply the sum of the squares of these 
+integers. This example application will function for any chromosome length. 
+
+\section{Final Comments}
+SGA-C is intended to be a simple
+program for first-time GA experimentation. It is 
+not intended to be 
+definitive in terms of its efficiency 
+or the grace of its implementation. The
+authors are interested in the comments, criticisms, and bug reports
+from SGA-C users, so that the code can be refined for
+easier use in subsequent versions.
+Please email your comments to {\bf rob@comec4.mh.ua.edu},
+or write to TCGA:
+\begin{center}
+The Clearinghouse for Genetic Algorithms\\
+The University of Alabama\\
+Department of Engineering Mechanics\\
+P.O. Box 870278\\
+Tuscaloosa, Alabama 35487
+\end{center}
+
+\subsection*{Acknowledgments}
+The authors gratefully acknowledge support provided by NASA under
+Grant NGT--50224 and support provided by the 
+National Science Foundation under Grant CTS--8451610.
+We also thank Hillol Kargupta for donating his tournament selection
+implementation.
+
+
+\bibliography{sga-c}
+\end{document}

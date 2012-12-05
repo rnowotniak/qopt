@@ -1,0 +1,53 @@
+SGA-C: A C-language Implementation 
+of a Simple Genetic Algorithm
+
+Robert E. Smith
+The University of Alabama
+
+David E. Goldberg
+The University of Illinois
+
+and
+
+Jeff A. Earickson
+Alabama Supercomputer Network
+
+TCGA Report No. 91002
+The Clearinghouse for Genetic Algorithms
+The University of Alabama
+Department of Engineering Mechanics
+Tuscaloosa, AL 35487
+
+SGA-C is a C-language translation and extension of the original
+Pascal SGA code presented in Goldberg's text (Goldberg, 1989). 
+It has some additional features, but its operation is 
+essentially the same as that of the original, Pascal version. 
+A technical report (in PostScript file sga-c.ps) 
+is included as a concise introduction 
+to the SGA-C distribution. It is presented with the assumptions that 
+the reader has a general understanding of Goldberg's original Pascal SGA 
+code, and a good working knowledge of the C programming language.
+The report begins with an outline of the files included in the SGA-C
+distribution, and the routines they contain. 
+The outline is followed by a discussion of significant features of SGA-C
+that differ from those of the Pascal version.
+The report concludes with a discussion of routines that must be altered to
+implement one's own application in SGA-C.
+
+
+The authors are interested in the comments, criticisms, and bug reports
+from SGA-C users, so that the code can be refined for easier use in 
+subsequent versions. Please email your comments to 
+rob@comec4.mh.ua.edu, or write to TCGA:
+
+The Clearinghouse for Genetic Algorithms
+The University of Alabama
+Department of Engineering Mechanics
+P.O. Box 870278
+Tuscaloosa, Alabama 35487
+
+
+References:
+Goldberg, D.E. (1989). Genetic algorithms in search, optimization, and
+machine learning. Reading, MA: Addison-Wesley. 
+

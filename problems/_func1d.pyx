@@ -34,7 +34,9 @@ cdef class Func1D(Problem):
             # self.evaluator = func3_b
             self.mi = 0
             self.ma = 17
-    def evaluate(self, double x):
+    def evaluate(self, char *x):
+        return self.f(getx(x, len(x), self.mi, self.ma))
+    def evaluate2(self, double x):
         return self.f(x)
     def getx(self, s):
         return getx(s, len(s), self.mi, self.ma)
