@@ -12,19 +12,36 @@
 # python bblocks.py f3 2
 # python bblocks.py f3 3
 
-# python bblocks.py sat15 1
-# python bblocks.py sat15 2
-# python bblocks.py sat15 3
+python bblocks.py sat15 1
+python bblocks.py sat15 2
+python bblocks.py sat15 3
+python bblocks.py sat15 4
+python bblocks.py sat15 5
+python bblocks.py sat15 6
+python bblocks.py sat15 7
+python bblocks.py sat15 8
+python bblocks.py sat15 9
+python bblocks.py sat15 10
+python bblocks.py sat15 11
+python bblocks.py sat15 12
+python bblocks.py sat15 13
+python bblocks.py sat15 14
+python bblocks.py sat15 15
+python bblocks.py sat15 16
+python bblocks.py sat15 17
+python bblocks.py sat15 18
+python bblocks.py sat15 19
+python bblocks.py sat15 20
 
-#python bblocks.py sat20 1
-#python bblocks.py sat20 2
-#python bblocks.py sat20 3
+# python bblocks.py sat20 1
+# python bblocks.py sat20 2
+# python bblocks.py sat20 3
+# 
+# python bblocks.py sat25 1
+# python bblocks.py sat25 2
+# python bblocks.py sat25 3
 
-#python bblocks.py sat25 1
-#python bblocks.py sat25 2
-#python bblocks.py sat25 3
-
-python bblocks.py knapsack15 1
+# python bblocks.py knapsack15 1
 # python bblocks.py knapsack15 2
 #python bblocks.py knapsack15 3
 
