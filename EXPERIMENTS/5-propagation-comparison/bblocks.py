@@ -9,116 +9,46 @@ import qopt
 import qopt.algorithms
 import qopt.problems
 
+MaxFE = 1600
 repeat = 50
 popsize = 10
+sgapopsize = 80
 
 prob = sys.argv[1]
-schemanum = int(sys.argv[2])
+chromlen = int(sys.argv[2])
+schemanum = int(sys.argv[3])
 
 fname = prob
 
 if prob == 'f1':
     f = qopt.problems.func1d.f1
-    schemata = ['01001**********', '01*011*********', '010*11*********']
 elif prob == 'f2':
     f = qopt.problems.func1d.f2
-    schemata = [ '10100***************', '1*1001**************', '1010****************' ]
 elif prob == 'f3':
     f = qopt.problems.func1d.f3
-    schemata = ['10001********************', '1000*1*******************', '1000*********************']
-elif prob == 'sat15':
-    f = qopt.problems.sat15
-    schemata = [ '*****11*101****', '******1*1*11***', '******1*1011***' ]
-    schemata = '''
-        ****011*10*****
-        ***00*101******
-        ***00*1*1******
-        ******1010*1***
-        ******101*1****
-        **0*0110*******
-        *********011*10
-        ****0*1*1******
-        ******1*1*1****
-        **0*0*1********
-        ********1011*1*
-        ******101*11***
-        ****0*101******
-        ******1*101****
-        ******10101****
-        **0*0*10*******
-        ****0*1010*****
-        ******1*1*11***
-        *****11*101****
-        ******1*1011***
-    '''.split()
-elif prob == 'sat20':
-    f = qopt.problems.sat20
-    schemata = [ '***********1100***** 81.695000', '***********1*00*1*** 81.905998', '***********1100*1*** 82.030998']
-    schemata = '''
-        *********111*00*****
-        ************100*****
-        *********1**100*****
-        ***********1*000****
-        ***********110**1***
-        *************0001*1*
-        **********11100*****
-        *************00*111*
-        *************00*1*1*
-        *********1*1*00*****
-        ************10001***
-        ***********11000****
-        ***********1*00*****
-        ************100*11**
-        ************100*1***
-        *********1*1100*****
-        ***********1100*****
-        ***********1*0001***
-        ***********1*00*1***
-        ***********1100*1***
-    '''.split()
-elif prob == 'sat25':
-    f = qopt.problems.sat25
-    schemata = [ '**************01*011*****', '***************1*0110****', '***************1*011*****' ]
-    schemata = '''
-        **************010*11*****
-        **************01***1*****
-        ***************1*01******
-        1*0*10*******************
-        **************0100*1*****
-        ***************1*01*0****
-        ***************10*110****
-        110*10*******************
-        ***************1*0*10****
-        ***************1***10****
-        **************01**11*****
-        **************01*0*1*****
-        11**10*******************
-        ***************1**11*****
-        ***************10011*****
-        ***************1**110****
-        ***************1*0*1*****
-        **************01*011*****
-        ***************1*0110****
-        ***************1*011*****
-    '''.split()
-elif prob == 'knapsack15':
-    f = qopt.problems.knapsack15
-    schemata = ['****11111******', '****11*11******', '****11*110*****']
-elif prob == 'knapsack20':
-    f = qopt.problems.knapsack20
-    schemata = [ '************010*10**', '************01011***', '************01*110**' ]
-elif prob == 'knapsack25':
-    f = qopt.problems.knapsack25
-    schemata = ['*******************111*00', '*******************111**0', '******1011***************']
+elif prob == 'sat':
+    if chromlen == 15:
+        f = qopt.problems.sat15
+    elif chromlen == 20:
+        f = qopt.problems.sat20
+    elif chromlen == 25:
+        f = qopt.problems.sat25
+elif prob == 'k':
+    if chromlen == 15:
+        f = qopt.problems.knapsack15
+    elif chromlen == 20:
+        f = qopt.problems.knapsack20
+    elif chromlen == 25:
+        f = qopt.problems.knapsack25
+else:
+    assert False
 
-if prob in ('f1', 'sat15', 'knapsack15'):
-    chromlen = 15
-elif prob in ('f2', 'sat20', 'knapsack20'):
-    chromlen = 20
-elif prob in ('f3', 'sat25', 'knapsack25'):
-    chromlen = 25
-
+fil = open(qopt.path('data/%s-%d-bblocks' % (prob, chromlen)))
+schemata = [line.split()[0] for line in fil.readlines()]
 schema = schemata[schemanum - 1]
+
+#print schema
+#sys.exit(0)
 
 # f1
 #schema = '01001**********'
@@ -149,17 +79,18 @@ schema = schemata[schemanum - 1]
 def count_bblocks(pop):
     res = 0
     for chromo in pop:
+        #print chromo
+        #print schema
         if qopt.matches(chromo, schema):
             res += 1
+        #print res
+        #print '--'
+    #print res
     return res
 
 def evaluator(chrom):
     s = ''.join([str(g) for g in chrom])
-    s = '%s' % s
-    #f.repair(s)
-    #x = f.getx(s)
-    x = s
-    return f.evaluate(x)
+    return f.evaluate(s) + 3
 
 def step(ga):
     pop = []
@@ -167,6 +98,7 @@ def step(ga):
         chromo = ''.join([str(g) for g in ind])
         pop.append(chromo)
     bblocks_count.append(count_bblocks(pop))
+    #print bblocks_count
 
 
 # QIGA
@@ -180,45 +112,39 @@ class QIGA(qopt.algorithms.QIGA):
         bblocks_count.append(count_bblocks(self.P))
 
 qiga = QIGA(chromlen = chromlen, popsize = popsize)
-qiga.tmax = 160
+qiga.tmax = MaxFE / popsize
 qiga.problem = f
 
-Y = np.zeros((0,160))
+Y = np.zeros((0,MaxFE / popsize))
 for r in xrange(repeat):
     bblocks_count = []
-    #e = []
     qiga.run()
-    #print e
-    #print bblocks_count
     Y = np.vstack((Y, bblocks_count))
 
 Y = np.average(Y, 0)
 print Y
 
-pylab.plot(Y, 'ro-', label='QIGA')
+X = np.linspace(0,MaxFE,len(Y))
+pylab.plot(X, Y / popsize, 'ro-', label='bQIGAo')
 
 # SGA
 
-Y = np.zeros((0,160))
+Y = np.zeros((0,MaxFE / sgapopsize))
 for r in xrange(repeat):
     bblocks_count = []
-    sga = qopt.algorithms.SGA(evaluator, chromlen)
-    sga.setElitism(True)
-    sga.setGenerations(160)
-    sga.setPopulationSize(popsize)
+    sga = qopt.algorithms.SGA(evaluator, chromlen = chromlen, popsize = sgapopsize)
     sga.stepCallback.set(step)
+    sga.setGenerations(MaxFE / sgapopsize)
     sga.evolve()
     Y = np.vstack((Y, bblocks_count))
-
 Y = np.average(Y, 0)
 
-pylab.plot(Y, 's-', label='SGA')
-
+pylab.plot(np.linspace(0,MaxFE,len(Y)), Y / sgapopsize, 's-', label='SGA')
 
 pylab.title(u'Porównanie propagacji bloku budującego\nblok: %s, funkcja: %s, $chromlen=%d$' \
         % (schema, fname, chromlen))
-pylab.ylabel(u'Średnia liczba bloków budujących')
-pylab.xlabel('Numer generacji $t$')
+pylab.ylabel(u'Chromosomy pasujące do bloku (\%)')
+pylab.xlabel(u'Liczba wywołań funkcji oceny ($FE$)')
 pylab.legend(loc='lower right')
-pylab.savefig('/tmp/bb-%s-%d.pdf' % (prob, schemanum), bbox_inches = 'tight')
+pylab.savefig('/tmp/bb-%s-%d-%d.pdf' % (prob, chromlen, schemanum), bbox_inches = 'tight')
 
