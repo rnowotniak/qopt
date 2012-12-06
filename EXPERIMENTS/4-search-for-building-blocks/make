@@ -5,7 +5,7 @@
 # 	../../C/knapsack.cpp \
 # 	../../contrib/alglib/src/*.o \
 
-g++ -lefence -O2 -I../../contrib/alglib/src -I../../C search2.cpp -o search2 \
+g++ -lefence -g -O2 -I../../contrib/alglib/src -I../../C search2.cpp -o search2 \
 	../../C/functions1d.cpp \
 	../../C/sat.cpp \
 	../../C/knapsack.cpp \

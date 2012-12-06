@@ -37,6 +37,8 @@ elif prob == 'knapsack20':
     f = qopt.problems.knapsack20
 elif prob == 'knapsack25':
     f = qopt.problems.knapsack25
+elif prob == 'knapsack100':
+    f = qopt.problems.knapsack100
 
 if prob in ('f1', 'sat15', 'knapsack15'):
     chromlen = 15
@@ -44,6 +46,8 @@ elif prob in ('f2', 'sat20', 'knapsack20'):
     chromlen = 20
 elif prob in ('f3', 'sat25', 'knapsack25'):
     chromlen = 25
+elif prob in ('knapsack100',):
+    chromlen = 100
 
 def evaluator(chrom):
     s = ''.join([str(g) for g in chrom])

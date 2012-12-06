@@ -15,6 +15,7 @@ def SGA(evaluator, chromlen, popsize = 50, elitism = False):
     ga.setElitism(elitism)
     ga.setPopulationSize(popsize)
     #ga.setGenerations(160)
+    #ga.setCrossoverRate(.65) #
     ga.setMutationRate(.02) # .02 na poziomie chromosomu i na poziomie populacji (to to samo!)
     #ga.setMutationRate(0)
     ga.setSortType(Consts.sortType["raw"]) # !!!

@@ -105,7 +105,8 @@ inline int deflenth(char *s, int len) {
 }
 
 inline unsigned sample(const char *schema, int length) {
-	char s[length];
+	char s[length + 1];
+    s[length] = '\0';
 	for (int i = 0; i < length; i++) {
 		if (schema[i] != '*') {
 			s[i] = schema[i];

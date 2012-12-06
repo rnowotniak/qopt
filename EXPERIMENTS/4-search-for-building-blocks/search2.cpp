@@ -42,11 +42,9 @@ float evaluate_schema(const char *schema, int length, float *mem) {
  * Szukanie inna metoda -- dla znanego rozwiazania optymalnego x^*
  *
  */
-void find_best_schemata() {
-
-	const int chromlen = 25;
+void find_best_schemata(const char *spacefile, const int chromlen) {
 	float *mem = new float[int(pow(2,chromlen))];
-	FILE *F = fopen("/var/tmp/sat25-space", "r");
+	FILE *F = fopen(spacefile, "r");
 	fread(mem, sizeof(float), int(pow(2, chromlen)), F);
 	//printf("-> %f\n", mem[0]);
 	//printf("-> %f\n", mem[1]);
@@ -62,12 +60,15 @@ void find_best_schemata() {
 		}
 	}
 
-	char beststr[chromlen + 1] = { '\0' };
+	char beststr[chromlen + 1];
+	beststr[chromlen] = '\0';
 	dec2bin(beststr, best, chromlen);
-	printf("%s\n", beststr);
-	printf("-\n");
+	fprintf(stderr, "Best solution possible:\n");
+	fprintf(stderr, "%s\n", beststr);
+	fprintf(stderr, "-\n");
 
-	char buf[chromlen + 1] = { '\0' };
+	char buf[chromlen + 1];
+	buf[chromlen] = '\0';
 	int maxlen = 5;
 	int maxorder = 5;
 	int minorder = 3;
@@ -106,7 +107,7 @@ void find_best_schemata() {
 		}
 	}
 
-	printf("-\n");
+	//printf("-\n");
 
 	for (std::map<std::string, float>::iterator i = schemata.begin();
 			i != schemata.end(); i++) {
@@ -115,11 +116,16 @@ void find_best_schemata() {
 
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+
+	if (argc != 3) {
+		fprintf(stderr, "%s <spacefile> <chromlen>\n", argv[0]);
+		return 0;
+	}
 
 	srand(time(0));
+	find_best_schemata(argv[1], atoi(argv[2]));
 
-	find_best_schemata();
-
+	return 0;
 }
 
