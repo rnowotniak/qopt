@@ -210,24 +210,25 @@ angles=[(0,1,0,.5), (0.8,.4,.8,.2), (.5,.6,.7,.8)]
 #     coverage.append(-p)
 #     #print i, p
 
-# for i in xrange(4**len(angles)):
-#     print i
-#     bstr = qopt.dec2four(i,3)
-#     print bstr
-#     p = 1.
-#     for j in xrange(len(bstr)):
-#         if bstr[j] == '0':
-#             p *= angles[j][0]
-#         elif bstr[j] == '1':
-#             p *= angles[j][1]
-#         elif bstr[j] == '2':
-#             p *= angles[j][2]
-#         elif bstr[j] == '3':
-#             p *= angles[j][3]
-#     coverage.append(-p)
-#     #print i, p
+coverage=[]
+for i in xrange(4**len(angles)):
+    print i
+    bstr = qopt.dec2four(i,3)
+    print bstr
+    p = 1.
+    for j in xrange(len(bstr)):
+        if bstr[j] == '0':
+            p *= angles[j][0]
+        elif bstr[j] == '1':
+            p *= angles[j][1]
+        elif bstr[j] == '2':
+            p *= angles[j][2]
+        elif bstr[j] == '3':
+            p *= angles[j][3]
+    coverage.append(-p)
+    #print i, p
 
-pylab.plot(X, [f1.evaluate(x) for x in X], label='Funkcja $f_1(x)$')
+pylab.plot(X, [f1.evaluate2(x) for x in X], label='Funkcja $f_1(x)$')
 #qgen = []
 #def gauss2d(x, shift, sigma):
         #return 1./sigma/numpy.sqrt(2*numpy.pi) * numpy.exp(-((x-shift)**2)/2/sigma**2)
@@ -241,8 +242,8 @@ pylab.ylim([0,100])
 pylab.xlim((0,200))
 pylab.grid(True)
 #pylab.legend(loc='upper left')
-#pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
-pylab.title(schema)
+pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
+#pylab.title(schema)
 pylab.xlabel('$x$')
 pylab.ylabel('$f_1(x)$')
 #pylab.gca().set_aspect(1, 'box')

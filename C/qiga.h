@@ -24,7 +24,8 @@ class QIGA {
 
     public:
 
-	const int maxgen;
+	int tmax;
+
 	const int popsize;
 	const int chromlen;
 
@@ -43,8 +44,10 @@ class QIGA {
 
 	Problem<char,float> *problem;
 
-	QIGA(int chromlen, int popsize) : maxgen(500), popsize(popsize), chromlen(chromlen) {
+	QIGA(int chromlen, int popsize) : popsize(popsize), chromlen(chromlen) {
 		printf("QIGA::QIGA constructor\n");
+
+		tmax = 500;
 
 		problem = NULL;
 

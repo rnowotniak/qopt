@@ -133,7 +133,7 @@ void QIGA::qiga() {
 	repair();
 	evaluate();
 	storebest();
-	while (t < maxgen) {
+	while (t < tmax) {
 		//printf("generation %d\n", t);
 		observe();
 		repair();

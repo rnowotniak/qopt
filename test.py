@@ -62,9 +62,14 @@ class QIGA(qopt.algorithms.QIGA):
 q = QIGA(chromlen = 250)
 q.tmax = 500
 q.problem = qopt.problems.knapsack250
+import time
+t1 = time.time()
+for run in xrange(1):
+    q.run()
+print '100 runs in: %g seconds' % (time.time() - t1)
 q.run()
-print q.best
-print q.bestval
+#print q.best
+#print q.bestval
 #print q.P[0]
 #print q.Q[3,5]
 

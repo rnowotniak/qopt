@@ -22,6 +22,7 @@ cdef extern from "qiga.h":
         QIGAcpp(int chromlen, int popsize)
         int popsize
         int chromlen
+        int tmax
         float bestval
         float *Q
         char **P
@@ -65,6 +66,9 @@ cdef class __QIGAcpp:
 
     property popsize:
         def __get__(self): return self.thisptr.popsize
+    property tmax:
+        def __get__(self): return self.thisptr.tmax
+        def __set__(self, int tmax): self.thisptr.tmax = tmax
     property best:
         def __get__(self): return self.thisptr.best[:self.thisptr.chromlen]
         def __set__(self, char *val): libc.string.memcpy(self.thisptr.best, val, len(val))
