@@ -12,6 +12,7 @@
 // #include "knapsack.h"
 #include "qiga.h"
 
+#define Qij (Q[i * chromlen + j])
 
 /*
  * The algorithm data

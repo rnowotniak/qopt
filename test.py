@@ -69,7 +69,7 @@ for run in xrange(1):
 print '100 runs in: %g seconds' % (time.time() - t1)
 q.run()
 #print q.best
-#print q.bestval
+print q.bestval
 #print q.P[0]
 #print q.Q[3,5]
 

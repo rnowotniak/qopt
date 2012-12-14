@@ -19,8 +19,6 @@
 
 #define M_S2 0.70710678118654757f  /* sqrt(2)/2 */
 
-#define Qij (Q + i * (2 * chromlen) + (2 * j))
-
 
 class BQIGAo {
 

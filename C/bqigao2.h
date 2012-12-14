@@ -1,11 +1,12 @@
-#ifndef _QIGA_H
-#define _QIGA_H 1
+#ifndef _BQIGAO2_H
+#define _BQIGAO2_H 1
 
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
 #include <cstring>
+#include <cassert>
 #include <sys/time.h>
 #include "framework.h"
 
@@ -17,8 +18,10 @@
 #define M_PI_2	1.57079632679489661923f	/* pi/2 float */
 #define M_PI_4	0.78539816339744830962f	/* pi/4 float */
 
+#define M_S2 0.70710678118654757f  /* sqrt(2)/2 */
 
-class QIGA {
+
+class BQIGAo2 {
 
     public:
 
@@ -30,26 +33,30 @@ class QIGA {
 	float *Q;
 	char **P;
 	float *fvals;
-	char *best;
 
+	char *best;
 	float bestval;
 
+	// parameters
+	float mi;
+
 	// Lookup table: rotation angles in Qubit state spaces
-	float lookup_table[2][2][2]; // [x][b][f(x)>=f(b)]
+	// float lookup_table[2][2][2]; // [x][b][f(x)>=f(b)]
 
 	// Rotation directions
-	float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
+	// float signs_table[2][2][2][4]; // [x][b][f(x)>=f(b)][s(alpha*beta)]
 
 	Problem<char,float> *problem;
 
-	QIGA(int chromlen, int popsize) : popsize(popsize), chromlen(chromlen) {
-		printf("QIGA::QIGA constructor\n");
+	BQIGAo2(int chromlen, int popsize) : popsize(popsize), chromlen(chromlen) {
+		printf("BQIGAo2::BQIGAo2 constructor\n");
+		assert(chromlen % 2 == 0);
 
 		tmax = 500;
 
 		problem = NULL;
 
-		Q = new float[popsize * chromlen];
+		Q = new float[popsize * (chromlen/2) * 4];
 		fvals = new float[popsize];
 		best = new char[chromlen];
 
@@ -58,6 +65,9 @@ class QIGA {
 			P[i] = new char[chromlen];
 		}
 
+		mi = .95;
+
+		/*
 		float lt[2][2][2] = 
 		{
 			0, 0, 0,
@@ -74,11 +84,12 @@ class QIGA {
 			+1, -1,  0, +1,
 			+1, -1,  0, +1,
 		};
-		memcpy(this->lookup_table, lt, sizeof(lt));
-		memcpy(this->signs_table, st, sizeof(st));
+		*/
+		// memcpy(this->lookup_table, lt, sizeof(lt));
+		// memcpy(this->signs_table, st, sizeof(st));
 	}
 
-	~QIGA() {
+	~BQIGAo2() {
 		for (int i = 0; i < popsize; i++) {
 			delete [] P[i];
 		}
@@ -89,7 +100,7 @@ class QIGA {
 	}
 
 	// complete algorithm in C++
-	void qiga();
+	void bqigao2();
 
 	// elementary operations
 	void evaluate();
