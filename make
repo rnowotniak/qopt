@@ -27,7 +27,7 @@ check
 cd algorithms
 cython --cplus _algorithms.pyx
 check
-g++ $INCLUDE -shared -o _algorithms.so _algorithms.cpp ../C/qiga.cpp `python-config --cflags`
+g++ $INCLUDE -shared -o _algorithms.so _algorithms.cpp ../C/qiga.cpp ../C/bqigao.cpp `python-config --cflags`
 check
 cd ..
 

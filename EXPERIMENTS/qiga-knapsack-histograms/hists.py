@@ -12,23 +12,39 @@ import qopt.problems
 # k500 = numpy.matrix(';'.join(open('results-knapsack500.txt').readlines()))
 
 h1 = numpy.matrix(';'.join(open('results-3000.txt').readlines()))
-h2 = numpy.matrix(';'.join(open('results-3000-tosamo.txt').readlines()))
-h3 = numpy.matrix(';'.join(open('results-3000-StorePrior.txt').readlines()))
+h2 = numpy.matrix(';'.join(open('results-3000-bqigao.txt').readlines()))
+h3 = numpy.matrix(';'.join(open('results-3000-tuned.txt').readlines()))
+h4 = numpy.matrix(';'.join(open('results-3000-bqigao-tuned.txt').readlines()))
 
-pylab.figure()
+print numpy.average(h1), numpy.var(h1)
+print numpy.average(h2), numpy.var(h2)
+print numpy.average(h3), numpy.var(h3)
+print numpy.average(h4), numpy.var(h4)
 
-pylab.subplot(3,1,1)
-pylab.hist(h1, 480)
+pylab.subplot(4,1,1)
+pylab.title('QIGA$(\\theta)$')
+pylab.xlim((1380, 1500))
+pylab.hist(h1, 300)
 
-pylab.subplot(3,1,2)
-pylab.hist(h2, 480)
+pylab.subplot(4,1,2)
+pylab.title('bQIGAo')
+pylab.xlim((1380, 1500))
+pylab.hist(h2, 300)
 
-pylab.subplot(3,1,3)
-pylab.hist(h3, 480)
+pylab.subplot(4,1,3)
+pylab.title('QIGA$(\\theta)$ tuned')
+pylab.xlim((1380, 1500))
+pylab.hist(h3, 300)
 
+pylab.subplot(4,1,4)
+pylab.title('bQIGAo tuned')
+pylab.xlim((1380, 1500))
+pylab.hist(h4, 300)
 
 pylab.savefig('/tmp/hists.pdf', bbox_inches = 'tight')
 sys.exit(0)
+
+####
 
 pylab.subplot(4,1,1)
 pylab.hist(k100, 480)

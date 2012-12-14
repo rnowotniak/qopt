@@ -1,5 +1,5 @@
 
-from _algorithms import QIGA, QIGA_StorePriorToRepair
+from _algorithms import QIGA, BQIGAo, QIGA_StorePriorToRepair
 
 #from _algorithms import RQIEA
 #...
