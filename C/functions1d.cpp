@@ -4,6 +4,7 @@
 #include <math.h>
 #include "interpolation.h"
 
+#include <gmp.h>
 
 int bin2dec(char *bin, int len)
 {
@@ -64,10 +65,27 @@ double func3(double x) {
 }
 
 float getx(char *s, int len, float min, float max) {
-	float val;
-	val = bin2dec(s, len);
-	val = min + val * (max - min) / (pow(2, len) - 1);
-	return val;
+	// float val;
+	// val = bin2dec(s, len);
+	// val = min + val * (max - min) / (pow(2, len) - 1);
+	// return val;
+
+	static int initialized_length = -1;
+	static mpf_t full;
+	if (initialized_length != len) {
+		initialized_length = len;
+		mpf_init_set_ui(full, 2); // full = 2
+		mpf_pow_ui(full, full, len); // full = 2**len
+		mpf_sub_ui(full, full, 1);   // full = full - 1
+	}
+	mpf_t result, tmp;
+	mpf_init_set_str(result, s, 2);
+	mpf_div(result, result, full);  // result /= full
+	mpf_init_set_d(tmp, max - min);
+	mpf_mul(result, result, tmp);   // result *= max - min
+	mpf_init_set_d(tmp, min);
+	mpf_add(result, result, tmp); // result += min
+	return mpf_get_d(result);
 }
 
 float func1_b(char *s,int len) {

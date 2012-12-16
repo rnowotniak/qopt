@@ -9,7 +9,7 @@ import qopt.problems
 
 prob = sys.argv[1]
 
-MaxFE = 1600
+MaxFE = 5000
 repeat = 50
 popsize = 10
 sgapopsize = 80
@@ -31,6 +31,12 @@ elif prob == 'sat20':
     f = qopt.problems.sat20
 elif prob == 'sat25':
     f = qopt.problems.sat25
+elif prob == 'sat90':
+    f = qopt.problems.sat90
+elif prob == 'sat512':
+    f = qopt.problems.sat512
+elif prob == 'sat718':
+    f = qopt.problems.sat718
 elif prob == 'knapsack15':
     f = qopt.problems.knapsack15
 elif prob == 'knapsack20':
@@ -39,15 +45,29 @@ elif prob == 'knapsack25':
     f = qopt.problems.knapsack25
 elif prob == 'knapsack100':
     f = qopt.problems.knapsack100
+elif prob == 'knapsack250':
+    f = qopt.problems.knapsack250
+elif prob == 'knapsack500':
+    f = qopt.problems.knapsack500
 
-if prob in ('f1', 'sat15', 'knapsack15'):
+if prob in ('sat15', 'knapsack15'):
     chromlen = 15
-elif prob in ('f2', 'sat20', 'knapsack20'):
+elif prob in ('sat20', 'knapsack20'):
     chromlen = 20
-elif prob in ('f3', 'sat25', 'knapsack25'):
+elif prob in ('sat25', 'knapsack25'):
     chromlen = 25
-elif prob in ('knapsack100',):
+elif prob in ('sat90',):
+    chromlen = 90
+elif prob in ('sat512',):
+    chromlen = 512
+elif prob in ('sat718',):
+    chromlen = 718
+elif prob in ('f1', 'knapsack100',):
     chromlen = 100
+elif prob in ('f2', 'knapsack250',):
+    chromlen = 250
+elif prob in ('f3', 'knapsack500',):
+    chromlen = 500
 
 def evaluator(chrom):
     s = ''.join([str(g) for g in chrom])
@@ -59,7 +79,7 @@ def step(ga):
 Ysga = np.zeros((0,MaxFE / sgapopsize))
 for r in xrange(repeat):
     fvals = []
-    sga = qopt.algorithms.SGA(evaluator, chromlen = chromlen, popsize = sgapopsize)
+    sga = qopt.algorithms.SGA(evaluator, chromlen = chromlen, popsize = sgapopsize, elitism = True)
     sga.stepCallback.set(step)
     sga.setGenerations(MaxFE / sgapopsize)
     sga.evolve()
@@ -89,10 +109,50 @@ Y = np.average(Y, 0)
 
 print 'qiga done'
 
+
+qiga = QIGA(chromlen = chromlen, popsize = popsize)
+qiga.tmax = MaxFE / popsize
+qiga.problem = f
+
+lut = qiga.lookup_table.reshape((1,8))[0]
+lut[3:8] = [.0, .044, .223, .254, .151]
+
+Ytuned1 = np.zeros((0,MaxFE / popsize))
+for r in xrange(repeat):
+    fvals = []
+    qiga.run()
+    Ytuned1 = np.vstack((Ytuned1, fvals))
+
+Ytuned1 = np.average(Ytuned1, 0)
+
+print 'qiga1 tuned done'
+
+class QIGA2(qopt.algorithms.BQIGAo2):
+    def generation(self):
+        super(QIGA2, self).generation()
+        fvals.append(np.max(self.fvals))
+
+qiga2 = QIGA2(chromlen = chromlen, popsize = popsize)
+qiga2.tmax = MaxFE / popsize
+qiga2.problem = f
+qiga2.mi = .9918
+
+Yqiga2 = np.zeros((0,MaxFE / popsize))
+for r in xrange(repeat):
+    fvals = []
+    qiga2.run()
+    Yqiga2 = np.vstack((Yqiga2, fvals))
+
+Yqiga2 = np.average(Yqiga2, 0)
+
+print 'qiga2 done'
+
 import pylab
 X = np.linspace(0,MaxFE,len(Y))
-pylab.plot(X, Y, 'ro-', label='bQIGAo')
-pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 's-', label='SGA')
+pylab.plot(X, Yqiga2, 'ro-', label='bQIGAo2')
+pylab.plot(X, Ytuned1, 'm^-', label='bQIGAo1-tuned')
+pylab.plot(X, Y, 'gs-', label='bQIGAo1')
+pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 'x-', label='SGA')
 pylab.legend(loc = 'lower right')
 pylab.title(u'Porównanie efektywności algorytmów,\nfunkcja: $\\texttt{%s}$, $chromlen=%d$' % (prob, chromlen))
 pylab.ylabel(u'Średnia wartość maksymalnego dopasowania')

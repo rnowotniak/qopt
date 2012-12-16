@@ -26,6 +26,9 @@ sat = SATs()
 sat15 = _sat.SatProblem(qopt.path('problems/sat/random-15.cnf'))
 sat20 = _sat.SatProblem(qopt.path('problems/sat/random-20.cnf'))
 sat25 = _sat.SatProblem(qopt.path('problems/sat/random-25.cnf'))
+sat90 = _sat.SatProblem(qopt.path('problems/sat/flat30-100.cnf'))
+sat512 = _sat.SatProblem(qopt.path('problems/sat/qg4-08.cnf'))
+sat718 = _sat.SatProblem(qopt.path('problems/sat/hanoi4.cnf'))
 
 # REAL #
 

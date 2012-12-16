@@ -1,25 +1,25 @@
 #!/bin/bash
 
-function rep() {
-	for s in `seq 1 3`; do
-		eval $* $s &
-	done
-	wait
-}
-
-rep python bblocks.py f1 15
-rep python bblocks.py f2 20
-rep python bblocks.py f3 25
-
-rep python bblocks.py k 15
-rep python bblocks.py k 20
-rep python bblocks.py k 25
-
-rep python bblocks.py sat 15
-rep python bblocks.py sat 20
-rep python bblocks.py sat 25
-
-exit 0
+# function rep() {
+# 	for s in `seq 1 3`; do
+# 		eval $* $s &
+# 	done
+# 	wait
+# }
+# 
+# rep python bblocks.py f1 15
+# rep python bblocks.py f2 20
+# rep python bblocks.py f3 25
+# 
+# rep python bblocks.py k 15
+# rep python bblocks.py k 20
+# rep python bblocks.py k 25
+# 
+# rep python bblocks.py sat 15
+# rep python bblocks.py sat 20
+# rep python bblocks.py sat 25
+# 
+# exit 0
 
 # python bblocks.py f1 1
 # python bblocks.py f1 2
@@ -77,17 +77,17 @@ exit 0
 
 
 
-# python "efficiency-comparison.py" f1 &
-# python "efficiency-comparison.py" f2 &
-# python "efficiency-comparison.py" f3 &
-# 
-# python "efficiency-comparison.py" sat15 &
-# python "efficiency-comparison.py" sat20 &
-# python "efficiency-comparison.py" sat25 &
-# 
-# python "efficiency-comparison.py" knapsack15 &
-# python "efficiency-comparison.py" knapsack20 &
-# python "efficiency-comparison.py" knapsack25 &
+python "efficiency-comparison.py" f1 &
+python "efficiency-comparison.py" f2 &
+python "efficiency-comparison.py" f3 &
+
+python "efficiency-comparison.py" sat90 &
+python "efficiency-comparison.py" sat512 &
+python "efficiency-comparison.py" sat718 &
+
+python "efficiency-comparison.py" knapsack100 &
+python "efficiency-comparison.py" knapsack250 &
+python "efficiency-comparison.py" knapsack500 &
 
 wait
 

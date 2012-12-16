@@ -62,7 +62,8 @@ class BQIGAo2 {
 
 		P = new char*[popsize];
 		for (int i = 0; i < popsize; i++) {
-			P[i] = new char[chromlen];
+			P[i] = new char[chromlen + 1];
+			P[i][chromlen] = '\0';
 		}
 
 		mi = .95;

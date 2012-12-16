@@ -72,12 +72,6 @@ void BQIGAo2::evaluate() {
 
 
 /*
-void kronecker(float result[4][4], float m1[2][2], float m2[2][2]) {
-	
-}
-*/
-
-/*
  * Update stage -- quantum genetic operators; rotations in qubit state spaces
  */
 void BQIGAo2::update() {

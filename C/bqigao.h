@@ -57,7 +57,8 @@ class BQIGAo {
 
 		P = new char*[popsize];
 		for (int i = 0; i < popsize; i++) {
-			P[i] = new char[chromlen];
+			P[i] = new char[chromlen + 1];
+			P[i][chromlen] = '\0';
 		}
 
 		float lt[2][2][2] = 

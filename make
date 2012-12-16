@@ -50,7 +50,7 @@ g++ $INCLUDE -shared -o _sat.so ../C/sat.cpp _sat.cpp `python-config --cflags`
 check
 cython --cplus _func1d.pyx
 check
-g++ $INCLUDE -shared -o _func1d.so _func1d.cpp ../C/functions1d.cpp -I../contrib/alglib/src  `python-config --cflags` ../contrib/alglib/src/*.o
+g++ $INCLUDE -shared -o _func1d.so _func1d.cpp ../C/functions1d.cpp -I../contrib/alglib/src  `python-config --cflags` ../contrib/alglib/src/*.o -lgmp
 check
 
 # numerical
