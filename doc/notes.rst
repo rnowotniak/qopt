@@ -28,6 +28,9 @@ jeśli jest bogactwo narzędzi napisanych w Pythonie (powyżej):
 * Jenes (http://jenes.ciselab.org/) Java
 * Alglib (http://www.alglib.net/#download) -- inne jezyki niż Python, EA tutaj to tylko margines
 * Open BEAGLE (http://beagle.gel.ulaval.ca/) C++
+* http://eodev.sourceforge.net/
+* http://dev.heuristiclab.com/trac/hl/core
+* http://cs.gmu.edu/~eclab/projects/ecj/
 
 
 
