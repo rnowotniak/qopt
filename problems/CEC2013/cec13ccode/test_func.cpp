@@ -5,7 +5,7 @@
 */
 
 
-#include <WINDOWS.H>      
+// #include <WINDOWS.H>      
 #include <stdio.h>
 #include <math.h>
 #include <malloc.h>
@@ -89,7 +89,7 @@ void test_func(double *x, double *f, int nx, int mx,int func_num)
 			printf("\nError: there is insufficient memory available!\n");
 		for (i=0; i<cf_num*nx*nx; i++)
 		{
-				fscanf(fpt,"%Lf",&M[i]);
+				fscanf(fpt,"%lf",&M[i]);
 				//printf("M[%d] = %LE,",i+1,M[i]);
 		}
 		fclose(fpt);
@@ -105,7 +105,7 @@ void test_func(double *x, double *f, int nx, int mx,int func_num)
 			printf("\nError: there is insufficient memory available!\n");
 		for(i=0;i<cf_num*nx;i++)
 		{
-				fscanf(fpt,"%Lf",&OShift[i]);
+				fscanf(fpt,"%lf",&OShift[i]);
 		}
 		fclose(fpt);
 

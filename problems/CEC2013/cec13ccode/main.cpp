@@ -4,7 +4,7 @@
   Dec. 23th 2012
 */
 
-#include <WINDOWS.H>    
+// #include <WINDOWS.H>    
 #include <stdio.h>
 #include <math.h>
 #include <malloc.h>
@@ -16,7 +16,7 @@ double *OShift,*M,*y,*z,*x_bound;
 int ini_flag=0,n_flag,func_flag;
 
 
-void main()
+int main()
 {
 	int i,j,k,n,m,func_num;
 	double *f,*x;
@@ -35,8 +35,8 @@ void main()
 			printf("\nError: there is insufficient memory available!\n");
 		for(i=0;i<n;i++)
 		{
-				fscanf(fpt,"%Lf",&x[i]);
-				printf("%Lf\n",x[i]);
+				fscanf(fpt,"%lf",&x[i]);
+				printf("%f\n",x[i]);
 		}
 		fclose(fpt);
 
@@ -45,7 +45,7 @@ void main()
 			for (j = 0; j < n; j++)
 			{
 				x[i*n+j]=0.0;
-				printf("%Lf\n",x[i*n+j]);
+				printf("%f\n",x[i*n+j]);
 			}
 		}
 
@@ -58,7 +58,7 @@ void main()
 		{
 			test_func(x, f, n,m,func_num);
 			for (j = 0; j < m; j++)
-				printf(" f%d(x[%d]) = %Lf,",func_num,j+1,f[j]);
+				printf(" f%d(x[%d]) = %f,",func_num,j+1,f[j]);
 			printf("\n");
 		}
 	}
