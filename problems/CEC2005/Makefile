@@ -13,7 +13,7 @@ LD=/usr/bin/gcc
 
 RM=/bin/rm -f
 
-CFLAGS=-Df$(FNUM) -Wall -Werror -ansi -pedantic -g
+CFLAGS=-Df$(FNUM) -DDEBUG=$(DEBUG) -Wall -Werror -ansi -pedantic -g
 
 #CFLAGS=-O2 -march=pentium4 -pipe -fomit-frame-pointer
 #LDFLAGS=-s

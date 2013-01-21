@@ -13,7 +13,9 @@ long double evaluate(long double *x, int n) {
 
     if (initialized_dimension != n) {
         initialized_dimension = n;
+#if defined(DEBUG) && DEBUG != 0
         printf("Initializing CEC05 benchmark function for dimension %d\n", n);
+#endif
 
         nreal = n;
 
@@ -24,7 +26,9 @@ long double evaluate(long double *x, int n) {
 #endif
 
 	olddir = getcwd(0, 0);
+#if defined(DEBUG) && DEBUG != 0
         printf("chdir %s\n", ABSDIR);
+#endif
 	chdir(ABSDIR);
 
         randomize();
@@ -35,7 +39,9 @@ long double evaluate(long double *x, int n) {
         calc_benchmark_norm();
 #endif
 
+#if defined(DEBUG) && DEBUG != 0
         printf("\nchdir back to %s\n", olddir);
+#endif
 	chdir(olddir);
 	free(olddir);
     }

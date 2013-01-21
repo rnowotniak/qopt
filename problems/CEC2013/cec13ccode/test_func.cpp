@@ -112,7 +112,9 @@ void test_func(double *x, double *f, int nx, int mx,int func_num)
 		n_flag=nx;
 		func_flag=func_num;
 		ini_flag=1;
+#if defined(DEBUG) && DEBUG != 0
 		printf("Function has been initialized!\n");
+#endif
 	}
 
 

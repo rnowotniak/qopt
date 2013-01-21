@@ -16,6 +16,7 @@ function check() {
 }
 
 INCLUDE=-I../C
+export DEBUG=0
 
 # framework
 cython --cplus framework.pyx

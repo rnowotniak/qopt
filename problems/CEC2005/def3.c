@@ -26,7 +26,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -51,7 +53,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -79,7 +83,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n G[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -94,7 +100,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -119,7 +127,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -147,7 +157,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
@@ -160,7 +172,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&A[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n A[%d][%d] = %LE",i+1,j+1,A[i][j]);
+#endif
         }
         do
         {
@@ -216,7 +230,9 @@ void initialize()
         {
             fscanf(fpt,"%Lf",&o[i][j]);
             o[i][j] -= 1.0;
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -244,7 +260,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n G[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -259,7 +277,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -288,7 +308,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n M[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -303,7 +325,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -333,7 +357,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -361,7 +387,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n M[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -376,7 +404,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -404,7 +434,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n M[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -419,7 +451,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -454,7 +488,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&A[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n A[%d][%d] = %LE",i+1,j+1,A[i][j]);
+#endif
         }
         do
         {
@@ -479,7 +515,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&B[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n B[%d][%d] = %LE",i+1,j+1,B[i][j]);
+#endif
         }
         do
         {
@@ -502,7 +540,9 @@ void initialize()
     for (i=0; i<nreal; i++)
     {
         fscanf(fpt,"%Lf",&alpha[i]);
+#if defined(DEBUG) && DEBUG != 0
         printf("\n alpha[%d] = %LE",i+1,alpha[i]);
+#endif
     }
     fclose(fpt);
     bias[0] = -460.0;
@@ -527,7 +567,9 @@ void initialize()
         {
             fscanf(fpt,"%Lf",&o[i][j]);
             o[i][j] -= 1.0;
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -555,7 +597,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&g[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n M[%d][%d] = %LE",i+1,j+1,g[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -570,7 +614,9 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
     }
     fclose(fpt);
@@ -596,14 +642,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     lambda[0] = 1.0;
@@ -638,14 +688,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func1_M_D2.txt","r");
@@ -659,7 +713,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -667,7 +723,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     lambda[0] = 1.0;
     lambda[1] = 1.0;
@@ -701,14 +759,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func1_M_D2.txt","r");
@@ -722,7 +784,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -730,7 +794,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     lambda[0] = 1.0;
     lambda[1] = 1.0;
@@ -764,14 +830,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func2_M_D2.txt","r");
@@ -785,7 +855,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -793,7 +865,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     for (i=0; i<nreal; i++)
     {
@@ -841,14 +915,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func2_M_D2.txt","r");
@@ -862,7 +940,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -870,7 +950,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     for (i=0; i<nreal; i++)
     {
@@ -919,14 +1001,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     index = nreal/2;
@@ -945,7 +1031,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -953,7 +1041,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     for (i=0; i<nreal; i++)
     {
@@ -1001,14 +1091,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func3_M_D2.txt","r");
@@ -1022,7 +1116,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -1030,7 +1126,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     sigma[0] = 1.0;
     sigma[1] = 1.0;
@@ -1074,14 +1172,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func3_HM_D2.txt","r");
@@ -1095,7 +1197,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -1103,7 +1207,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     sigma[0] = 1.0;
     sigma[1] = 1.0;
@@ -1147,14 +1253,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func3_M_D2.txt","r");
@@ -1168,7 +1278,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -1177,7 +1289,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     sigma[0] = 1.0;
     sigma[1] = 1.0;
@@ -1221,14 +1335,18 @@ void initialize()
         for (j=0; j<nreal; j++)
         {
             fscanf(fpt,"%Lf",&o[i][j]);
+#if defined(DEBUG) && DEBUG != 0
             printf("\n O[%d][%d] = %LE",i+1,j+1,o[i][j]);
+#endif
         }
         do
         {
             fscanf(fpt,"%c",&c);
         }
         while (c!='\n');
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     fclose(fpt);
     if (nreal==2)    fpt = fopen("input_data/hybrid_func4_M_D2.txt","r");
@@ -1242,7 +1360,9 @@ void initialize()
             for (k=0; k<nreal; k++)
             {
                 fscanf(fpt,"%Lf",&l[i][j][k]);
+#if defined(DEBUG) && DEBUG != 0
                 printf("\n M[%d][%d][%d] = %LE",i+1,j+1,k+1,l[i][j][k]);
+#endif
             }
             do
             {
@@ -1250,7 +1370,9 @@ void initialize()
             }
             while (c!='\n');
         }
+#if defined(DEBUG) && DEBUG != 0
         printf("\n");
+#endif
     }
     for (i=0; i<nfunc; i++)
     {

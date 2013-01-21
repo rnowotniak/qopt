@@ -12,8 +12,10 @@ SAT::SAT(const char *fname) {
 	}
 	initprob(f);
 	fclose(f);
+#if defined(DEBUG) && DEBUG != 0
 	printf("%d %d\n", numatom, numclause);
 	printf("%d\n", clause[3][2]);
+#endif
 }
 
 float SAT::evaluator(char *cand, int length) {
@@ -92,7 +94,9 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 		{
 			storeptr = (int *) malloc( sizeof(int) * STOREBLOCK );
 			freestore = STOREBLOCK;
+#if defined(DEBUG) && DEBUG != 0
 			fprintf(stderr,"allocating memory...\n");
+#endif
 		}
 		clause[i] = storeptr;
 		do
@@ -130,7 +134,9 @@ void SAT::initprob(FILE *F) // drawn from WalkSAT
 		{
 			storeptr = (int *) malloc( sizeof(int) * STOREBLOCK );
 			freestore = STOREBLOCK;
+#if defined(DEBUG) && DEBUG != 0
 			fprintf(stderr,"allocating memory...\n");
+#endif
 		}
 		occurence[i] = storeptr;
 		freestore -= numoccurence[i];
