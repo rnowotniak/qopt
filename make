@@ -58,6 +58,10 @@ cd CEC2005
 #bash genlibs.sh
 check
 cd ..
+cython --cplus _cec2013.pyx
+check
+g++ $INCLUDE -I CEC2013/cec13ccode -shared -o _cec2013.so _cec2013.cpp CEC2013/cec13ccode/test_func.cpp `python-config --cflags`
+check
 cython --cplus _cec2005.pyx
 check
 g++ $INCLUDE -shared -o _cec2005.so _cec2005.cpp `python-config --cflags`

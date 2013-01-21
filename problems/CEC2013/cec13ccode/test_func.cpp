@@ -48,8 +48,8 @@ void asyfunc (double *, double *x, int, double);
 void oszfunc (double *, double *, int);
 void cf_cal(double *, double *, int, double *,double *,double *,double *,int);
 
-extern double *OShift,*M,*y,*z,*x_bound;;
-extern int ini_flag,n_flag,func_flag;
+double *OShift,*M,*y,*z,*x_bound;;
+int ini_flag=0,n_flag,func_flag;
 
 void test_func(double *x, double *f, int nx, int mx,int func_num)
 {
