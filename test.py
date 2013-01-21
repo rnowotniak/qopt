@@ -43,6 +43,13 @@ print cassini.evaluate([-779.629801566988, 3.265804135361, 0.528440291493, 0.382
 # should be 8.383...
 
 # cec2011
+# ...
+
+# cec2013
+f1 = qopt.problems.CEC2013(fnum = 1)
+print f1.evaluate(qopt.problems.CEC2013.optimum)
+f2 = qopt.problems.CEC2013(fnum = 2)
+print f2.evaluate(qopt.problems.CEC2013.optimum)
 
 ##############################
 # Combinatorial optimization #

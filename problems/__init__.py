@@ -41,4 +41,5 @@ cec2005 = _cec2005.CEC2005
 import _cec2011
 cec2011 = _cec2011.CEC2011
 
+from _cec2013 import CEC2013
 
