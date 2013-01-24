@@ -14,13 +14,13 @@ rQIEA<DTYPE>::rQIEA(int popsize, int chromlen) : EA<DTYPE>::EA(popsize, chromlen
 	}
 
 	bounds = new DTYPE* [chromlen];
-    for (int i = 0; i < chromlen; i++) {
-        bounds[i] = new DTYPE[2];
-        bounds[i][0] = -130;
-        bounds[i][1] = 130;
-    }
+	for (int i = 0; i < chromlen; i++) {
+		bounds[i] = new DTYPE[2];
+		bounds[i][0] = -130;
+		bounds[i][1] = 130;
+	}
 
-    qbest = new float* [chromlen];
+	qbest = new float* [chromlen];
 
 }
 
@@ -47,17 +47,17 @@ rQIEA<DTYPE>::~rQIEA() {
 
 	for (int i = 0; i < this->popsize; i++) {
 		for (int j = 0; j < this->chromlen; j++) {
-            delete [] this->Q[i][j];
-        }
-        delete [] this->Q[i];
-    }
+			delete [] this->Q[i][j];
+		}
+		delete [] this->Q[i];
+	}
 
-    delete [] this->Q;
+	delete [] this->Q;
 
-    for (int i = 0; i < this->chromlen; i++) {
-        delete [] bounds[i];
-    }
-    delete [] bounds;
+	for (int i = 0; i < this->chromlen; i++) {
+		delete [] bounds[i];
+	}
+	delete [] bounds;
 }
 
 template <class DTYPE>

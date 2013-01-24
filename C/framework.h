@@ -1,6 +1,7 @@
 #ifndef _FRAMEWORK_H
 #define _FRAMEWORK_H 1
 
+#include <cstdlib>
 #include <exception>
 #include <string.h>
 

@@ -85,10 +85,10 @@ class BQIGAo {
 		for (int i = 0; i < popsize; i++) {
 			delete [] P[i];
 		}
-		delete P;
-		delete Q;
-		delete fvals;
-		delete best;
+		delete P;      // []
+		delete Q;      // []
+		delete fvals;  // []
+		delete best;   // []
 	}
 
 	// complete algorithm in C++

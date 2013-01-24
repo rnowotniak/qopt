@@ -1,6 +1,11 @@
 #ifndef _QIGA_H
 #define _QIGA_H 1
 
+/*
+ * This implementation is based on trigonometric (angular) representation
+ *
+ */
+
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
