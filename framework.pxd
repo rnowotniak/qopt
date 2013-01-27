@@ -7,3 +7,6 @@ cdef extern from "framework.h":
 cdef class Problem:
     cdef ProblemCpp[char,float] *thisptr
 
+cdef class ProblemDouble:
+    cdef ProblemCpp[double,double] *thisptr
+

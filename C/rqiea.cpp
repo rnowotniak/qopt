@@ -40,7 +40,14 @@ void RQIEA::observe() {
 			*Pij *= (this->bounds[j][1] - this->bounds[j][0]);
 			*Pij += this->bounds[j][0];
 		}
+		/*
+		for (int j = 0; j < chromlen; j++) {
+			printf("%f, ", *Pij);
+		}
+		printf("\n");
+		*/
 	}
+	//printf("-\n");
 }
 
 void RQIEA::storebest() {
@@ -65,6 +72,7 @@ void RQIEA::storebest() {
 void RQIEA::evaluate() {
 	for (int i = 0; i < popsize; i++) {
 		fvals[i] = problem->evaluator(P + i * chromlen, chromlen);
+		//printf("%f\n", fvals[i]);
 	}
 }
 
@@ -132,8 +140,8 @@ void RQIEA::recombine() {
 	DTYPE buf[2 * chromlen];
 	memcpy(buf, q1, 2 * chromlen * sizeof(DTYPE));
 
-	memcpy(q1 + h1 * 2, q2 + h1, (h2 - h1) * 2);
-	memcpy(q2 + h1 * 2, buf + h1, (h2 - h1) * 2);
+	memcpy(q1 + h1 * 2, q2 + h1, sizeof(DTYPE) * (h2 - h1) * 2);
+	memcpy(q2 + h1 * 2, buf + h1, sizeof(DTYPE) * (h2 - h1) * 2);
 
 	for (int k = h1; k < h2; k++) { // < ???
 		DTYPE tmp = q1[k * 2];
@@ -148,7 +156,7 @@ void RQIEA::catastrophe() {
 
 void RQIEA::run() {
 	t = 0;
-	int tmax = 10000;
+	int tmax = 5000;
 	initialize();
 	observe(); //
 	evaluate(); //
@@ -169,8 +177,9 @@ void RQIEA::run() {
 #include "cec2013.h"
 int main() {
 	srand(time(0));
+	srand(2);//time(0));
 	int dim = 10;
-	int popsize = 10;
+	int popsize = 20;
 	RQIEA *rQIEA = new RQIEA(dim, popsize);
 	for (int i = 0; i < dim; i++) {
 		rQIEA->bounds[i][0] = -100;
