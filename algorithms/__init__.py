@@ -1,6 +1,8 @@
 
 from _algorithms import QIGA, BQIGAo, BQIGAo2, QIGA_StorePriorToRepair
 
+from _myrqiea2 import MyRQIEA2
+
 #from _algorithms import RQIEA
 #...
 

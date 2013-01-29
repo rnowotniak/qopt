@@ -1,3 +1,4 @@
+import sys
 import qopt
 
 # COMBINATORIAL #
@@ -37,9 +38,13 @@ import _cec2005
 cec2005 = _cec2005.CEC2005
 
 # cec2011
-# if os.environ('LD_LIBRARY_PATH').contains('.../CEC2011') and ...('Matlab2011..  # <- TODO
-import _cec2011
-cec2011 = _cec2011.CEC2011
+try:
+    import _cec2011
+    cec2011 = _cec2011.CEC2011
+except ImportError, e:
+    sys.stderr.write('Warning: Could not import CEC2011 benchmark due to:\n')
+    sys.stderr.write(str(e) + '\n')
 
+# cec2013
 from _cec2013 import CEC2013
 

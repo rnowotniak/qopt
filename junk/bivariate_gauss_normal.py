@@ -11,7 +11,7 @@ nbPoints=500
 # data
 points = 900
 mean = [-2.,-3.]
-theta = -90. * numpy.pi / 180
+theta = 20. * numpy.pi / 180
 d1 = .1
 d2 = 1
 
@@ -42,17 +42,17 @@ import random,math
 # METHOD 2
 def box_muller(how_many):
     res = []
-    u1 = random.random()
-    u2 = random.random()
     for i in xrange(how_many):
+        u1 = random.random()
+        u2 = random.random()
         z1 = math.sqrt(-2.*math.log(u1)) * math.cos(2.*math.pi*u2)
         res.append(z1)
     return numpy.matrix(res)
 
-u =  d1 * numpy.random.standard_normal(points)
-v =  d2 * numpy.random.standard_normal(points)
+u =  d1 * box_muller(points)
+v =  d2 * box_muller(points)
 
-m = numpy.matrix((u,v))
+m = numpy.vstack((u,v))
 m = rot * m
 
 m[0,:] += mean[0]

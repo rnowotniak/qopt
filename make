@@ -26,6 +26,11 @@ check
 
 # algorithms
 cd algorithms
+cython --cplus _myrqiea2.pyx
+check
+g++ $INCLUDE -shared -o _myrqiea2.so _myrqiea2.cpp ../C/myrqiea2.cpp `python-config --cflags`
+check
+
 cython --cplus _algorithms.pyx
 check
 g++ $INCLUDE -shared -o _algorithms.so _algorithms.cpp ../C/qiga.cpp ../C/bqigao.cpp ../C/bqigao2.cpp `python-config --cflags`
