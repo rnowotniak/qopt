@@ -31,10 +31,14 @@ s1 = qopt.problems._sat.SatProblem('problems/sat/flat30-100.cnf')
 print s1.evaluate('100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001')
 
 # cec2005
-f1 = qopt.problems.cec2005(1)
+f1 = qopt.problems.CEC2005(1)
 print f1.evaluate((0,0))
 
-cassini = qopt.problems.cec2011(15) # XXX
+f1 = qopt.problems.CEC2013(8)
+print f1.evaluate(qopt.problems.CEC2013.optimum[:2])
+
+# cec2011
+cassini = qopt.problems.CEC2011(15) # XXX
 print cassini.evaluate([-779.629801566988, 3.265804135361, 0.528440291493, 0.382390419772,\
         167.937610148996, 424.032204472497, 53.304869390732, 589.767895836123, 2199.961911685212,\
         0.772877728290, 0.531757418755, 0.010789195916, 0.167388829033, 0.010425709182,\
@@ -42,8 +46,6 @@ print cassini.evaluate([-779.629801566988, 3.265804135361, 0.528440291493, 0.382
         -1.959572311812, -1.554796022348, -1.513432303179])
 # should be 8.383...
 
-# cec2011
-# ...
 
 # cec2013
 f1 = qopt.problems.CEC2013(fnum = 1)
@@ -81,6 +83,7 @@ print q.bestval
 #print q.Q[3,5]
 
 #r = qopt.algorithms.rQIEA()
+print 'OK'
 sys.exit(0)
 
 q._initialize()
@@ -93,13 +96,13 @@ print q.Q
 
 # cec2005
 r = qopt.algorithms.RQIEA
-r.problem = qopt.problems.cec2005.f2
+r.problem = qopt.problems.CEC2005(2)
 r.dim = 30
 r.bounds = None # ??? set automatically in .problem ?
 r.run()
 
 # cec2011
-r.problem = qopt.problems.cec2011.f15
+r.problem = qopt.problems.CEC2011(15)
 r.run()
 
 

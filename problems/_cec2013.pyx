@@ -6,11 +6,14 @@ import os
 import qopt
 import numpy
 
-from qopt.framework cimport Problem, ProblemCpp
+from qopt.framework cimport ProblemDouble, ProblemCpp
 
 cdef extern from "test_func.h":
     void test_func(double *x, double *f, int nx, int mx,int func_num)
 
+cdef extern from "cec2013.h":
+    cdef cppclass CEC2013cpp "CEC2013" (ProblemCpp[double,double]):
+        CEC2013cpp(int fnum)
 
 DEF MAXDIM = 10
 
@@ -25,12 +28,13 @@ cdef double evaluate_cec2013(int fnum, x):
     test_func(arg, res, len(x), 1, fnum)
     return res[0]
 
-cdef class CEC2013(Problem):
+cdef class CEC2013(ProblemDouble):
     cdef long double (*r_evaluator) (long double *x,int n)
     cdef int fnum
     optimum = [float(x) for x in open(qopt.path(fname),'r').readlines()[0].split()][:MAXDIM]
     def __cinit__(self, int fnum):
         self.fnum = fnum
+        self.thisptr = new CEC2013cpp(fnum)
     def evaluate(self, x):
         if type(x[0]) == numpy.ndarray:
             assert len(x[0].shape) == 2 and x[0].shape == x[1].shape

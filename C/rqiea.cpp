@@ -1,6 +1,9 @@
 
 /*
  * rQIEA algorithm from Gexiang's survey
+ *
+ * IT IS WRONG WRONG WRONG, IT DOES NOT DOES NOT DOES NOT WORK
+ *
  */
 
 #include <time.h>

@@ -27,7 +27,7 @@ cdef extern from "myrqiea2.h":
         double *Q
         char **P
         double *fvals
-        char *best
+        double *best
         ProblemCpp[double,double] *problem
         void bqigao()
         void initialize()
@@ -67,7 +67,8 @@ cdef class __MyRQIEA2cpp:
     #     def __get__(self): return self.thisptr.tmax
     #     def __set__(self, int tmax): self.thisptr.tmax = tmax
     property best:
-        def __get__(self): return self.thisptr.best[:self.thisptr.chromlen]
+        def __get__(self):
+            return [self.thisptr.best[0],self.thisptr.best[1]]
         def __set__(self, char *val): libc.string.memcpy(self.thisptr.best, val, len(val))
     property bestval:
         def __get__(self): return self.thisptr.bestval

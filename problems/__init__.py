@@ -34,13 +34,11 @@ sat718 = _sat.SatProblem(qopt.path('problems/sat/hanoi4.cnf'))
 # REAL #
 
 # cec2005
-import _cec2005
-cec2005 = _cec2005.CEC2005
+from _cec2005 import CEC2005
 
 # cec2011
 try:
-    import _cec2011
-    cec2011 = _cec2011.CEC2011
+    from _cec2011 import CEC2011
 except ImportError, e:
     sys.stderr.write('Warning: Could not import CEC2011 benchmark due to:\n')
     sys.stderr.write(str(e) + '\n')

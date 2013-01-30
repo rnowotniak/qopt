@@ -24,6 +24,7 @@ void MyRQIEA2::run() {
 #define Pij (P + i * (chromlen) + (2 * j))
 
 void MyRQIEA2::initialize() {
+	bestval = std::numeric_limits<DTYPE>::max();
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
 			Qij[0] = 2. * M_PI * rand() / RAND_MAX - M_PI; // location
@@ -54,12 +55,46 @@ void MyRQIEA2::observe() {
 }
 
 void MyRQIEA2::storebest() {
+	DTYPE val = std::numeric_limits<DTYPE>::max();
+	int i_best;
+	for (int i = 0; i < popsize; i++) {
+		if (fvals[i] < val) { // XXX minmax
+			val = fvals[i];
+			i_best = i;
+		}
+	}
+	if (val < bestval) { /// XXX minmax
+		bestval = val;
+		memcpy(best, P + i_best * chromlen, sizeof(DTYPE) * chromlen);
+	}
 }
 
 void MyRQIEA2::evaluate() {
+	for (int i = 0; i < popsize; i++) {
+		fvals[i] = problem->evaluator(P + i * chromlen, chromlen);
+	}
 }
 
 void MyRQIEA2::update() {
+	for (int i = 0; i < popsize; i++) {
+		for (int j = 0; j < chromlen / 2; j++) {
+			/* distribution adaptation */
+
+			double anglebest[2] = {
+				best[0] * 2. * M_PI / 100, // XXX
+				best[1] * 2. * M_PI / 100, // XXX
+			};
+			Qij[0] += 1. * (2.*M_PI/100) * (anglebest[0] > Qij[0] ? 1 : -1); // XXX
+			Qij[1] += 1. * (2.*M_PI/100) * (anglebest[1] > Qij[1] ? 1 : -1); // XXX
+
+			// Qij[2] <- ~ wspolczynnik korelacji??? podejrzec w CMAES???
+			Qij[2] += fmod(M_PI / 18, (2. * M_PI));
+
+			// very simple rule
+			Qij[3] *= .98;
+			Qij[4] *= .98;
+		}
+	}
 }
 
 /*

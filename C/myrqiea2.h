@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <limits>
 
 class MyRQIEA2 {
 
@@ -35,6 +36,7 @@ class MyRQIEA2 {
 			assert(chromlen % 2 == 0);
 
 			problem = NULL;
+			bestval = std::numeric_limits<DTYPE>::max();
 
 			Q = new DTYPE[5 * chromlen / 2 * popsize];
 			P = new DTYPE[popsize * chromlen];
