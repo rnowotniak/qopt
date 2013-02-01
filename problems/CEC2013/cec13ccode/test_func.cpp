@@ -81,7 +81,7 @@ void test_func(double *x, double *f, int nx, int mx,int func_num)
 		fpt = fopen(FileName,"r");
 		if (fpt==NULL)
 		{
-		    printf("\n Error: Cannot open input file for reading \n");
+		    printf("\n Error: Cannot open input file %s for reading \n", FileName);
 		}
 
 		M=(double*)malloc(cf_num*nx*nx*sizeof(double));

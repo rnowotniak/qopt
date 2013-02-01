@@ -27,7 +27,7 @@ class MyRQIEA2 {
 		DTYPE *fvals;
 		DTYPE bestval;
 		DTYPE *best;
-		DTYPE (*bestq)[2];
+		// DTYPE (*bestq)[2];
 
 		Problem<DTYPE,DTYPE> *problem;
 
@@ -43,7 +43,7 @@ class MyRQIEA2 {
 			fvals = new DTYPE[popsize];
 			bounds = new DTYPE[chromlen][2];
 			best = new DTYPE[chromlen];
-			bestq = new DTYPE[chromlen][2];
+			// bestq = new DTYPE[chromlen][2];
 		}
 
 		~MyRQIEA2() {
@@ -52,7 +52,7 @@ class MyRQIEA2 {
 			delete [] bounds;
 			delete [] best;
 			delete [] fvals;
-			delete [] bestq;
+			// delete [] bestq;
 		}
 
 		// the whole algorithm in C++

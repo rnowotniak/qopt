@@ -68,7 +68,10 @@ cdef class __MyRQIEA2cpp:
     #     def __set__(self, int tmax): self.thisptr.tmax = tmax
     property best:
         def __get__(self):
-            return [self.thisptr.best[0],self.thisptr.best[1]]
+            result = []
+            for i in xrange(self.thisptr.chromlen):
+                result.append(self.thisptr.best[i])
+            return result
         def __set__(self, char *val): libc.string.memcpy(self.thisptr.best, val, len(val))
     property bestval:
         def __get__(self): return self.thisptr.bestval

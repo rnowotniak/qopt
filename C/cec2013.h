@@ -18,7 +18,7 @@ class CEC2013 : public Problem<double,double> {
 			double result;
 			char oldpath[256] = {'\0'};
 			getcwd(oldpath, sizeof(oldpath) - 1);
-			chdir("../problems/CEC2013/cec13ccode");
+			chdir(QOPT_PATH "/problems/CEC2013/cec13ccode");
 			test_func(x, &result, length, 1, fnum);
 			chdir(oldpath);
 			return result;

@@ -13,7 +13,7 @@ cdef extern from "test_func.h":
 
 cdef extern from "cec2013.h":
     cdef cppclass CEC2013cpp "CEC2013" (ProblemCpp[double,double]):
-        CEC2013cpp(int fnum)
+        CEC2013cpp(int fnum) except +SyntaxError
 
 DEF MAXDIM = 10
 

@@ -5,6 +5,11 @@
 #include <exception>
 #include <string.h>
 
+
+// XXX
+#define QOPT_PATH "/home/rob/qopt/"
+
+
 class QOptException : public std::exception {
 
 	const char *str;
