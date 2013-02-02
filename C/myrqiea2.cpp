@@ -100,6 +100,7 @@ void MyRQIEA2::update() {
 	}
 }
 
+/*
 #include "cec2005.h"
 #include "cec2013.h"
 #include <time.h>
@@ -128,3 +129,5 @@ int main() {
 	}
 	printf("\n");
 }
+*/
+

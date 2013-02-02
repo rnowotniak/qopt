@@ -1,0 +1,105 @@
+{
+
+
+	# -----------------------------------------
+	# Cassini/Huygens Mission Part 2: 
+	# Demonstrating the trajectory produced by 
+	# gravitational assists from Venus and Earth
+	# 
+	# Initialization adapted from script by Paul Swennenhuis
+	# 
+	#
+	# Author: "Maine " aka Walter Allan - wallan@maine.rr.com
+	#
+	# ------------------
+	# Cassini/Huygens from launch Oct. 15, 1997
+	# to escape encounter with Jupiter Dec. 2000
+	# ------------------
+	
+	# duration approx. 3 minutes	
+	
+	#initialization
+	
+	cancel{}
+	renderflags { clear "atmospheres|automag|boundaries|cloudmaps|comettails|constellations|eclipseshadows|galaxies|grid|markers|nightmaps|orbits|planets|pointstars|ringshadows|stars"}
+	labels { clear "asteroids|comets|constellations|galaxies|moons|planets|spacecraft|stars"}
+	unmarkall {}
+	set {name "ambientlightlevel" value 0.5}
+	setfaintestautomag45deg {magnitude 7.2}
+	set {name "fov" value 48}
+	set {name "stardistancelimit" value 1000000}
+	
+	renderflags { set "atmospheres|automag|cloudmaps|eclipseshadows|galaxies|nightmaps|planets|pointstars|ringshadows|stars"}
+	timerate {rate 1.0}
+	
+	# --------------------------------------------------
+	# Script continues the Cassini/Huygens mission
+	# with oblique overview of trajectory
+	# --------------------------------------------------
+
+
+	set {name "fov" value 25}
+	timerate {rate 1}
+	time {jd 2451408.02847}
+	cancel{}
+	renderflags { clear "orbits"}
+	select { object "sol" }
+	center {time 3}
+	wait {duration 3}
+	renderflags { set "orbits"}
+	track {}
+	gotolonglat {time 12 distance 4000 up [0 1 0] longitude 150 latitude 30}
+	labels { set "planets|spacecraft"}
+	select { object "cassini"}
+	print { text "This is where we left off at the end of Part 1 -\nCassini was receiving its boost to the outer planets." row -5 duration 10}
+	wait {duration 12}
+	select { object "sol"}
+	changedistance { duration 2 rate -0.5}
+	wait {duration 2}
+	select { object "cassini"}
+	print { text "Now we will re-run time from Cassini/Huygens' launch (Oct.  1997)\nto illustrate the importance of gravitational assists.\nThe red track is Cassini's path." row -5 duration 10}
+	time { jd 2450736.9000}
+	wait {duration 6}
+	timerate {rate 1000000}
+	wait {duration 5}
+	#  print { text "Note how Cassini is 'falling' toward the Sun at this point.\nThe first Venus assist (April  1998) will boost it but not quite enough." row -5 duration 12}
+	#  wait {duration 15}
+	#  timerate {rate 10000000}
+	#  wait {duration 2}
+	#  timerate {rate 1000000}
+	#  print { text "A year later Cassini gets a second Venus gravitational assist followed by an assist from Earth.\nThis will send Cassini/Huygens on to the outer solar system." row -5 duration 12}
+	#  wait {duration 12}
+	#  print { text "Note the hitch in the Cassini's smooth trajectory \nin this end-on view as it passes Venus" row -5 duration 12}
+	#  wait {duration 13}
+	#  cancel{}
+	#  
+	#  renderflags {clear "orbits"}
+	#  labels {clear "planets"}
+
+	#  select { object "Cassini" }
+	#  
+	#  print { text "We will follow Cassini/Huygens to Jupiter." row -5 duration 10}
+	#  track {}
+	#  follow {}
+	#  timerate {rate 10000}
+	#  
+	#  gotolonglat {latitude -10 longitude 90 up [0 1 0] distance 5 time 10}
+	#  wait {duration 10}
+	#  
+	#  # December 25, 2000
+	#  time { jd 2451904.39212}
+	#  print { text "Cassini/Huygens approaches Jupiter and its moons at Christmastime, 2000." row -5 duration 20}
+	#  set {name "fov" value 15}
+	#  gotolonglat {latitude 5 longitude 300 up [0 1 0] distance 5 time 10}
+	#  labels {clear "spacecraft"}
+	#  wait {duration 20}
+	#  print { text "There is still a long way to go. \nIn Part 3, we will jump ahead to Cassini/Huygens arrival at Saturn on July 1, 2004. \nThat is almost seven years after launch!." row -5 duration 10}
+	#  wait {duration 15}
+	#  print { text "End of Part 2." row -5 duration 5}
+	#  wait {duration 5}
+	#  
+	#  timerate {rate 1}
+	#  
+
+
+}

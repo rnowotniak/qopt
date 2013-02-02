@@ -19,6 +19,8 @@ cdef class CEC2011(Problem):
     cdef long double (*r_evaluator) (long double *x,int n)
 
     def __cinit__(self, int fnum):
+        # XXX do something with fnum!
+        assert fnum == 15
         Initial_CEC2011_Cost_Function()
         # TODO:  set fnum and r_evaluator accordingly
 
@@ -30,7 +32,7 @@ cdef class CEC2011(Problem):
         for i in xrange(len(x)):
             tab[i] = x[i]
         cdef FIELD_TYPE res[1]
-        cost_function15(tab, res)
+        cost_function15(tab, res) # XXX
         os.chdir(path)
         return res[0]
 
