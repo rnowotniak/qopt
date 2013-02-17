@@ -9,7 +9,7 @@ import qopt.problems
 
 #prob = sys.argv[1]
 
-prob = 'knapsack250'
+prob = 'sat25'
 
 MaxFE = 4000
 repeat = 50

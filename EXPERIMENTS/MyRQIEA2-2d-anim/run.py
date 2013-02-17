@@ -20,7 +20,7 @@ Y = np.linspace(-50, 50,30)
 X,Y = np.meshgrid(X,Y)
 Z = f.evaluate((X,Y))
 
-surf = pylab.contourf(X,Y, Z, cmap='hot')
+surf = pylab.contourf(X,Y, Z)#, cmap='hot')
 opt = f.optimum[:2]
 pylab.plot(opt[0], opt[1], 'ro')
 pylab.xlabel('x')
@@ -68,7 +68,7 @@ def update_plot(i):
 
 anim = animation.FuncAnimation(pylab.gcf(), update_plot,repeat=True,frames=300, interval=1000/30,blit=False)
 
-#anim.save('/tmp/MyRQIEA.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+anim.save('/tmp/MyRQIEA.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
 
-pylab.show()
+#pylab.show()
 
