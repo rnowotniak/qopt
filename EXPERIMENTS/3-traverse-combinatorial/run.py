@@ -13,7 +13,7 @@ sat = qopt.problems._sat.SatProblem('../../problems/sat/random-20.cnf')
 #fun = qopt.problems.func1d.f2
 fun = sat
 
-f=open(qopt.path('data/sat20-best'))
+f=open(qopt.path('data/sat-20-best'))
 
 if True:
     lines = f.readlines()
