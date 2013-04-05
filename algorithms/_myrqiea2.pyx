@@ -84,7 +84,6 @@ cdef class __MyRQIEA2cpp:
             return ndarray
     property problem:
         def __set__(self, ProblemDouble p):
-            print p
             self.thisptr.problem = p.thisptr
     property Q:
         def __get__(self):

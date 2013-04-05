@@ -12,7 +12,11 @@ class CEC2013 : public Problem<double,double> {
 
 		const int fnum;
 
-		CEC2013(int fnum) : fnum(fnum) { }
+		CEC2013(int fnum) : fnum(fnum) {
+			if (fnum < 1 || fnum > 28) {
+				throw QOptException("Wrong fnum. Should be in the range [1;28]");
+			}
+		}
 
 		virtual double evaluator(double *x, int length) {
 			double result;
