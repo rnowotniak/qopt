@@ -1,0 +1,13 @@
+
+pso-cmaes-ga-nelder-dim2.npy
+----------------------------
+DIM=2
+REPEAT=25
+MaxFE = 10000 * DIM (20,000)
+order: PSO CMAES GA NelderMead
+fields:
+	mean
+	median
+	stddev
+	time of single algorithm run
+
