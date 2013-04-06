@@ -18,7 +18,7 @@ logging.disable(logging.WARNING)
 REPEAT = 10
 DIM = 2
 #MaxFE = 10000 * DIM # according to CEC2013
-MaxFE = 1000
+MaxFE = 2000
 qiea_popsize = 10
 
 myrqiea2 = MyRQIEA2(chromlen = DIM, popsize = qiea_popsize)
