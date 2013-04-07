@@ -5,8 +5,8 @@ import numpy as np
 import qopt.problems
 import operator
 
-myrqiea2 = np.matrix(np.load('myrqiea2-dim10.npy'))
-data = np.matrix(np.load('pso-cmaes-ga-nelder-dim10.npy'))
+myrqiea2 = np.matrix(np.load('myrqiea2-dim2.npy'))
+data = np.matrix(np.load('pso-cmaes-ga-nelder-dim2.npy'))
 
 algs = ['MyRQIEA2', 'PSO', 'CMAES', 'GA', 'NelderMead']
 #algs = [ 'PSO', 'CMAES', 'GA', 'NelderMead']

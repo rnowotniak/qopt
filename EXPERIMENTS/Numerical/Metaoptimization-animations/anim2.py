@@ -64,8 +64,12 @@ plt.grid(True)
 #plt.annotate('x', xy=(0.7,0.6), size='xx-large', color='white')
 #plt.plot([0.8], [0.3], '*', color='white', markersize=10)
 #ax.set_zlim3d(-1.01, 1.01)
-ax.set_ylabel(u'prawdopodobieństwo krzyżowania $\\xi$')
-ax.set_xlabel(u'współczynnik kontrakcji $\\delta$')
+
+#ax.set_ylabel(u'prawdopodobieństwo krzyżowania $\\xi$')
+#ax.set_xlabel(u'współczynnik kontrakcji $\\delta$')
+ax.set_ylabel(u'parametr $\\xi$')
+ax.set_xlabel(u'parametr $\\delta$')
+
 ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
 ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
 

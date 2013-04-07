@@ -1,0 +1,34 @@
+\documentclass{article}
+%\usepackage{type1cm}
+%\renewcommand{\rmdefault}{pnc}
+%\usepackage{helvet}
+%\usepackage{courier}
+%\usepackage{textcomp}
+%\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{tikz}
+        
+\newcommand{\strzalka}[1]{%
+\begin{tikzpicture}[rotate=#1,>=stealth]
+%\fill[lightgray] (0,0) circle (1ex);
+\draw[black,ultra thin] (0,0) circle (1ex);
+\draw[->,line width=1.2] (-1ex,0) -- (1ex,0);
+\end{tikzpicture}}       
+%\usepackage[papersize={72in,72in}, body={70in,70in}, margin={1in,1in}]{geometry}
+\pagestyle{empty}
+
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+
+\begin{figure}
+\centering
+%\beginpgfgraphicnamed{bla}
+\scalebox{20}{
+\strzalka{0}
+}
+%\endpgfgraphicnamed
+
+\end{figure}
+\end{document}

@@ -243,13 +243,21 @@ pylab.xlim((0,200))
 pylab.grid(True)
 #pylab.legend(loc='upper left')
 pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
-#pylab.title(schema)
+#pylab.title('$%s$' % schema)
 pylab.xlabel('$x$')
-pylab.ylabel('$f_1(x)$')
+pylab.ylabel('$f(x)$')
+
+pylab.yticks((20,40,60,80,100), (20,40,60,80,100))
+pylab.xticks((0, len(X)/4,len(X)/2, len(X)/4*3., len(X)),
+        ('000...0', '010...0', '100...0', '110...0', '111...1'))
 #pylab.gca().set_aspect(1, 'box')
 pylab.savefig('/tmp/f1.pdf', bbox_inches = 'tight')
 pylab.cla()
 sys.exit(0)
+
+
+
+
 
 X = pylab.linspace(0, 200, 200)
 pylab.plot(

@@ -223,12 +223,13 @@ def genplot(prob):
     print Yqiga2[-1], ';'
 
     X = np.linspace(0,MaxFE,len(Y))
-    pylab.plot(X, Yqiga2, 'ro-', label='bQIGAo2')
-    pylab.plot(X, Ytuned1, 'm^-', label='bQIGAo1-tuned')
-    pylab.plot(X, Y, 'gs-', label='bQIGAo1')
+    pylab.ylim((1300,1480))
+    #pylab.plot(X, Yqiga2, 'ro-', label='QIGA-2')
+    pylab.plot(X, Ytuned1, 'm^-', label='QIGA-1 tuned')
+    pylab.plot(X, Y, 'gs-', label='QIGA-1')
     pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 'x-', label='SGA')
     pylab.legend(loc = 'lower right')
-    pylab.title(u'Porównanie efektywności algorytmów,\nZadanie: $\\texttt{%s}$, $N=%d$' % (prob, chromlen))
+    pylab.title(u'Porównanie efektywności algorytmów,\nZadanie: $\\texttt{%s}$, rozmiar $N=%d$' % (prob, chromlen))
     pylab.ylabel(u'Średnia wartość maksymalnego dopasowania')
     pylab.xlabel(u'Liczba wywołań funkcji oceny ($FE$)')
     pylab.grid(True)
@@ -236,8 +237,9 @@ def genplot(prob):
     # pylab.savefig('/tmp/cmp-%s.pdf' % (prob), bbox_inches = 'tight')
     pylab.savefig('/tmp/wykres-%s.pdf' % prob, bbox_inches = 'tight')
 
-#for prob in glob.glob('/var/tmp/cache/???*'):
+for prob in glob.glob('cache/???*'):
+    pass
     #genplot(prob.split('/')[-1])
 
-genplot('knapsack1000')
+genplot('knapsack250')
 

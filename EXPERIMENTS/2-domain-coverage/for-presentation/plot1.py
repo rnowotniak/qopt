@@ -229,7 +229,8 @@ for i in xrange(4**len(angles)):
     #print i, p
 
 pylab.plot(X, [f1.evaluate2(x) for x in X], label='Funkcja $f_1(x)$')
-points = numpy.array([15.5,62,140,178])
+points = numpy.array([15.5,62.,140.,178.])
+points = [points[3]]
 pylab.plot(points, [f1.evaluate2(x) for x in points], 'ro', markersize=10)
 pylab.xticks((0, len(X)/4,len(X)/2, len(X)/4*3., len(X)),
         ('000...0', '010...0', '100...0', '110...0', '111...1'))
@@ -248,6 +249,7 @@ pylab.grid(True)
 #pylab.legend(loc='upper left')
 #pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
 #pylab.title(schema)
+pylab.title('$%s$' % qopt.int2bin(int(points[0]/200 * 2**len(schema)), len(schema)))
 pylab.xlabel('$x$')
 pylab.ylabel('$f(x)$')
 #pylab.gca().set_aspect(1, 'box')

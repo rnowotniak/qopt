@@ -239,7 +239,8 @@ qgen = []
 def gauss2d(x, shift, sigma):
     return 1./sigma/numpy.sqrt(2*numpy.pi) * numpy.exp(-((x-shift)**2)/2/sigma**2)
 for q in X:
-    qgen.append(-gauss2d(q, 60, 5) - gauss2d(q, 80, 8) - 2.9*gauss2d(q, 150, 19) - gauss2d(q, 18, 6))
+    #qgen.append(-gauss2d(q, 60, 5) - gauss2d(q, 80, 8) - 2.9*gauss2d(q, 150, 19) - gauss2d(q, 18, 6))
+    qgen.append(-1.5*gauss2d(q, 60, 5) - gauss2d(q, 80, 8) - 2.9*gauss2d(q, 150, 19) - gauss2d(q, 18, 6))
 pylab.imshow(numpy.matrix(qgen), interpolation='none',extent=(0,200,-10, 100), cmap = matplotlib.cm.gray, alpha=.35)
 #pylab.imshow(numpy.matrix([-f1.evaluate(x) for x in X]), interpolation='none',extent=(0,200,-10, 100), cmap = matplotlib.cm.gray, alpha=.35)
 #pylab.imshow(numpy.matrix(numpy.random.rand(2**5)), interpolation='none',extent=(0,200,-10, 100), cmap = matplotlib.cm.gray, alpha=.35)

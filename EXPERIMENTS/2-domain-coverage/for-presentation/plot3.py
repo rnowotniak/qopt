@@ -162,7 +162,21 @@ schema = '01*010*********'
 
 import matplotlib
 
-#matplotlib.rc('text.latex', preamble='\\usepackage{graphicx}')
+###  DOES NOT WORK  ##########################
+#      #matplotlib.rc('text', usetex=True)
+#      #matplotlib.rc('text', dvipnghack=True)
+#      matplotlib.rcParams['text.latex.preamble']=[
+#              r'''\usepackage{tikz}\usepackage{graphics}
+#              
+#      \newcommand{\strzalka}[1]{%
+#      \begin{tikzpicture}[rotate=#1,>=stealth]
+#      %\fill[lightgray] (0,0) circle (1ex);
+#      \draw[black,ultra thin] (0,0) circle (1ex);
+#      \draw[->,line width=1.2] (-1ex,0) -- (1ex,0);
+#      \end{tikzpicture}}       '''
+#      ]
+#      matplotlib.rc('text.latex', preamble='\\usepackage{graphicx}')
+##############################################
 
 #schema = '10100***************'
 schema = '01*011*********'
@@ -194,9 +208,13 @@ for i in xrange(2**len(schema)):
 #angles=[0, 90, 30, 0, 90, 90,45,45,45,45,45,45,45,45,45]
 #angles=[0, 90, 30, 30, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45]
 #angles=[45, 45, 25, 10, 45, 45, 30, 45, 45, 45, 45, 45, 45, 45, 45]
-angles=[30, 80, 35, 35]
 #angles=[0, 45,45,45,45,45,45,45,45,45,45,45,45,45,45]
 #angles=[0,0,0,0]
+
+#angles=[0, 90, 0, 45]
+#angles=[20, 90, 45, 30]
+angles=[30, 80, 35, 35]
+
 coverage=[]
 
 angles = [1.*a*numpy.pi / 180 for a in angles]
@@ -249,11 +267,19 @@ pylab.xlim((0,200))
 pylab.grid(True)
 #pylab.legend(loc='upper left')
 #pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
-#pylab.title('H='+schema)
+
+pylab.title(r'\(q='+ \
+        ''.join([
+            r'\left[\begin{array}{c}%.3f\\%.3f\end{array}\right]' % (cos(angle), sin(angle))
+            for angle in angles]) + r'\)'
+)
+
+#pylab.title('''q=\\rotatebox{45}{\includegraphics[width=1.5ex]{/tmp/strzalka.eps}}''')  # DOES NOT NOT NOT WORK !
+
 pylab.xlabel('$x$')
 pylab.ylabel('$f(x)$')
 #pylab.gca().set_aspect(1, 'box')
-pylab.savefig('/tmp/f1.pdf', bbox_inches = 'tight')
+pylab.savefig('/tmp/f1.pdf', dpi=300, bbox_inches = 'tight')
 pylab.cla()
 
 

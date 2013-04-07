@@ -1,0 +1,5 @@
+
+mencoder "mf://anim2-1*png" -mf fps=10 "mf://anim2-2-*png" -mf fps=10 "mf://anim2-3-*.png" -mf fps=10  -o movie.avi -ovc lavc -lavcopts vcodec=mjpeg
+ffmpeg -sameq -i movie.avi -f avi -vcodec wmv1   zz.avi
+
+
