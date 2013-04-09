@@ -10,7 +10,7 @@ import qopt.problems
 # from qopt.algorithms import MyRQIEA2
 from qopt.algorithms import MyRQIEA2
 
-REPEAT = 25
+REPEAT = 10
 DIM = 10
 MaxFE = 10000 * DIM # according to CEC2013
 #MaxFE = 2000

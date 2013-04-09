@@ -5,15 +5,17 @@ import numpy as np
 import qopt.problems
 import operator
 
+iqiea = np.matrix(np.load('multiprocessing-iqiea-dim2.npy'))
 myrqiea2 = np.matrix(np.load('myrqiea2-dim2.npy'))
+
 data = np.matrix(np.load('pso-cmaes-ga-nelder-dim2.npy'))
 
-algs = ['MyRQIEA2', 'PSO', 'CMAES', 'GA', 'NelderMead']
+algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'MyRQIEA2']
 #algs = [ 'PSO', 'CMAES', 'GA', 'NelderMead']
 
 MEAN_ONLY = True
 
-data = np.hstack((myrqiea2, data))
+data = np.hstack((data, iqiea, myrqiea2))
 
 numfuncs = data.shape[0]
 numalgs = data.shape[1] / 4 # / number of fields
@@ -38,7 +40,8 @@ for fnum in xrange(1, numfuncs + 1):
     optval = fobj.evaluate(fobj.optimum)
     print '%2d %5g ' % (fnum, optval),
     row = data[fnum - 1]
-    best = min( row[0,0], row[0,4], row[0,8], row[0,12], row[0,16] )
+    best = min([row[0,4*a] for a in xrange(numalgs )])
+    #best = min( row[0,0], row[0,4], row[0,8], row[0,12], row[0,16] )
     rowranking = []
     for field in xrange(numalgs * 4):
         if MEAN_ONLY and field % 4 != 0:
@@ -51,7 +54,7 @@ for fnum in xrange(1, numfuncs + 1):
             rowranking.append((algs[field/4], val))
 
             if val == best:
-                #ranking[algs[field / 4]] += 1
+                ranking[algs[field / 4]] += 1
                 sys.stdout.write(HIGHLIGHT)
         print '%10g ' % val,
         sys.stdout.write(NORMAL)
@@ -61,11 +64,11 @@ for fnum in xrange(1, numfuncs + 1):
     #print rowranking
     for alg in algs:
         pass
-        ranking[alg] += rowranking.index(alg) + 1
+        #ranking[alg] += rowranking.index(alg) + 1
 
 for alg in ranking:
     pass
-    ranking[alg] /= 28
+    #ranking[alg] /= 28
 
 print ranking
 

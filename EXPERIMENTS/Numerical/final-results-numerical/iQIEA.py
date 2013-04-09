@@ -185,11 +185,10 @@ class iQIEA(qopt.framework.EA):
             # E = [([9.400, -19.846], 117), ([8.604, -13.675], 19.3), ...
             self.C = selection(E + self.C, self.K)
 
-            # uncomment THIS for output
             #print self.evaluation_counter, self.C[0][1]
+            self.bestval = self.C[0][1]
 
             self.best = self.C[0]
-            self.bestval = self.C[0][1]
             #if self.C[0][1] < EPSILON:
             #    sys.exit(0)
             # C = [ ([8.604, -13.675], 19.3), ([9.400, -19.846], 117), ...
@@ -313,6 +312,7 @@ if __name__ == '__main__':
     sys.argv = 'rcqiea.py 3 0.78 0.421'.split()
     sys.argv = 'rcqiea.py 3 0.5 0.1'.split()
     sys.argv = 'rcqiea.py 3 0.23 0.785'.split()
+    sys.argv = 'rcqiea.py 5 0.3 0.3'.split()
     if sys.argv[1] == '1':
         iqiea.fitness_function = testfuncs_f1
         iqiea.bounds = [(-30,30)]*30
@@ -351,6 +351,20 @@ if __name__ == '__main__':
         iqiea.G = 30
         iqiea.kstep = 20
         iqiea.XI = float(sys.argv[2])
+        iqiea.DELTA = float(sys.argv[3])
+    elif sys.argv[1] == '5':
+        import qopt.problems
+        fcec2013 = qopt.problems.CEC2013(4)
+        def cec2013wrapper(x):
+            return fcec2013.evaluate(x)
+        iqiea.fitness_function = cec2013wrapper
+        iqiea.G = 10
+        iqiea.bounds = [(-100,100)]*10
+        iqiea.popsize = 10
+        iqiea.K = 15
+        iqiea.kstep = 20
+        iqiea.XI = float(sys.argv[2])
+        iqiea.tmax = (100000 / 15)
         iqiea.DELTA = float(sys.argv[3])
     iqiea.run()
 

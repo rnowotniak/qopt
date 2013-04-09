@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 from matplotlib.ticker import NullFormatter
 
-param1 = 20
-param2 = 10
-param3 = -50
-param4 = 25
+#param1, param2, param3, param4 = 20, 10, -50, 25
+
+param1, param2, param3, param4 = -45, 15, 50, 35
+param1, param2, param3, param4 = 0, 25, 43, 11
+#param1, param2, param3, param4 = 25, 4, 0, 19
+#param1, param2, param3, param4 = 25, 19, 0, 4
 
 
 ##################
@@ -56,9 +58,9 @@ axScatter.set_xlim( (-lim, lim) )
 axScatter.set_ylim( (-lim, lim) )
 
 
-x = np.linspace(-100,100)
+x = np.linspace(-100,100,100)
 y = mlab.normpdf(x, param1, param2)
-x2 = np.linspace(-100,100)
+x2 = np.linspace(-100,100,100)
 y2 = mlab.normpdf(x2, param3, param4)
 
 axHistx.plot(x, y)
@@ -69,10 +71,25 @@ y,y2 = np.meshgrid(y,y2)
 
 z = y * y2
 
-axScatter.contourf(x,x2,z, cmap='hot_r')
+axScatter.contourf(x,x2,z, cmap='hot')
+axScatter.set_xlabel('$x$')
+axScatter.set_ylabel('$y$')
 
 axHistx.set_xlim( (-lim,lim) )
 axHisty.set_ylim( (-lim,lim) )
+
+
+
+axScatter.grid(False)
+
+#BLAAx = np.arange(6)
+#BLAAy = np.arange(5)
+#BLAAz = BLAAx * BLAAy[:,np.newaxis]
+#plt.set_title('Funkcja nieseparowalna, $f(x,y) \\ne f_x(x)f_y{y}$')
+import matplotlib.image as mpimg
+background = mpimg.imread('Rosenbrock2_04.png')
+#axScatter.imshow(background, extent=(-100,100, -100,100))
+
 
 #plt.show()
 plt.savefig('/tmp/MyRQIEA1.pdf', bbox_inches='tight')
