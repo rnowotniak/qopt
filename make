@@ -15,7 +15,7 @@ function check() {
 	fi
 }
 
-INCLUDE=-I../C
+INCLUDE="-I../C -fPIC"
 export DEBUG=0
 
 # framework

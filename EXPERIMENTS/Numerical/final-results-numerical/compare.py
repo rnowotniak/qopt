@@ -5,17 +5,19 @@ import numpy as np
 import qopt.problems
 import operator
 
-iqiea = np.matrix(np.load('multiprocessing-iqiea-dim2.npy'))
-myrqiea2 = np.matrix(np.load('myrqiea2-dim2.npy'))
+DIM = 10
 
-data = np.matrix(np.load('pso-cmaes-ga-nelder-dim2.npy'))
+iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
+qiea1 = np.matrix(np.load('/tmp/multiprocessing-qiea1-dim%d.npy' % DIM))
 
-algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'MyRQIEA2']
+data = np.matrix(np.load('pso-cmaes-ga-nelder-dim%d.npy' % DIM))
+
+algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'QIEA1']
 #algs = [ 'PSO', 'CMAES', 'GA', 'NelderMead']
 
 MEAN_ONLY = True
 
-data = np.hstack((data, iqiea, myrqiea2))
+data = np.hstack((data, iqiea, qiea1))
 
 numfuncs = data.shape[0]
 numalgs = data.shape[1] / 4 # / number of fields
@@ -26,9 +28,11 @@ NORMAL = "\033[0m"
 #NORMAL = ""
 
 
-ranking = {}
+ranking1 = {}
+ranking2 = {}
 for alg in algs:
-    ranking[alg] = 0.
+    ranking1[alg] = 0.
+    ranking2[alg] = 0.
 
 
 
@@ -54,7 +58,7 @@ for fnum in xrange(1, numfuncs + 1):
             rowranking.append((algs[field/4], val))
 
             if val == best:
-                ranking[algs[field / 4]] += 1
+                ranking1[algs[field / 4]] += 1
                 sys.stdout.write(HIGHLIGHT)
         print '%10g ' % val,
         sys.stdout.write(NORMAL)
@@ -63,20 +67,25 @@ for fnum in xrange(1, numfuncs + 1):
     rowranking = map(lambda i: i[0], rowranking)
     #print rowranking
     for alg in algs:
-        pass
-        #ranking[alg] += rowranking.index(alg) + 1
+        ranking2[alg] += rowranking.index(alg) + 1
 
-for alg in ranking:
+for alg in ranking2:
     pass
-    #ranking[alg] /= 28
+    ranking2[alg] /= 28
 
-print ranking
+print ranking1
 
 print 
-print 'Ranking:'
+print 'Ranking1:'
 print '--------'
+table = sorted(ranking1.iteritems(), key = operator.itemgetter(1), reverse = True)
+for row in table:
+    print row[0], row[1]
 
-table = sorted(ranking.iteritems(), key = operator.itemgetter(1), reverse = False)
+print 
+print 'Ranking2:'
+print '--------'
+table = sorted(ranking2.iteritems(), key = operator.itemgetter(1), reverse = False)
 for row in table:
     print row[0], row[1]
 
