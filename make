@@ -36,6 +36,11 @@ check
 g++ $INCLUDE -shared -o _qiea1.so _qiea1.cpp ../C/qiea1.cpp `python-config --cflags`
 check
 
+cython --cplus _qiea2.pyx
+check
+g++ $INCLUDE -shared -o _qiea2.so _qiea2.cpp ../C/qiea2.cpp `python-config --cflags`
+check
+
 cython --cplus _algorithms.pyx
 check
 g++ $INCLUDE -shared -o _algorithms.so _algorithms.cpp ../C/qiga.cpp ../C/bqigao.cpp ../C/bqigao2.cpp `python-config --cflags`

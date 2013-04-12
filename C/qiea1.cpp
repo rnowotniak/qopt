@@ -31,7 +31,7 @@ void QIEA1::initialize() {
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen; j++) {
 			Qij[0] = (1. * rand() / RAND_MAX) * 200. - 100.;   // mean  XXX bounds
-			Qij[1] = (1. * rand() / RAND_MAX) * 40.;   // stddev  XXX bounds
+			Qij[1] = (1. * rand() / RAND_MAX) * 40.;   // stddev  XXX bounds XXX 40 param.
 		}
 	}
 }
@@ -92,7 +92,7 @@ int main() {
 	//	qiea1->bounds[i][1] = 100;
 	//}
 
-	Problem<double,double> *fun = new CEC2013(5);
+	Problem<double,double> *fun = new CEC2013(1);
 	// double x[2] = {-39.3, 58.8};
 	// double val = fun->evaluator(x, 2);
 	// printf("-> %f\n", val);

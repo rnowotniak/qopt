@@ -7,6 +7,7 @@ from purepython.iQIEA import iQIEA
 from _myrqiea2 import MyRQIEA2
 
 from _qiea1 import QIEA1
+from _qiea2 import QIEA2
 
 #from _algorithms import RQIEA
 #...

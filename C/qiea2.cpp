@@ -1,8 +1,8 @@
 
-#include "myrqiea2.h"
+#include "qiea2.h"
 
 
-void MyRQIEA2::run() {
+void QIEA2::run() {
 	t = 0;
 	int tmax = 100000 / popsize;
 	initialize();
@@ -10,8 +10,8 @@ void MyRQIEA2::run() {
 	evaluate(); //
 	storebest(); //
 	while (t < tmax) {
-		printf("Generation %d\n", t);
-		printf("bestval: %f\n", bestval);
+		// printf("Generation %d\n", t);
+		// printf("bestval: %f\n", bestval);
 		t++;
 		observe();
 		evaluate();
@@ -23,38 +23,40 @@ void MyRQIEA2::run() {
 #define Qij (Q + i * (5 * (chromlen/2)) + (5 * j))
 #define Pij (P + i * (chromlen) + (2 * j))
 
-void MyRQIEA2::initialize() {
+void QIEA2::initialize() {
 	bestval = std::numeric_limits<DTYPE>::max();
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
-			Qij[0] = 2. * M_PI * rand() / RAND_MAX - M_PI; // location
-			Qij[1] = 2. * M_PI * rand() / RAND_MAX - M_PI; // location
-			Qij[2] = 2. * M_PI * rand() / RAND_MAX; // orientation
-			Qij[3] = 1. * rand() / RAND_MAX; // scale X
-			Qij[4] = 1. * rand() / RAND_MAX; // scale Y
+			Qij[0] = (1. * rand() / RAND_MAX) * 200. - 100.;   // location X  XXX bounds
+			Qij[1] = (1. * rand() / RAND_MAX) * 200. - 100.;   // location Y  XXX bounds
+			// Qij[2] = M_PI * rand() / RAND_MAX; // orientation
+			Qij[2] = 0; // should be the same as QIEA1
+			Qij[3] = 40. * rand() / RAND_MAX; // scale X   XXX 40 param
+			Qij[4] = 40. * rand() / RAND_MAX; // scale Y   XXX 40 param
 		}
 	}
 }
 
-void MyRQIEA2::observe() {
+void QIEA2::observe() {
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
-			double u = 10. * Qij[3] * box_muller();
-			double v = 10. * Qij[4] * box_muller();
-			double theta = Qij[2] / 2; // / (M_PI * 2) * 180 * M_PI / 180;
+			double u = Qij[3] * box_muller();
+			double v = Qij[4] * box_muller();
+			double theta = Qij[2];
+
 			double u2 = u * cos(theta) - v * sin(theta);
 			double v2 = u * sin(theta) + v * cos(theta);
 			u = u2;
 			v = v2;
-			u += Qij[0] * 100. / (M_PI * 2);
-			v += Qij[1] * 100. / (M_PI * 2);
+			u += Qij[0];
+			v += Qij[1];
 			Pij[0] = u;
 			Pij[1] = v;
 		}
 	}
 }
 
-void MyRQIEA2::storebest() {
+void QIEA2::storebest() {
 	DTYPE val = std::numeric_limits<DTYPE>::max();
 	int i_best;
 	for (int i = 0; i < popsize; i++) {
@@ -69,21 +71,32 @@ void MyRQIEA2::storebest() {
 	}
 }
 
-void MyRQIEA2::evaluate() {
+void QIEA2::evaluate() {
 	for (int i = 0; i < popsize; i++) {
 		fvals[i] = problem->evaluator(P + i * chromlen, chromlen);
 	}
 }
 
-void MyRQIEA2::update() {
+void QIEA2::update() {
 	/* TUTAJ TRZEBA TO ROZBUDOWAC PRAWIDLOWO */
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
+			Qij[0] = best[2*j];
+			Qij[1] = best[2*j + 1];
+			// Qij[2] += .1 // rotating
+			Qij[3] *= .999;
+			Qij[4] *= .999;
+			continue;
+
+
+
+
+
 			/* distribution adaptation */
 
 			double anglebest[2] = {
-				best[0] * 2. * M_PI / 100, // XXX bounds   //  best[0] ?!?!? wroing for DIM>2 !
-				best[1] * 2. * M_PI / 100, // XXX bounds   //  best[1] ?!?!? wroing for DIM>2 !
+				best[0] * 2. * M_PI / 100, // XXX bounds
+				best[1] * 2. * M_PI / 100, // XXX bounds
 			};
 			Qij[0] += 1. * (2.*M_PI/100) * (anglebest[0] > Qij[0] ? 1 : -1); // XXX bounds
 			Qij[1] += 1. * (2.*M_PI/100) * (anglebest[1] > Qij[1] ? 1 : -1); // XXX bounds
@@ -101,18 +114,17 @@ void MyRQIEA2::update() {
 }
 
 /*
-#include "cec2005.h"
 #include "cec2013.h"
 #include <time.h>
 int main() {
 	//srand(time(0));
 	srand(5);//time(0));
 	int dim = 10;
-	int popsize = 20;
-	MyRQIEA2 *rQIEA = new MyRQIEA2(dim, popsize);
+	int popsize = 10;
+	QIEA2 *qiea2 = new QIEA2(dim, popsize);
 	//for (int i = 0; i < dim; i++) {
-	//	rQIEA->bounds[i][0] = -100;
-	//	rQIEA->bounds[i][1] = 100;
+	//	qiea2->bounds[i][0] = -100;
+	//	qiea2->bounds[i][1] = 100;
 	//}
 
 	Problem<double,double> *fun = new CEC2013(1);
@@ -120,12 +132,12 @@ int main() {
 	// double val = fun->evaluator(x, 2);
 	// printf("-> %f\n", val);
 	// return 0;
-	rQIEA->problem = fun;
-	rQIEA->run();
-	printf("Final bestval: %f\n", rQIEA->bestval);
+	qiea2->problem = fun;
+	qiea2->run();
+	printf("Final bestval: %f\n", qiea2->bestval);
 	printf("Final best: ");
 	for (int i = 0; i < dim; i++) {
-		printf("%f, ", rQIEA->best[i]);
+		printf("%f, ", qiea2->best[i]);
 	}
 	printf("\n");
 }
