@@ -82,8 +82,8 @@ void MyRQIEA2::update() {
 			/* distribution adaptation */
 
 			double anglebest[2] = {
-				best[0] * 2. * M_PI / 100, // XXX bounds   //  best[0] ?!?!? wroing for DIM>2 !
-				best[1] * 2. * M_PI / 100, // XXX bounds   //  best[1] ?!?!? wroing for DIM>2 !
+				best[2*j] * 2. * M_PI / 100, // XXX bounds   //  best[0] ?!?!? wroing for DIM>2 !
+				best[2*j+1] * 2. * M_PI / 100, // XXX bounds   //  best[1] ?!?!? wroing for DIM>2 !
 			};
 			Qij[0] += 1. * (2.*M_PI/100) * (anglebest[0] > Qij[0] ? 1 : -1); // XXX bounds
 			Qij[1] += 1. * (2.*M_PI/100) * (anglebest[1] > Qij[1] ? 1 : -1); // XXX bounds

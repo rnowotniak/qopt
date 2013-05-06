@@ -12,8 +12,8 @@ import qopt.problems
 from qopt.algorithms import QIEA2
 
 FUNCS = 28
-REPEAT = 25
-DIM = 10
+REPEAT = 20
+DIM = 2
 MaxFE = 10000 * DIM # according to CEC2013
 #MaxFE = 2000
 qiea_popsize = 10

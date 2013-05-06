@@ -29,8 +29,8 @@ void QIEA2::initialize() {
 		for (int j = 0; j < chromlen / 2; j++) {
 			Qij[0] = (1. * rand() / RAND_MAX) * 200. - 100.;   // location X  XXX bounds
 			Qij[1] = (1. * rand() / RAND_MAX) * 200. - 100.;   // location Y  XXX bounds
-			// Qij[2] = M_PI * rand() / RAND_MAX; // orientation
-			Qij[2] = 0; // should be the same as QIEA1
+			Qij[2] = M_PI * rand() / RAND_MAX; // orientation
+			// Qij[2] = 0; // should be the same as QIEA1
 			Qij[3] = 40. * rand() / RAND_MAX; // scale X   XXX 40 param
 			Qij[4] = 40. * rand() / RAND_MAX; // scale Y   XXX 40 param
 		}
@@ -84,8 +84,8 @@ void QIEA2::update() {
 			Qij[0] = best[2*j];
 			Qij[1] = best[2*j + 1];
 			// Qij[2] += .1 // rotating
-			Qij[3] *= .999;
-			Qij[4] *= .999;
+			Qij[3] *= .9995;
+			Qij[4] *= .9995;
 			continue;
 
 
