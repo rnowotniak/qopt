@@ -76,7 +76,13 @@ void MyRQIEA2::evaluate() {
 }
 
 void MyRQIEA2::update() {
-	/* TUTAJ TRZEBA TO ROZBUDOWAC PRAWIDLOWO */
+	/*
+	 * Tutaj dziala to tak:
+	 * X,Y  ->   przesuwanie w kierunku najlepszego
+	 * orientacja  ->   rotowanie ze stala predkoscia
+	 * dx,dy  ->  kurczenie o staly czynnik
+	 */
+
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
 			/* distribution adaptation */

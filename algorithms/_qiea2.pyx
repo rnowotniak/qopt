@@ -19,9 +19,13 @@ from qopt.framework cimport ProblemDouble, ProblemCpp
 
 cdef extern from "qiea2.h":
     cdef cppclass QIEA2cpp "QIEA2":
-        QIEA2cpp(int chromlen, int popsize)
-        int popsize
+        QIEA2cpp(int chromlen, int popsize, int K)
+        int t
         int chromlen
+        int popsize
+        int K
+        float delta
+        float XI
         #int tmax
         double bestval
         double *Q
@@ -40,9 +44,11 @@ cdef extern from "qiea2.h":
 cdef class __QIEA2cpp:
     cdef QIEA2cpp *thisptr
 
-    def __cinit__(self, int chromlen, int popsize = 10):
+    def __cinit__(self, int chromlen, int popsize = 10, int K = -1):
         print "__QIEA2cpp constructor"
-        self.thisptr = new QIEA2cpp(chromlen, popsize)
+        if K == -1:
+            K = popsize
+        self.thisptr = new QIEA2cpp(chromlen, popsize, K)
     def __dealloc__(self):
         del self.thisptr
 
@@ -61,8 +67,19 @@ cdef class __QIEA2cpp:
     #     def __get__(self): return self.thisptr.mi
     #     def __set__(self, float mi): self.thisptr.mi = mi
 
+    property delta:
+        def __get__(self): return self.thisptr.delta
+        def __set__(self, delta): self.thisptr.delta = delta
+    property XI:
+        def __get__(self): return self.thisptr.XI
+        def __set__(self, XI): self.thisptr.XI = XI
+    property t:
+        def __get__(self): return self.thisptr.t
+        def __set__(self, t): self.thisptr.t = t
     property popsize:
         def __get__(self): return self.thisptr.popsize
+    property K:
+        def __get__(self): return self.thisptr.K
     # property tmax:
     #     def __get__(self): return self.thisptr.tmax
     #     def __set__(self, int tmax): self.thisptr.tmax = tmax
@@ -105,7 +122,7 @@ cdef class __QIEA2cpp:
 
 class QIEA2(__QIEA2cpp, qopt.EA):
 
-    def __init__(self, int chromlen, int popsize = 10):
+    def __init__(self, int chromlen, int popsize = 10, int K = -1):
         qopt.EA.__init__(self)
 
     def initialize(self):
@@ -116,8 +133,9 @@ class QIEA2(__QIEA2cpp, qopt.EA):
         self._storebest()
 
     def generation(self):
+        #print 'gen %d' % self.t
         self._observe()
-        self._evaluate()
+        #self._evaluate()  # performed in _update  # tylko to zakomentowane
         self._update()
         self._storebest()
 

@@ -12,7 +12,7 @@ import qopt.problems
 from qopt.algorithms import QIEA2
 
 FUNCS = 28
-REPEAT = 20
+REPEAT = 10
 DIM = 2
 MaxFE = 10000 * DIM # according to CEC2013
 #MaxFE = 2000
@@ -20,6 +20,8 @@ qiea_popsize = 10
 
 qiea2 = QIEA2(chromlen = DIM, popsize = qiea_popsize)
 qiea2.tmax = MaxFE / qiea_popsize
+qiea2.delta = .9995
+qiea2.XI = .2
 
 print ' f   opt  |      mean       median     stddev'
 print '------------------------------------'

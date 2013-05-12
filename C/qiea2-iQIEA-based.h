@@ -15,43 +15,41 @@ class QIEA2 {
 
 		typedef double DTYPE;
 
-		DTYPE *Q;    // [popsize,N] -- quantum population
-		DTYPE *P;    // [K,N]       -- observed classical population  (denoted E in iQIEA)
-		DTYPE *P_old; // [K,N]       -- old observed classical population  (denoted E in iQIEA)
+		DTYPE *Q; // [popsize,N] -- quantum population
+		DTYPE *P; // [K,N]       -- observed classical population  (denoted E in iQIEA)
+		DTYPE *C; // [K,N]       -- crossed-over P
 
 		int t;
 
 		DTYPE (*bounds)[2];
-		int popsize; // |Q|
 		int chromlen; // N
-		int K; // |P| >= popsize
-
-		float delta;
-		float XI;
+		int popsize;  // |Q|
+		int K; // K >= popsize
 
 		DTYPE *fvals;
+		DTYPE *fvalsC;
 		DTYPE bestval;
 		DTYPE *best;
 		// DTYPE (*bestq)[2];
 
 		Problem<DTYPE,DTYPE> *problem;
 
-		QIEA2(int chromlen, int popsize, int K = -1) : popsize(popsize), chromlen(chromlen), K(K) {
+		QIEA2(int chromlen, int popsize, int K = 0) : popsize(popsize), chromlen(chromlen) {
 			if (K == -1) {
-				this->K = popsize;
+				K = popsize;
 			}
-			printf("QIEA2::QIEA2 constructor (N=%d |Q|=%d K=%d)\n", chromlen, popsize, this->K);
+			printf("QIEA2::QIEA2 constructor %d %d %d\n", chromlen, popsize, K);
 			assert(chromlen % 2 == 0);
 
 			problem = NULL;
 			bestval = std::numeric_limits<DTYPE>::max();
-			delta = .9995;
-			XI = .9;
 
 			Q = new DTYPE[5 * chromlen / 2 * popsize];
-			P = new DTYPE[this->K * chromlen];
-			P_old = new DTYPE[this->K * chromlen];
-			fvals = new DTYPE[this->K];
+			P = new DTYPE[K * chromlen];
+			C = new DTYPE[K * chromlen];
+
+			fvals = new DTYPE[K];
+			fvalsC = new DTYPE[K];
 			bounds = new DTYPE[chromlen][2];
 			best = new DTYPE[chromlen];
 			// bestq = new DTYPE[chromlen][2];
@@ -60,10 +58,11 @@ class QIEA2 {
 		~QIEA2() {
 			delete [] Q;
 			delete [] P;
-			delete [] P_old;
+			delete [] C;
 			delete [] bounds;
 			delete [] best;
 			delete [] fvals;
+			delete [] fvalsC;
 			// delete [] bestq;
 		}
 
@@ -79,8 +78,8 @@ class QIEA2 {
 		// void recombine();
 		// void catastrophe();
 
-		void crossover();
-		void mutate();
+		void crossover(DTYPE *pop1, DTYPE *pop2);
+		void select();
 
 		DTYPE LUT(DTYPE alpha, DTYPE beta, DTYPE alphabest, DTYPE betabest);
 

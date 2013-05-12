@@ -9,7 +9,7 @@ DIM = 2
 
 iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
-qiea2 = np.matrix(np.load('multiprocessing-qiea2-dim%d.npy' % DIM))
+qiea2 = np.matrix(np.load('/tmp/multiprocessing-qiea2-dim%d.npy' % DIM))
 #myrqiea2 = np.matrix(np.load('myrqiea2-dim%d.npy' % DIM))
 data = np.matrix(np.load('pso-cmaes-ga-nelder-dim%d.npy' % DIM))
 
@@ -24,7 +24,7 @@ data = np.hstack((data, iqiea, qiea1, qiea2))
 numfuncs = data.shape[0]
 numalgs = data.shape[1] / 4 # / number of fields
 
-HIGHLIGHT = "\033[1;31m"
+HIGHLIGHT = "\033[7;31m"
 NORMAL = "\033[0m"
 #HIGHLIGHT = ""
 #NORMAL = ""
