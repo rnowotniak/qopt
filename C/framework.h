@@ -6,9 +6,9 @@
 #include <string.h>
 
 
-// XXX
+#ifndef QOPT_PATH
 #define QOPT_PATH "/home/rob/qopt/"
-
+#endif
 
 class QOptException : public std::exception {
 

@@ -12,7 +12,7 @@ import qopt.problems
 from qopt.algorithms import QIEA2
 
 FUNCS = 28
-REPEAT = 10
+REPEAT = 20
 DIM = 2
 MaxFE = 10000 * DIM # according to CEC2013
 #MaxFE = 2000
