@@ -224,11 +224,18 @@ void QIEA2::update() {
 	for (int i = 0; i < popsize; i++) {
 		for (int j = 0; j < chromlen / 2; j++) {
 
+			// (ver1)
 			// update Q according to |Q| best in P
 			//Qij[0] = (best + 2*j)[0];  //  converge to the best ever
 			//Qij[1] = (best + 2*j)[1];  //  converge to the best ever
-			Qij[0] = (P_both + pairs[i].first * chromlen)[2*j];
-			Qij[1] = (P_both + pairs[i].first * chromlen)[2*j + 1];
+
+			// (ver2)
+			//Qij[0] = (P_both + pairs[i].first * chromlen)[2*j];
+			//Qij[1] = (P_both + pairs[i].first * chromlen)[2*j + 1];
+
+			// (ver3)
+			Qij[0] += (((P_both + pairs[i].first * chromlen)[2*j] > Qij[0]) ? 1. : -1.);
+			Qij[1] += (((P_both + pairs[i].first * chromlen)[2*j + 1] > Qij[1]) ? 1. : -1.) ;
 
 			if (i == 0 && j == 0) {
 				//printf("-> %g\n", Qij[3]);
@@ -283,9 +290,9 @@ void QIEA2::update() {
 #include "cec2013.h"
 #include <time.h>
 int main() {
-	srand(time(0));
-	//srand(5);//time(0));
-	int dim = 10;
+	//srand(time(0));
+	srand(5);//time(0));
+	int dim = 2;
 	int popsize = 10;
 	QIEA2 *qiea2 = new QIEA2(dim, popsize);
 	//for (int i = 0; i < dim; i++) {

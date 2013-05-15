@@ -5,13 +5,13 @@ import sys
 from qopt.algorithms import QIEA2
 from qopt.problems import CEC2013
 
-K = 2
-qiea2 = QIEA2(2, 10, 10)
-qiea2.tmax = 100000 / K
+K = 10
+qiea2 = QIEA2(2, 10, K)
+qiea2.tmax = 2 * 10000 / K
 fun = CEC2013(1)
 qiea2.problem = fun
 
-qiea2.delta = .9991
+qiea2.delta = .9995
 qiea2.XI = .2
 
 #print fun.evaluate((

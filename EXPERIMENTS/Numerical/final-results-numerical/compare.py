@@ -5,7 +5,7 @@ import numpy as np
 import qopt.problems
 import operator
 
-DIM = 2
+DIM = 10
 
 iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))

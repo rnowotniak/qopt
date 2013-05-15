@@ -12,8 +12,8 @@ import qopt.problems
 from qopt.algorithms import QIEA2
 
 FUNCS = 28
-REPEAT = 20
-DIM = 2
+REPEAT = 25
+DIM = 10
 MaxFE = 10000 * DIM # according to CEC2013
 #MaxFE = 2000
 qiea_popsize = 10
@@ -51,7 +51,7 @@ def runAlg(fnum):
     # print '%12g %12g %12g %12g' % tuple(row.tolist()[0])
     # qiea2 done
 
-pool = Pool(processes = 8)
+pool = Pool(processes = 14)
 table = np.matrix( np.vstack(pool.map(runAlg, xrange(1,FUNCS+1))) )
 
 for fnum in xrange(1,FUNCS+1):
