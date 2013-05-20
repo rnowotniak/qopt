@@ -9,7 +9,7 @@ DIM = 10
 
 iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
-qiea2 = np.matrix(np.load('/tmp/multiprocessing-qiea2-dim%d.npy' % DIM))
+qiea2 = np.matrix(np.load('multiprocessing-qiea2-dim%d.npy' % DIM))
 #myrqiea2 = np.matrix(np.load('myrqiea2-dim%d.npy' % DIM))
 data = np.matrix(np.load('pso-cmaes-ga-nelder-dim%d.npy' % DIM))
 
