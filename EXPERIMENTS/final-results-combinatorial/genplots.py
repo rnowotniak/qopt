@@ -223,8 +223,8 @@ def genplot(prob):
     print Yqiga2[-1], ';'
 
     X = np.linspace(0,MaxFE,len(Y))
-    pylab.ylim((1300,1480))
-    #pylab.plot(X, Yqiga2, 'ro-', label='QIGA-2')
+    #pylab.ylim((1300,1480))
+    pylab.plot(X, Yqiga2, 'ro-', label='QIGA-2')
     pylab.plot(X, Ytuned1, 'm^-', label='QIGA-1 tuned')
     pylab.plot(X, Y, 'gs-', label='QIGA-1')
     pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 'x-', label='SGA')
@@ -238,8 +238,8 @@ def genplot(prob):
     pylab.savefig('/tmp/wykres-%s.pdf' % prob, bbox_inches = 'tight')
 
 for prob in glob.glob('cache/???*'):
-    pass
-    #genplot(prob.split('/')[-1])
+    #pass
+    genplot(prob.split('/')[-1])
 
-genplot('knapsack250')
+#genplot('knapsack250')
 
