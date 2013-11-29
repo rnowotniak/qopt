@@ -5,21 +5,22 @@ import numpy as np
 import qopt.problems
 import operator
 
-DIM = 10
+DIM = 30
 
 iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
-qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
+#qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
 qiea2 = np.matrix(np.load('multiprocessing-qiea2-dim%d.npy' % DIM))
+#qiea2=qiea1
 #myrqiea2 = np.matrix(np.load('myrqiea2-dim%d.npy' % DIM))
-data = np.matrix(np.load('pso-cmaes-ga-nelder-dim%d.npy' % DIM))
+data = np.matrix(np.load('multiprocessing-pso-cmaes-ga-nelder-dim%d.npy' % DIM))
 
 
-algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'QIEA1', 'QIEA2']
+algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'QIEA2']
 #algs = [ 'PSO', 'CMAES', 'GA', 'NelderMead']
 
 MEAN_ONLY = True
 
-data = np.hstack((data, iqiea, qiea1, qiea2))
+data = np.hstack((data, iqiea, qiea2))
 
 numfuncs = data.shape[0]
 numalgs = data.shape[1] / 4 # / number of fields

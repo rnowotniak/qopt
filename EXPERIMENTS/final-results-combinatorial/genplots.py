@@ -202,13 +202,13 @@ prob = 'bejing-252'
 
 def genplot(prob):
     pylab.cla()
-    Yqiga2 = np.load('/var/tmp/cache/%s/cache-bQIGAo2.npy' % prob)
-    Ysga = np.load('/var/tmp/cache/%s/cache-sga.npy' % prob)
-    Y = np.load('/var/tmp/cache/%s/cache-bQIGAo1.npy' % prob)
-    Ytuned1 = np.load('/var/tmp/cache/%s/cache-bQIGAo1-tuned.npy' % prob)
+    Yqiga2 = np.load('cache/%s/cache-bQIGAo2.npy' % prob)
+    Ysga = np.load('cache/%s/cache-sga.npy' % prob)
+    Y = np.load('cache/%s/cache-bQIGAo1.npy' % prob)
+    Ytuned1 = np.load('cache/%s/cache-bQIGAo1-tuned.npy' % prob)
 
 
-    cnffilename = glob.glob('/var/tmp/cache/%s/*.cnf' % prob)[0]
+    cnffilename = glob.glob('cache/%s/*.cnf' % prob)[0]
 
     line = filter(lambda l: l.startswith('p '), open(cnffilename, 'r').readlines())[0]
     chromlen = int(line.split(' ')[2])
