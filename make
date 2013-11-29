@@ -72,7 +72,7 @@ check
 
 # numerical
 cd CEC2005
-bash genlibs.sh
+#bash genlibs.sh
 check
 cd ..
 cython --cplus _cec2013.pyx
