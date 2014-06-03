@@ -15,7 +15,7 @@ cdef extern from "cec2013.h":
     cdef cppclass CEC2013cpp "CEC2013" (ProblemCpp[double,double]):
         CEC2013cpp(int fnum) except +SyntaxError
 
-DEF MAXDIM = 10
+DEF MAXDIM = 50
 
 fname = 'problems/CEC2013/cec13ccode/input_data/shift_data.txt'
 

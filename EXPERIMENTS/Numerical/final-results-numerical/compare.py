@@ -5,9 +5,9 @@ import numpy as np
 import qopt.problems
 import operator
 
-DIM = 50
+DIM = 30
 
-iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
+#iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 #qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
 qiea2 = np.matrix(np.load('multiprocessing-qiea2-dim%d.npy' % DIM))
 #qiea2=qiea1
@@ -15,12 +15,12 @@ qiea2 = np.matrix(np.load('multiprocessing-qiea2-dim%d.npy' % DIM))
 data = np.matrix(np.load('multiprocessing-pso-cmaes-ga-nelder-dim%d.npy' % DIM))
 
 
-algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'iQIEA', 'QIEA2']
+algs = ['PSO', 'CMAES', 'GA', 'NelderMead', 'QIEA2']
 #algs = [ 'PSO', 'CMAES', 'GA', 'NelderMead']
 
 MEAN_ONLY = True
 
-data = np.hstack((data, iqiea, qiea2))
+data = np.hstack((data, qiea2))
 
 numfuncs = data.shape[0]
 numalgs = data.shape[1] / 4 # / number of fields
@@ -68,7 +68,7 @@ for fnum in xrange(1, numfuncs + 1):
     print
     rowranking = sorted(rowranking, cmp = lambda a,b: cmp(a[1],b[1]))
     rowranking = map(lambda i: i[0], rowranking)
-    #print rowranking
+    print rowranking
     for alg in algs:
         ranking2[alg] += rowranking.index(alg) + 1
 
