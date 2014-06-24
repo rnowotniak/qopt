@@ -21,8 +21,8 @@ algs = ['PSO', 'CMAES', 'GA', 'NelderMead'] # , 'QIEA2']
 data = np.hstack((data, ))  # qiea2))
 
 iQIEAs = {}
-for iQIEA_file in glob.glob('multiprocessing-iqiea-dim50-*.npy'):
-    xi, delta = iQIEA_file.replace('multiprocessing-iqiea-dim50-', '').replace('.npy', '').split('-')
+for iQIEA_file in glob.glob('multiprocessing-iqiea-dim%d-*.npy' % DIM):
+    xi, delta = iQIEA_file.replace('multiprocessing-iqiea-dim%d-' % DIM, '').replace('.npy', '').split('-')
     #print xi, delta
     algs.append( 'iQIEA-%s,%s' % (xi, delta))
     data = np.hstack((data, np.matrix(np.load(iQIEA_file)) ))
