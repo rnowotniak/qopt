@@ -224,12 +224,12 @@ def genplot(prob):
 
     X = np.linspace(0,MaxFE,len(Y))
     #pylab.ylim((1300,1480))
-    pylab.plot(X, Yqiga2, 'ro-', label='QIGA-2')
-    pylab.plot(X, Ytuned1, 'm^-', label='QIGA-1 tuned')
-    pylab.plot(X, Y, 'gs-', label='QIGA-1')
-    pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 'x-', label='SGA')
+    pylab.plot(X, Yqiga2, 'ro-', label='QIGA-2', markevery=50, markersize=10)
+    pylab.plot(X, Ytuned1, 'm^-', label='QIGA-1 tuned', markevery=50, markersize=10)
+    pylab.plot(X, Y, 'gs-', label='QIGA-1', markevery=50, markersize=10)
+    pylab.plot(np.linspace(0,MaxFE,len(Ysga)), Ysga - 3, 'x-', label='SGA', markevery=5, markersize=10)
     pylab.legend(loc = 'lower right')
-    pylab.title(u'Algorithms efficacy comparison\nProblem: $\\texttt{%s}$, size $N=%d$' % (prob, chromlen))
+    pylab.title(u'Algorithms performance comparison\nProblem: $\\texttt{%s}$, size $N=%d$' % (prob, chromlen))
     pylab.ylabel(u'Average fitness of the best individual')
     pylab.xlabel(u'Fitness evaluation count ($FE$)')
     pylab.grid(True)
@@ -241,5 +241,5 @@ for prob in glob.glob('cache/???*'):
     pass
     #genplot(prob.split('/')[-1])
 
-genplot('knapsack250')
+genplot('bejing-252')
 

@@ -6,7 +6,7 @@ import qopt.problems
 import operator
 import glob
 
-DIM = 50
+DIM = 2
 
 #iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 #qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
@@ -21,7 +21,8 @@ algs = ['PSO', 'CMAES', 'GA', 'NelderMead'] # , 'QIEA2']
 data = np.hstack((data, ))  # qiea2))
 
 iQIEAs = {}
-for iQIEA_file in glob.glob('multiprocessing-iqiea-dim%d-*.npy' % DIM):
+for iQIEA_file in [f.strip() for f in open('/tmp/blabla.txt').readlines()]:
+# glob.glob('multiprocessing-iqiea-dim%d-*.npy' % DIM):
     xi, delta = iQIEA_file.replace('multiprocessing-iqiea-dim%d-' % DIM, '').replace('.npy', '').split('-')
     #print xi, delta
     algs.append( 'iQIEA-%s,%s' % (xi, delta))
