@@ -177,6 +177,11 @@ schema = '10010**********'
 #schema = '01*01**********'
 schema = '*1*0***********'
 
+schema = '0*110**********'
+
+schema = '****0'
+schema = '***10'
+
 coverage=[]
 X = pylab.linspace(0, 200, 200)
 
