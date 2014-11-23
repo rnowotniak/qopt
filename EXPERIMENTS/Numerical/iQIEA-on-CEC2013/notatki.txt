@@ -1,0 +1,6 @@
+Lepsza metoda porownan:
+
+for f in *iqiea*dim30*npy; do echo -n "$f  "; echo $(./compare-better-method.py $f 2> /dev/null | grep ^iQIEA | awk '{print $2}')   ; done
+
+
+
