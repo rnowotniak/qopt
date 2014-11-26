@@ -6,7 +6,7 @@ import qopt.problems
 import operator
 import glob
 
-DIM = 2
+DIM = 50
 
 #iqiea = np.matrix(np.load('multiprocessing-iqiea-dim%d.npy' % DIM))
 #qiea1 = np.matrix(np.load('multiprocessing-qiea1-dim%d.npy' % DIM))
