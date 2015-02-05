@@ -233,7 +233,7 @@ points = numpy.array([15.5,62.,140.,178.])
 points = [points[3]]
 pylab.plot(points, [f1.evaluate2(x) for x in points], 'ro', markersize=10)
 pylab.xticks((0, len(X)/4,len(X)/2, len(X)/4*3., len(X)),
-        ('000...0', '010...0', '100...0', '110...0', '111...1'))
+        ('000...0\n$x=0$', '010...0', '100...0', '110...0', '111...1\n$x=200$'))
 #qgen = []
 #def gauss2d(x, shift, sigma):
         #return 1./sigma/numpy.sqrt(2*numpy.pi) * numpy.exp(-((x-shift)**2)/2/sigma**2)
