@@ -212,8 +212,10 @@ for i in xrange(2**len(schema)):
 #angles=[0,0,0,0]
 
 #angles=[0, 90, 0, 45]
-#angles=[20, 90, 45, 30]
-angles=[30, 80, 35, 35]
+
+#angles=[45, 90, 45, 0] # , 45, 45, 45, 45] # 1
+#angles=[30, 80, 35, 35]  # 2
+angles=[20, 90, 45, 30] # 3
 
 coverage=[]
 

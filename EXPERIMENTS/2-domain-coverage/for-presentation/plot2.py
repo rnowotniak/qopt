@@ -181,6 +181,9 @@ schema = '0*110**********'
 
 schema = '****0'
 schema = '***10'
+schema = '*1*0****'
+#schema = '01*01***'
+#schema = '01001***'
 
 coverage=[]
 X = pylab.linspace(0, 200, 200)
@@ -254,7 +257,7 @@ pylab.xlim((0,200))
 pylab.grid(True)
 #pylab.legend(loc='upper left')
 #pylab.title('$\\left[' +'|'.join(['{{{%.3f \\atop %.3f} \\atop %.3f} \\atop %.3f}' % (a[0],a[1],a[2],a[3]) for a in angles]) + '\\right]$')
-pylab.title('$H=%s$'%schema)
+pylab.title('$H={}$\\texttt{%s}'%schema)
 pylab.xlabel('$x$')
 pylab.ylabel('$f(x)$')
 #pylab.gca().set_aspect(1, 'box')
