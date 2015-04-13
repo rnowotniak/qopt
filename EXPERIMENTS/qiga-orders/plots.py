@@ -46,7 +46,7 @@ pylab.plot(X5,map(lambda x: lambda_(x,5),X5), '--') # , label='$r=5$')
 #pylab.plot(X, map(lambda x: lambda_(x,4), X), 'ko-')
 #pylab.plot(X, map(lambda x: lambda_(x,5), X), 'ko-')
 
-pylab.plot([4,5,6,7,8,9,10], map(lambda x: lambda_(x,2), [4,5,6,7,8,9,10]), 'wo', markersize=15, label='$r=1$')  # R1
+pylab.plot([4,5,6,7,8,9,10], map(lambda x: lambda_(x,1), [4,5,6,7,8,9,10]), 'wo', markersize=15, label='$r=1$')  # R1
 pylab.plot([4,6,8,10], map(lambda x: lambda_(x,2), [4,6,8,10]),             'bo', markersize= 8, label='$r=2$')  # R2
 pylab.plot([6,9],    map(lambda x: lambda_(x,3), [6,9]),                    'r^', markersize=12, label='$r=3$')  # R3
 pylab.plot([4,8],      map(lambda x: lambda_(x,4), [4,8]),                  'cD', markersize=10, label='$r=4$')  # R4
@@ -83,7 +83,7 @@ pylab.plot( X,map(lambda x: lambdaO(x,3), X), '--') # , label='$r=3$')
 pylab.plot( X,map(lambda x: lambdaO(x,4), X), '--') # , label='$r=4$')
 pylab.plot(X5,map(lambda x: lambdaO(x,5),X5), '--') # , label='$r=5$')
 
-pylab.plot([4,5,6,7,8,9,10], map(lambda x: lambdaO(x,2), [4,5,6,7,8,9,10]), 'wo', markersize=15, label='$r=1$')  # R1
+pylab.plot([4,5,6,7,8,9,10], map(lambda x: lambdaO(x,1), [4,5,6,7,8,9,10]), 'wo', markersize=15, label='$r=1$')  # R1
 pylab.plot([4,6,8,10], map(lambda x: lambdaO(x,2), [4,6,8,10]),             'bo', markersize= 8, label='$r=2$')  # R2
 pylab.plot([6,9],    map(lambda x: lambdaO(x,3), [6,9]),                    'r^', markersize=12, label='$r=3$')  # R3
 pylab.plot([4,8],      map(lambda x: lambdaO(x,4), [4,8]),                  'cD', markersize=10, label='$r=4$')  # R4
