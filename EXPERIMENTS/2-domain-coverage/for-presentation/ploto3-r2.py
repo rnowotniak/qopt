@@ -301,6 +301,7 @@ pylab.grid(True)
 #pylab.title('''q=\\rotatebox{45}{\includegraphics[width=1.5ex]{/tmp/strzalka.eps}}''')  # DOES NOT NOT NOT WORK !
 
 pylab.title(u'Rozkład kodowany w genotypie $|q_3\\rangle$ rzędu II')
+pylab.title('')
 
 pylab.xlabel('$x$')
 pylab.ylabel('$f(x)$')

@@ -23,7 +23,7 @@ prob = 'mysat'
 f = qopt.problems.knapsack1000
 chromlen = 1000
 timecache = np.array([0.,0.,0.,0.])
-readCache = False
+readCache = True
 
 MaxFE = 5000
 repeat = 20

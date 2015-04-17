@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# encoding=utf-8
+# -*- coding: utf-8 -*-
 
 # http://www.scipy.org/Cookbook/Matplotlib/AdjustingImageSize
 
@@ -56,24 +56,25 @@ def knapsackplot(prob, length, fname):
     ax1 = fig1.add_subplot(111)
     # s = sorted(Y)
     # print s[-10:]
-    price = ax1.plot(Y, '-')
+    price = ax1.plot(Y, '.-')
     pylab.xlim([0,len(Y)])
     #pylab.ylim([-50,130])
     #pylab.ylim([520,521])
-    pylab.ylabel(u'Wartość')
+    pylab.ylabel(u'Wartość rozwiązania $f(x)$')
     ax1.grid(True)
     ax2 = fig1.add_subplot(111, sharex=ax1, frameon = False)
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position('right')
     weight = ax2.plot(Y2, 'r')
-    ax2.plot([0,len(Y2)], [prob.capacity, prob.capacity], 'r')
+    ax2.plot([0,len(Y2)], [prob.capacity, prob.capacity], 'r', linewidth=3)
     pylab.ylim([min(Y2),max(Y)])
     pylab.xlim([0,len(Y)])
     pylab.xticks((0, len(Y)/4,len(Y)/2, len(Y)/4*3., len(Y)),
             ('000...0', '010...0', '100...0', '110...0', '111...1'))
-    pylab.ylabel(u'Waga')
+    pylab.ylabel(u'Waga rozwiązania')
     pylab.xlabel(u'Przestrzeń rozwiązań $X$')
-    pylab.legend((price[0],weight[0]), (u'Wartość','Waga'), loc='upper left', shadow=True, fancybox=True, borderpad=0.3)
+    pylab.title(u'Problem plecakowy')
+    pylab.legend((price[0],weight[0]), (u'Wartość rozwiązania',u'Waga rozwiązania'), loc='upper left', shadow=True, fancybox=True, borderpad=0.3)
     pylab.savefig(fname, bbox_inches = 'tight')
 
 
@@ -93,32 +94,37 @@ def satplot(prob, length, fname):
     pylab.yticks(numpy.arange(pylab.ylim()[0] + 1, pylab.ylim()[1] + 1))
     pylab.xticks((0, len(Y)/4,len(Y)/2, len(Y)/4*3., len(Y)),
             ('000...0', '010...0', '100...0', '110...0', '111...1'))
-    pylab.ylabel(u'Liczba prawdziwych klauzul')
+    #pylab.ylabel(u'Liczba prawdziwych klauzul')
+    pylab.ylabel(u'Wartość rozwiązania $f(x)$')
     pylab.xlabel(u'Przestrzeń rozwiązań $X$')
+    pylab.title(u'Problem spełnialności (SAT)')
     pylab.savefig(fname, bbox_inches = 'tight')
 
 #knapsackplot(k15, 15, '/tmp/knapsack15.pdf')
 #knapsackplot(k20, 20, '/tmp/knapsack20.pdf')
 #knapsackplot(k25, 25, '/tmp/knapsack25.pdf')
 
-#  rs1 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-15.cnf'))
-#  rs2 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-20.cnf'))
-#  rs3 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-25.cnf'))
-#  #rs3 = qopt.problems._sat.SatProblem(qopt.path('contrib/SPY-1.2/25.cnf'))
-#  #satplot(rs1, 15, '/tmp/sat1.pdf')
+rs1 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-15.cnf'))
+rs2 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-20.cnf'))
+rs3 = qopt.problems._sat.SatProblem(qopt.path('problems/sat/random-25.cnf'))
+
+satplot(rs2, 20, '/tmp/sat1.pdf')
+
+#rs3 = qopt.problems._sat.SatProblem(qopt.path('contrib/SPY-1.2/25.cnf'))
+#satplot(rs1, 15, '/tmp/sat1.pdf')
 #  print 'a'
-#  #satplot(rs2, 20, '/tmp/sat2.pdf')
+#satplot(rs2, 20, '/tmp/sat2.pdf')
 #  print 'a'
 #  satplot(rs3, 25, '/tmp/sat3.pdf')
 #  print 'a'
 #  
 #  sys.exit(0)
 #  
-#  # satplot(s1, 90, '/tmp/sat1.pdf')
+# satplot(s1, 90, '/tmp/sat1.pdf')
 #  # satplot(s2, 512, '/tmp/sat2.pdf')
 #  # satplot(s3, 718, '/tmp/sat3.pdf')
 #  
-#  sys.exit(0)
+sys.exit(0)
 
 
 f1 = qopt.problems.func1d.f1
