@@ -1,7 +1,4 @@
-FRAMEWORK NALEŻY UPROŚCIĆ, ABY MÓC GO FAKTYCZNEI WYKORZYSTAĆ W ROZPRAWIE!!
-NP. PODSYSTEM GENEROWANIA RAPORTÓW NALEŻY GDZIEŚ ODŁĄCZYĆ^H^H^H^H^H USUNĄĆ
-
-Aktualne rzeczy do zrobienia:
+NIEAKTUALNE - rzeczy do zrobienia:
 	prosty model obiektowy (run, generation, evaluate, initialize)
 	wyprostowanie kilku kwestii
 		minmax   (.minmax = min   or   .minmax = max)
@@ -44,11 +41,6 @@ import qopt.algorithms.contrib.firefly   ?
 import qopt.algorithms.contrib.bat   ? (cockoo, de, gewa, hs, pso)
 
 --------8<--------8<--------8<--------8<--------8<--------8<--------8<
-
-Wyobrazic sobie te eksperymenty, ktore faktycznie bedziemy wykonywac podczas
-pracy nad rozprawa i podczas pracy nad artykulami, i na podstawie tego wyobrazenia
-odpowiedziec sobie na pytania dot. np. formatu argumentow, podzialu odowiedzialnosci skryptow itp.
-(podejscie z gory na dol). Ponizsze jest stworzone na podstawie wlasnie tego wyobrazenia:
 
 TODO:
 	1. Artykul bblocks
