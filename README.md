@@ -1,7 +1,7 @@
 # qopt
 Quantum-Inspired Evolutionary Algorithms for Optimization problems
 
-This repository contains some unpublished before source codes developed by me in the years
+This repository contains some unpublished before source codes developed by Robert Nowotniak in the years
 2010-2015. They were used for research on advanced randomised search
 algorithms (mainly quantum-inspired evolutionary and genetic algorithms and
 other population methods) for numerical and combinatorial optimisation. 
