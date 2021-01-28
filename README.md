@@ -26,6 +26,77 @@ The source code repository main contents:
   are made accessible on their independent licences, chosen by their authors.
   Most of these projects were made available by their authors using the GNU GPL license.
 
+## Examples
+
+Loading test functions / benchmark problems:
+
+```python
+# knapsack
+knapsack = qopt.problems.knapsack250
+print knapsack.evaluate('1' * 250)
+
+# func 1d
+f1d = qopt.problems.func1d.f1
+print f1d.evaluate2(60.488)
+
+# sat
+import qopt.problems._sat
+s1 = qopt.problems._sat.SatProblem('problems/sat/flat30-100.cnf')
+print s1.evaluate('100100001100100100001100010100010001010010100010100010010010010010001001001100001001001001')
+
+# cec2005
+f1 = qopt.problems.CEC2005(1)
+print f1.evaluate((0,0))
+
+f1 = qopt.problems.CEC2013(8)
+print f1.evaluate(qopt.problems.CEC2013.optimum[:2])
+```
+
+Solving combinatorial optimization using a little customized QIGA algorithm (overwriting initialize() and generation() methods):
+
+```python
+class QIGA(qopt.algorithms.QIGA):
+    def initialize(self):
+        super(QIGA, self).initialize()
+        print 'my initialization'
+        print self.Q
+
+    def generation(self):
+        super(QIGA, self).generation()
+        if self.t == 5:
+            print 'generation %d, bestval: %g' % (self.t, self.bestval)
+
+q = QIGA(chromlen = 250)
+q.tmax = 500
+q.problem = qopt.problems.knapsack250
+import time
+t1 = time.time()
+for run in xrange(1):
+    q.run()
+print '100 runs in: %g seconds' % (time.time() - t1)
+q.run()
+
+print q.bestval
+```
+
+Solving numerical optimization problems using implemented RQIEA algorithm:
+
+```python
+# cec2005
+r = qopt.algorithms.RQIEA
+r.problem = qopt.problems.CEC2005(2)
+r.dim = 30
+r.bounds = None
+r.run()
+
+# cec2011
+r.problem = qopt.problems.CEC2011(15)
+r.run()
+## References
+```
+
+## References
+
 The programs collected in this repository were used to conduct research (numerical experiments), whose results were presented
 in scientific papers and doctoral dissertation:
 
