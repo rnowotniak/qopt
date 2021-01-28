@@ -28,6 +28,13 @@ The source code repository main contents:
 
 ## Examples
 
+Import algorithms from `qopt` and some test problems:
+
+```python
+import qopt.algorithms
+import qopt.problems
+```
+
 Loading test functions / benchmark problems:
 
 ```python
