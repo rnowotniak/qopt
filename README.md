@@ -9,7 +9,7 @@ other population methods) for numerical and combinatorial optimisation.
 The programs and algorithms were developed in different programming languages:
 C, C++, Python with Cython interfaces, CUDA C kernels, helpers Bash shell scripts and some algorithms even in Matlab.
 
-The source code repository main contents:
+The [source code repository](https://github.com/rnowotniak/qopt) main contents:
 
 * **Algorithms/purepython/** -  algorithms implementation in pure Python (the slowest, initial POC implementations)
 * **Algorithms/*.pyx**  -   iQIEA, MyRQIEA2, QIEA1, QIEA2, rQIEA algorithms implementation in Cython
